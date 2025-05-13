@@ -93,7 +93,7 @@ const AnimatedBackground: React.FC = () => {
 };
 
 export default AnimatedBackground;
-</p></current-code>
+</current-code>
 
 <pp-write filepath="src/index.css" partial>
 /* Анимации для SVG-путей */
@@ -125,6 +125,30 @@ export default AnimatedBackground;
   }
   50% {
     transform: translateY(-15px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes float-medium {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1deg);
   }
   100% {
     transform: translateY(0px) rotate(0deg);

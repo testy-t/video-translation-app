@@ -1,7 +1,6 @@
-
-import React from 'react';
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import Icon from '@/components/ui/icon';
+import Icon from "@/components/ui/icon";
 
 interface Step {
   icon: string;
@@ -17,10 +16,15 @@ const HowItWorks: React.FC<HowItWorksProps> = ({ steps }) => {
   return (
     <section className="py-6 px-4 bg-white relative z-10">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-8 font-montserrat">Как это работает</h2>
+        <h2 className="text-3xl font-bold text-center mb-8 font-montserrat">
+          Как это работает
+        </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
-            <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow">
+            <Card
+              key={index}
+              className="shadow-lg hover:shadow-xl transition-shadow"
+            >
               <CardContent className="p-6">
                 <div className="mb-4 text-[#7c4dff]">
                   <Icon name={step.icon} size={36} />

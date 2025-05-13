@@ -1,11 +1,60 @@
 
 import React from 'react';
 
+// Компонент для создания анимированных SVG-путей
+const FloatingPaths = ({ position }: { position: number }) => {
+  // Создаем 36 путей с разными параметрами
+  const paths = Array.from({ length: 36 }, (_, i) => ({
+    id: i,
+    d: `M-${380 - i * 5 * position} -${189 + i * 6}C-${
+      380 - i * 5 * position
+    } -${189 + i * 6} -${312 - i * 5 * position} ${216 - i * 6} ${
+      152 - i * 5 * position
+    } ${343 - i * 6}C${616 - i * 5 * position} ${470 - i * 6} ${
+      684 - i * 5 * position
+    } ${875 - i * 6} ${684 - i * 5 * position} ${875 - i * 6}`,
+    opacity: 0.1 + i * 0.02,
+    width: 0.5 + i * 0.03,
+    // Разные параметры анимации для каждого пути
+    animationDuration: `${20 + Math.random() * 10}s`,
+    animationDelay: `${Math.random() * 5}s`,
+  }));
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-0">
+      <svg
+        className="w-full h-full text-white opacity-50"
+        viewBox="0 0 696 316"
+        fill="none"
+      >
+        <title>Background Paths</title>
+        {paths.map((path) => (
+          <path
+            key={path.id}
+            d={path.d}
+            stroke="currentColor"
+            strokeWidth={path.width}
+            strokeOpacity={path.opacity}
+            style={{
+              animation: `pathAnimation ${path.animationDuration} ${path.animationDelay} linear infinite`,
+            }}
+            className="path-anim"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+};
+
 const AnimatedBackground: React.FC = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
       {/* Основной темный градиентный фон */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#111827] to-[#1E293B]"></div>
+      
+      {/* Анимированные SVG пути */}
+      <FloatingPaths position={1} />
+      <FloatingPaths position={-1} />
       
       {/* Заблюренные градиентные волны */}
       <div className="absolute inset-0 overflow-hidden">
@@ -44,3 +93,40 @@ const AnimatedBackground: React.FC = () => {
 };
 
 export default AnimatedBackground;
+</p></current-code>
+
+<pp-write filepath="src/index.css" partial>
+/* Анимации для SVG-путей */
+@keyframes pathAnimation {
+  0% {
+    stroke-dasharray: 0 900;
+    stroke-dashoffset: 0;
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    stroke-dasharray: 900 0;
+    stroke-dashoffset: 900;
+    opacity: 0.3;
+  }
+}
+
+.path-anim {
+  stroke-dasharray: 0 900;
+  stroke-dashoffset: 0;
+}
+
+/* Анимации для фоновых элементов */
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}

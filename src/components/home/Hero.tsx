@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -22,35 +21,63 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden">
-      {/* Тёмная секция с минималистичным фоном */}
-      <div className="min-h-[90vh] pt-32 pb-20 px-4 relative">
+      {/* Тёмная секция с минималистичным фоном - увеличена высота */}
+      <div className="min-h-[100vh] pt-32 pb-20 px-4 relative">
         <AnimatedBackground />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
-            <Icon name="Video" size={16} className="text-white" />
-            ИИ Переводчик Видео
-          </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight mb-6 text-white">
-            Ваш голос на любом языке
-          </h1>
-          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Загрузите видео и получите профессиональный перевод на любой язык с
-            идеальной синхронизацией губ за считанные минуты.
-          </p>
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center">
+          {/* Левая часть с текстом */}
+          <div className="md:w-1/2 text-left mb-10 md:mb-0">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
+              <Icon name="Video" size={16} className="text-white" />
+              ИИ Переводчик Видео
+            </span>
 
-          {/* Компонент выбора языка */}
-          <LanguageSelector
-            languages={languages}
-            onSelectLanguage={handleLanguageSelect}
-            isDark={true}
-          />
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight mb-6 text-white">
+              Ваш голос на любом языке
+            </h1>
 
-          {/* Кнопка действия */}
-          <Button className="bg-white/15 text-white hover:bg-white/25 hover:text-white px-8 py-6 text-base font-medium rounded-full mt-4 backdrop-blur-sm border border-white/10">
-            <Icon name="Play" size={20} className="mr-2" />
-            Начать Бесплатно
-          </Button>
+            <p className="text-lg text-gray-300 mb-10 max-w-xl leading-relaxed">
+              Загрузите видео и получите профессиональный перевод на любой язык
+              с идеальной синхронизацией губ за считанные минуты.
+            </p>
+
+            {/* Компонент выбора языка */}
+            <LanguageSelector
+              languages={languages}
+              onSelectLanguage={handleLanguageSelect}
+              isDark={true}
+            />
+
+            {/* Кнопка действия */}
+            <Button className="bg-white/15 text-white hover:bg-white/25 hover:text-white px-8 py-6 text-base font-medium rounded-full mt-4 backdrop-blur-sm border border-white/10">
+              <Icon name="Play" size={20} className="mr-2" />
+              Начать Бесплатно
+            </Button>
+          </div>
+
+          {/* Правая часть - видео плейсхолдер */}
+          <div className="md:w-1/2 flex justify-center md:justify-end">
+            <div className="relative w-full max-w-lg aspect-video rounded-xl overflow-hidden">
+              {/* Стилизованная рамка */}
+              <div className="absolute inset-0 border border-white/20 rounded-xl z-10"></div>
+
+              {/* Плейсхолдер для видео */}
+              <div className="w-full h-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                {/* Полупрозрачная кнопка Play посередине */}
+                <div className="w-20 h-20 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center cursor-pointer hover:bg-white/25 transition-colors border border-white/30">
+                  <Icon name="Play" size={36} className="text-white ml-1" />
+                </div>
+
+                {/* Текст-плейсхолдер внизу */}
+                <div className="absolute bottom-4 left-0 right-0 text-center">
+                  <p className="text-white/70 text-sm">
+                    Демонстрация технологии
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

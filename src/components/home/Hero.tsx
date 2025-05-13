@@ -53,12 +53,12 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Волнистое разделение */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden">
+      {/* Волнистое разделение с корректировкой для устранения зазора */}
+      <div className="absolute -bottom-1 left-0 w-full overflow-hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1440 320"
-          className="w-full h-auto fill-[#f5f5f7]"
+          className="w-full h-auto fill-white"
         >
           <path d="M0,192L48,186.7C96,181,192,171,288,186.7C384,203,480,245,576,266.7C672,288,768,288,864,277.3C960,267,1056,245,1152,218.7C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
         </svg>

@@ -14,43 +14,54 @@ const Hero: React.FC = () => {
     { code: "de", flag: "🇩🇪", name: "Deutsch" },
   ];
 
-  // Обработчик выбора языка (для будущей функциональности)
+  // Обработчик выбора языка
   const handleLanguageSelect = (code: string) => {
     console.log(`Selected language: ${code}`);
-    // Здесь будет логика смены языка
   };
 
   return (
-    <section className="py-16 md:py-20 px-4 relative overflow-hidden">
-      <AnimatedBackground />
+    <section className="relative overflow-hidden">
+      {/* Добавляем темную секцию с увеличенной высотой для контраста */}
+      <div className="min-h-[90vh] pt-32 pb-20 px-4 relative">
+        <AnimatedBackground />
 
-      <div className="max-w-4xl mx-auto text-center relative z-10">
-        <span className="inline-flex items-center gap-1.5 bg-[#7c4dff]/10 text-[#7c4dff] px-3 py-1.5 rounded-full text-sm font-medium mb-6">
-          <Icon name="Video" size={18} />
-          ИИ Переводчик Видео
-        </span>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 font-montserrat">
-          Ваш голос на любом языке
-        </h1>
-        <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl mx-auto font-opensans">
-          Загрузите видео и получите профессиональный перевод на любой язык с
-          идеальной синхронизацией губ за считанные минуты.
-        </p>
-        <p className="text-sm text-gray-500 mb-8">
-          Попробуйте примеры перевода
-        </p>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 glass-dark text-white bg-white/10">
+            <Icon name="Video" size={16} className="text-white" />
+            ИИ Переводчик Видео
+          </span>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight mb-6 text-white">
+            Ваш голос на любом языке
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Загрузите видео и получите профессиональный перевод на любой язык с
+            идеальной синхронизацией губ за считанные минуты.
+          </p>
 
-        {/* Компонент выбора языка */}
-        <LanguageSelector
-          languages={languages}
-          onSelectLanguage={handleLanguageSelect}
-        />
+          {/* Компонент выбора языка */}
+          <LanguageSelector
+            languages={languages}
+            onSelectLanguage={handleLanguageSelect}
+            isDark={true}
+          />
 
-        {/* Кнопка действия */}
-        <Button className="bg-[#7c4dff] hover:bg-[#6c3ce9] rounded-full px-8 py-6 text-lg font-medium animate-pulse">
-          <Icon name="Play" size={20} className="mr-2" />
-          Начать Бесплатно
-        </Button>
+          {/* Кнопка действия */}
+          <Button className="glass-dark bg-white/15 text-white hover:bg-white/25 hover:text-white px-8 py-6 text-base font-medium rounded-full mt-4">
+            <Icon name="Play" size={20} className="mr-2" />
+            Начать Бесплатно
+          </Button>
+        </div>
+      </div>
+
+      {/* Добавляем волнистое разделение между секциями */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1440 320"
+          className="w-full h-auto fill-[#f5f5f7]"
+        >
+          <path d="M0,192L48,186.7C96,181,192,171,288,186.7C384,203,480,245,576,266.7C672,288,768,288,864,277.3C960,267,1056,245,1152,218.7C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
       </div>
     </section>
   );

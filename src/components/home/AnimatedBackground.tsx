@@ -3,31 +3,32 @@ import React from 'react';
 
 const AnimatedBackground: React.FC = () => {
   return (
-    <div className="absolute inset-0 z-0">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#f8f9ff] to-white"></div>
+    <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* Темный градиентный фон */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#111827] via-[#1E293B] to-[#334155]"></div>
       
-      {/* Анимированные круги */}
-      <div className="circle-animation absolute -top-20 -left-20 w-60 h-60 rounded-full bg-[#7c4dff]/5 animate-float-slow"></div>
-      <div className="circle-animation absolute top-40 -right-40 w-80 h-80 rounded-full bg-[#7c4dff]/10 animate-float-medium"></div>
-      <div className="circle-animation absolute bottom-20 -left-40 w-96 h-96 rounded-full bg-[#6c3ce9]/5 animate-float"></div>
+      {/* Темный оверлей с блюром */}
+      <div className="absolute inset-0 backdrop-blur-[120px]"></div>
       
-      {/* Анимированные волны */}
-      <svg className="absolute bottom-0 left-0 w-full opacity-30" 
-           viewBox="0 0 1440 320" 
-           xmlns="http://www.w3.org/2000/svg">
-        <path 
-          fill="#7c4dff" 
-          fillOpacity="0.2"
-          d="M0,192L48,170.7C96,149,192,107,288,112C384,117,480,171,576,197.3C672,224,768,224,864,192C960,160,1056,96,1152,74.7C1248,53,1344,75,1392,85.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          className="animate-wave-slow"
-        ></path>
-        <path 
-          fill="#7c4dff" 
-          fillOpacity="0.1"
-          d="M0,256L48,261.3C96,267,192,277,288,245.3C384,213,480,139,576,128C672,117,768,171,864,208C960,245,1056,267,1152,240C1248,213,1344,139,1392,101.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          className="animate-wave-medium"
-        ></path>
-      </svg>
+      {/* Анимированные элементы на темном фоне */}
+      <div className="circle-animation absolute -top-20 -left-20 w-96 h-96 rounded-full bg-[#0070F3]/30 animate-float-slow"></div>
+      <div className="circle-animation absolute top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#5EEAD4]/20 animate-float-medium"></div>
+      <div className="circle-animation absolute bottom-20 -left-40 w-[800px] h-[800px] rounded-full bg-[#818CF8]/20 animate-float"></div>
+      
+      {/* Светящиеся линии */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-[10%] left-0 w-full h-[1px] bg-[#38BDF8] transform -rotate-1"></div>
+        <div className="absolute top-[30%] left-0 w-full h-[1px] bg-[#38BDF8] transform rotate-2"></div>
+        <div className="absolute top-[70%] left-0 w-full h-[1px] bg-[#38BDF8] transform -rotate-1"></div>
+      </div>
+      
+      {/* Легкий градиентный оверлей внизу */}
+      <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black/30 to-transparent"></div>
+      
+      {/* Светящиеся точки */}
+      <div className="absolute top-[15%] right-[10%] w-4 h-4 rounded-full bg-[#38BDF8]/70 blur-sm animate-pulse-subtle"></div>
+      <div className="absolute top-[60%] left-[15%] w-6 h-6 rounded-full bg-[#7DD3FC]/80 blur-sm animate-pulse-subtle"></div>
+      <div className="absolute bottom-[20%] right-[20%] w-5 h-5 rounded-full bg-[#BAE6FD]/70 blur-sm animate-pulse-subtle"></div>
     </div>
   );
 };

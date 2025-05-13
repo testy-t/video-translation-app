@@ -64,8 +64,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        montserrat: ["Montserrat", "sans-serif", ...fontFamily.sans],
-        opensans: ["Open Sans", "sans-serif", ...fontFamily.sans],
+        inter: ["Inter", "sans-serif", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
@@ -88,6 +87,10 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      backgroundImage: {
+        "gradient-subtle":
+          "linear-gradient(180deg, rgba(240, 240, 243, 0) 0%, rgba(240, 240, 243, 0.8) 100%)",
       },
     },
   },

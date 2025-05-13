@@ -12,11 +12,13 @@ interface Language {
 interface LanguageSelectorProps {
   languages: Language[];
   onSelectLanguage?: (code: string) => void;
+  isDark?: boolean;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ 
   languages, 
-  onSelectLanguage = () => {} 
+  onSelectLanguage = () => {},
+  isDark = false
 }) => {
   return (
     <div className="flex flex-wrap justify-center gap-3 mb-12">
@@ -26,9 +28,13 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           variant={language.isActive ? "default" : "outline"}
           className={`
             rounded-full px-6 
-            ${language.isActive 
-              ? "bg-[#7c4dff] hover:bg-[#6c3ce9]" 
-              : "hover:bg-[#7c4dff]/10"
+            ${isDark
+              ? (language.isActive 
+                  ? "glass-dark bg-white/20 text-white" 
+                  : "glass-dark bg-white/10 text-white hover:bg-white/15")
+              : (language.isActive 
+                  ? "glass-button text-[#0070F3]" 
+                  : "glass-button text-gray-600 hover:text-[#0070F3]")
             }
           `}
           onClick={() => onSelectLanguage(language.code)}

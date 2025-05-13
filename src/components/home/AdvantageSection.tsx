@@ -11,50 +11,62 @@ const AdvantageSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 px-4 bg-gray-50">
+    <section className="py-24 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12 font-montserrat">Глобальный охват</h2>
+        <h2 className="text-3xl font-medium text-center mb-16 tracking-tight text-gray-900">Глобальный охват</h2>
         
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="max-w-xl">
             <FeatureBox>
-              <h3 className="text-xl font-bold mb-3 text-[#7c4dff]">Один контент — множество языков</h3>
-              <p>
-                Превратите одно видео в контент на <span className="text-[#7c4dff] font-bold">более 70+ языков и 175+ диалектов</span> с помощью ИИ - настолько естественно, что кажется, будто вы всегда говорили на них. Без актеров озвучивания, без дубляжа. Ваш голос, идеально синхронизированный с губами для любой аудитории.
+              <h3 className="text-xl font-medium mb-5 text-[#0070F3]">Один контент — множество языков</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Превратите одно видео в контент на <span className="text-[#0070F3] font-medium">более 70+ языков и 175+ диалектов</span> с помощью ИИ - настолько естественно, что кажется, будто вы всегда говорили на них. Без актеров озвучивания, без дубляжа. Ваш голос, идеально синхронизированный с губами для любой аудитории.
               </p>
-            </FeatureBox>
             
-            <div className="mt-6">
-              <h4 className="font-medium mb-2">Почему это важно:</h4>
-              <ul className="list-disc list-inside space-y-2 text-gray-700">
-                <li>Расширьте аудиторию вашего контента в глобальном масштабе</li>
-                <li>Сэкономьте до 90% бюджета на локализацию</li>
-                <li>Сократите время производства с недель до часов</li>
-                <li>Сохраните естественность речи и мимики</li>
-              </ul>
-            </div>
+              <div className="mt-8">
+                <h4 className="font-medium mb-4 text-gray-800">Почему это важно:</h4>
+                <ul className="space-y-3 text-gray-600">
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#0070F3] text-xl">•</span>
+                    <span>Расширьте аудиторию вашего контента в глобальном масштабе</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#0070F3] text-xl">•</span>
+                    <span>Сэкономьте до 90% бюджета на локализацию</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#0070F3] text-xl">•</span>
+                    <span>Сократите время производства с недель до часов</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-[#0070F3] text-xl">•</span>
+                    <span>Сохраните естественность речи и мимики</span>
+                  </li>
+                </ul>
+              </div>
+            </FeatureBox>
           </div>
           
-          <div className="bg-white p-8 rounded-lg shadow-lg">
-            <h3 className="text-xl font-bold mb-6 text-center">Наши возможности</h3>
+          <div className="glass p-10 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-medium mb-8 text-center text-gray-900">Наши возможности</h3>
             <StatsDisplay stats={stats} />
             
-            <div className="mt-8 grid grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-[#7c4dff]/5 rounded-lg">
-                <p className="text-lg font-bold">99.7%</p>
-                <p className="text-sm text-gray-600">точность синхронизации</p>
+            <div className="mt-10 grid grid-cols-2 gap-6">
+              <div className="glass text-center p-6 rounded-2xl">
+                <p className="text-xl font-medium text-[#0070F3]">99.7%</p>
+                <p className="text-sm text-gray-500 mt-1">точность синхронизации</p>
               </div>
-              <div className="text-center p-4 bg-[#7c4dff]/5 rounded-lg">
-                <p className="text-lg font-bold">4K</p>
-                <p className="text-sm text-gray-600">поддержка высокого разрешения</p>
+              <div className="glass text-center p-6 rounded-2xl">
+                <p className="text-xl font-medium text-[#0070F3]">4K</p>
+                <p className="text-sm text-gray-500 mt-1">поддержка высокого разрешения</p>
               </div>
-              <div className="text-center p-4 bg-[#7c4dff]/5 rounded-lg">
-                <p className="text-lg font-bold">GDPR</p>
-                <p className="text-sm text-gray-600">соответствие требованиям</p>
+              <div className="glass text-center p-6 rounded-2xl">
+                <p className="text-xl font-medium text-[#0070F3]">GDPR</p>
+                <p className="text-sm text-gray-500 mt-1">соответствие требованиям</p>
               </div>
-              <div className="text-center p-4 bg-[#7c4dff]/5 rounded-lg">
-                <p className="text-lg font-bold">24/7</p>
-                <p className="text-sm text-gray-600">техническая поддержка</p>
+              <div className="glass text-center p-6 rounded-2xl">
+                <p className="text-xl font-medium text-[#0070F3]">24/7</p>
+                <p className="text-sm text-gray-500 mt-1">техническая поддержка</p>
               </div>
             </div>
           </div>

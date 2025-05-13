@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,34 +7,34 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 267 100% 65%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 220 90% 56%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 267 100% 65%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -47,33 +47,33 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 267 100% 65%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 220 90% 56%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 267 100% 65%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -92,90 +92,149 @@
   }
 
   body {
-    @apply bg-background text-foreground font-opensans;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-montserrat;
+    @apply bg-background text-foreground font-inter;
   }
 }
 
-/* Анимации для фона */
+/* Новые анимации для фона в стиле Apple */
 @keyframes float {
   0% {
-    transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-20px) translateX(10px);
+    transform: translateY(-15px) rotate(2deg);
   }
   100% {
-    transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) rotate(0deg);
   }
 }
 
 @keyframes float-slow {
   0% {
-    transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-10px) translateX(15px);
+    transform: translateY(-8px) rotate(-2deg);
   }
   100% {
-    transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) rotate(0deg);
   }
 }
 
 @keyframes float-medium {
   0% {
-    transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-15px) translateX(-10px);
+    transform: translateY(-12px) rotate(1deg);
   }
   100% {
-    transform: translateY(0px) translateX(0px);
+    transform: translateY(0px) rotate(0deg);
   }
 }
 
-@keyframes wave {
+@keyframes pulse-subtle {
   0% {
-    transform: translateX(0) translateY(0);
+    opacity: 0.7;
   }
   50% {
-    transform: translateX(-25px) translateY(10px);
+    opacity: 1;
   }
   100% {
-    transform: translateX(0) translateY(0);
+    opacity: 0.7;
   }
 }
 
 .animate-float {
-  animation: float 12s ease-in-out infinite;
+  animation: float 14s ease-in-out infinite;
 }
 
 .animate-float-slow {
-  animation: float-slow 15s ease-in-out infinite;
+  animation: float-slow 18s ease-in-out infinite;
 }
 
 .animate-float-medium {
-  animation: float-medium 10s ease-in-out infinite;
+  animation: float-medium 12s ease-in-out infinite;
 }
 
-.animate-wave-slow {
-  animation: wave 25s ease-in-out infinite;
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
 }
 
-.animate-wave-medium {
-  animation: wave 15s ease-in-out infinite reverse;
+/* Специфичные стили для глассморфизма */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Специфичные стили для фоновых элементов */
+.glass-dark {
+  background: rgba(20, 20, 22, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.glass-dark-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.glass-dark-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Неоморфизм */
+.neomorphic {
+  border-radius: 16px;
+  background: #f0f0f3;
+  box-shadow:
+    10px 10px 20px #d1d1d4,
+    -10px -10px 20px #ffffff;
+}
+
+.neomorphic-button {
+  border-radius: 12px;
+  background: linear-gradient(145deg, #f0f0f3, #e1e1e4);
+  box-shadow:
+    5px 5px 10px #d1d1d4,
+    -5px -5px 10px #ffffff;
+  transition: all 0.3s ease;
+}
+
+.neomorphic-button:hover {
+  background: linear-gradient(145deg, #e1e1e4, #f0f0f3);
+}
+
+.neomorphic-button:active {
+  box-shadow:
+    inset 5px 5px 10px #d1d1d4,
+    inset -5px -5px 10px #ffffff;
+}
+
+/* Исправленные стили для фоновых элементов */
 .circle-animation {
-  filter: blur(50px);
+  filter: blur(70px);
   transform-origin: center;
+  mix-blend-mode: soft-light;
 }

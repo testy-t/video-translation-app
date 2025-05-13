@@ -5,24 +5,24 @@ import Icon from '@/components/ui/icon';
 
 const Header: React.FC = () => {
   return (
-    <header className="border-b py-4 px-6">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-dark">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 h-16">
         <div className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-[#7c4dff]">ГолосОК</span>
+          <span className="text-xl font-semibold text-white">ГолосОК</span>
         </div>
         <nav className="hidden md:flex gap-6 items-center">
-          <a href="#" className="text-sm font-medium text-gray-700 hover:text-[#7c4dff]">Возможности</a>
-          <a href="#" className="text-sm font-medium text-gray-700 hover:text-[#7c4dff]">Как это работает</a>
-          <a href="#" className="text-sm font-medium text-gray-700 hover:text-[#7c4dff]">Цены</a>
+          <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Возможности</a>
+          <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Как это работает</a>
+          <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Цены</a>
         </nav>
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="hidden md:inline-flex">
+          <Button variant="ghost" className="hidden md:inline-flex text-gray-300 hover:text-white transition-colors">
             Войти
           </Button>
-          <Button className="bg-[#7c4dff] hover:bg-[#6c3ce9]">
-            Регистрация
+          <Button className="glass-dark-button text-white bg-white/10 hover:bg-white/20">
+            Попробовать
           </Button>
-          <Button variant="ghost" className="md:hidden p-1">
+          <Button variant="ghost" className="md:hidden p-1 text-white">
             <Icon name="Menu" size={20} />
           </Button>
         </div>

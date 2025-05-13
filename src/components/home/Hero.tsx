@@ -21,12 +21,12 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden">
-      {/* Добавляем темную секцию с увеличенной высотой для контраста */}
+      {/* Тёмная секция с минималистичным фоном */}
       <div className="min-h-[90vh] pt-32 pb-20 px-4 relative">
         <AnimatedBackground />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 glass-dark text-white bg-white/10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
             <Icon name="Video" size={16} className="text-white" />
             ИИ Переводчик Видео
           </span>
@@ -46,14 +46,14 @@ const Hero: React.FC = () => {
           />
 
           {/* Кнопка действия */}
-          <Button className="glass-dark bg-white/15 text-white hover:bg-white/25 hover:text-white px-8 py-6 text-base font-medium rounded-full mt-4">
+          <Button className="bg-white/15 text-white hover:bg-white/25 hover:text-white px-8 py-6 text-base font-medium rounded-full mt-4 backdrop-blur-sm border border-white/10">
             <Icon name="Play" size={20} className="mr-2" />
             Начать Бесплатно
           </Button>
         </div>
       </div>
 
-      {/* Добавляем волнистое разделение между секциями */}
+      {/* Волнистое разделение */}
       <div className="absolute bottom-0 left-0 w-full overflow-hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"

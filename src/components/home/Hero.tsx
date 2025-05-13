@@ -72,23 +72,26 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Волнистое разделение с корректировкой для устранения зазора */}
-      <div className="absolute -bottom-1 left-0 w-full overflow-hidden">
-        <div className="relative w-[200%]">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 120"
-            className="w-full h-auto fill-white animate-wave"
-          >
-            <path d="M0,64L48,69.3C96,75,192,85,288,90.7C384,96,480,96,576,85.3C672,75,768,53,864,48C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1440 120"
-            className="w-full h-auto fill-white animate-wave absolute top-0 left-full"
-          >
-            <path d="M0,64L48,69.3C96,75,192,85,288,90.7C384,96,480,96,576,85.3C672,75,768,53,864,48C960,43,1056,53,1152,58.7C1248,64,1344,64,1392,64L1440,64L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
-          </svg>
+      {/* Звуковая визуализация вместо волны */}
+      <div className="absolute -bottom-0 left-0 w-full bg-white">
+        <div className="audio-visualizer-container flex justify-center w-full">
+          {Array.from({ length: 60 }).map((_, i) => {
+            // Определяем класс анимации для каждого бара
+            const animClass = `audio-bar-${(i % 5) + 1}`;
+            // Добавляем небольшую случайную задержку для каждого бара
+            const delay = `${Math.random() * 0.5}s`;
+
+            return (
+              <div
+                key={i}
+                className={`audio-bar ${animClass}`}
+                style={{
+                  animationDelay: delay,
+                  backgroundColor: i % 3 === 0 ? "#0070F3" : "#FFF",
+                }}
+              ></div>
+            );
+          })}
         </div>
       </div>
     </section>

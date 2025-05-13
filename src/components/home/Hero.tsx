@@ -28,7 +28,7 @@ const Hero: React.FC = () => {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Левая колонка - текст */}
-            <div className="text-left">
+            <div className="text-left -mt-10">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
                 <Icon name="Video" size={16} className="text-white" />
                 ИИ Переводчик Видео
@@ -42,7 +42,7 @@ const Hero: React.FC = () => {
               </p>
 
               {/* Кнопка действия - теперь синяя */}
-              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4">
+              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4 mb-12">
                 <Icon name="Play" size={20} className="mr-2" />
                 Начать Бесплатно
               </Button>

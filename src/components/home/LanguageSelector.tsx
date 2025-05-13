@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import { Button } from "@/components/ui/button";
 
 interface Language {
@@ -15,26 +14,27 @@ interface LanguageSelectorProps {
   isDark?: boolean;
 }
 
-const LanguageSelector: React.FC<LanguageSelectorProps> = ({ 
-  languages, 
+const LanguageSelector: React.FC<LanguageSelectorProps> = ({
+  languages,
   onSelectLanguage = () => {},
-  isDark = false
+  isDark = false,
 }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-3 mb-12">
+    <div className="flex flex-wrap justify-center gap-5 mb-12">
       {languages.map((language) => (
-        <Button 
+        <Button
           key={language.code}
           variant={language.isActive ? "default" : "outline"}
           className={`
             rounded-full px-6 
-            ${isDark
-              ? (language.isActive 
-                  ? "glass-dark bg-white/20 text-white" 
-                  : "glass-dark bg-white/10 text-white hover:bg-white/15")
-              : (language.isActive 
-                  ? "glass-button text-[#0070F3]" 
-                  : "glass-button text-gray-600 hover:text-[#0070F3]")
+            ${
+              isDark
+                ? language.isActive
+                  ? "glass-dark bg-white/20 text-white"
+                  : "glass-dark bg-white/10 text-white hover:bg-white/15"
+                : language.isActive
+                  ? "glass-button text-[#0070F3]"
+                  : "glass-button text-gray-600 hover:text-[#0070F3]"
             }
           `}
           onClick={() => onSelectLanguage(language.code)}

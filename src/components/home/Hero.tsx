@@ -72,27 +72,9 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Звуковая визуализация вместо волны */}
-      <div className="absolute -bottom-0 left-0 w-full bg-white">
-        <div className="audio-visualizer-container flex justify-center w-full">
-          {Array.from({ length: 60 }).map((_, i) => {
-            // Определяем класс анимации для каждого бара
-            const animClass = `audio-bar-${(i % 5) + 1}`;
-            // Добавляем небольшую случайную задержку для каждого бара
-            const delay = `${Math.random() * 0.5}s`;
-
-            return (
-              <div
-                key={i}
-                className={`audio-bar ${animClass}`}
-                style={{
-                  animationDelay: delay,
-                  backgroundColor: i % 3 === 0 ? "#0070F3" : "#FFF",
-                }}
-              ></div>
-            );
-          })}
-        </div>
+      {/* Убираем звуковую визуализацию и оставляем простой переход */}
+      <div className="absolute -bottom-0 left-0 w-full bg-white h-10">
+        {/* Простой переход без анимации */}
       </div>
     </section>
   );

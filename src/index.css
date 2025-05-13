@@ -145,6 +145,20 @@
   }
 }
 
+/* Анимация для звуковой волны */
+@keyframes wave-animation {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-wave {
+  animation: wave-animation 15s linear infinite;
+}
+
 .animate-float {
   animation: float 14s ease-in-out infinite;
 }
@@ -241,7 +255,7 @@
 
 /* Стили для Hero секции */
 .hero-section {
-  background-color: #0A0F1C;
+  background-color: #0a0f1c;
   position: relative;
   overflow: hidden;
 }
@@ -255,7 +269,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0070F3, #0054d3);
+  background: linear-gradient(135deg, #0070f3, #0054d3);
   margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
@@ -265,7 +279,11 @@
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(0, 112, 243, 0.2), rgba(0, 84, 211, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 112, 243, 0.2),
+    rgba(0, 84, 211, 0.1)
+  );
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -289,7 +307,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: #0070F3;
+  background-color: #0070f3;
   color: white;
   font-size: 14px;
   font-weight: 500;
@@ -300,7 +318,7 @@
   align-items: center;
   font-size: 15px;
   font-weight: 500;
-  color: #0070F3;
+  color: #0070f3;
   transition: all 0.2s ease;
 }
 

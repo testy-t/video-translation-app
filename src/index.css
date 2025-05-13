@@ -238,3 +238,81 @@
   transform-origin: center;
   mix-blend-mode: soft-light;
 }
+
+/* Стили для Hero секции */
+.hero-section {
+  background-color: #0A0F1C;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Стили в стиле Apple для секции "Как это работает" */
+.apple-step-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0070F3, #0054d3);
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.apple-step-icon::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 112, 243, 0.2), rgba(0, 84, 211, 0.1));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.apple-step:hover .apple-step-icon {
+  transform: translateY(-5px);
+}
+
+.apple-step:hover .apple-step-icon::before {
+  opacity: 1;
+}
+
+.apple-step-number {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #0070F3;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.apple-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #0070F3;
+  transition: all 0.2s ease;
+}
+
+.apple-link:hover {
+  transform: translateX(3px);
+}
+
+.apple-link svg {
+  margin-left: 5px;
+  transition: transform 0.2s ease;
+}
+
+.apple-link:hover svg {
+  transform: translateX(3px);
+}

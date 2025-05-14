@@ -20,13 +20,13 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   isDark = false,
 }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-5 mb-12">
+    <div className="flex flex-wrap justify-center gap-2 mb-8">
       {languages.map((language) => (
         <Button
           key={language.code}
           variant={language.isActive ? "default" : "outline"}
           className={`
-            rounded-full px-6 
+            rounded-full px-4 py-1 text-sm
             ${
               isDark
                 ? language.isActive

@@ -49,18 +49,18 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Правая колонка - плейсхолдер для видео */}
-            <div className="mx-auto w-full max-w-md">
+            <div className="mx-auto w-full max-w-sm">
               <div className="aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
-                <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                  <Icon name="Play" size={36} className="text-white ml-1" />
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                  <Icon name="Play" size={30} className="text-white ml-1" />
                 </div>
                 <p className="absolute bottom-4 text-white/70 text-sm">
                   Демонстрация технологии
                 </p>
               </div>
 
-              {/* Перемещенный LanguageSelector под видео */}
-              <div className="mt-10">
+              {/* Уменьшенный отступ между видео и языками */}
+              <div className="mt-5">
                 <LanguageSelector
                   languages={languages}
                   onSelectLanguage={handleLanguageSelect}

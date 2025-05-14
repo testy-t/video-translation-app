@@ -22,13 +22,13 @@ const Hero: React.FC = () => {
   return (
     <section className="relative overflow-hidden">
       {/* Тёмная секция с минималистичным фоном */}
-      <div className="min-h-[100vh] pt-32 pb-20 px-4 relative">
+      <div className="min-h-[100vh] flex items-center pt-16 pb-16 px-4 relative">
         <AnimatedBackground />
 
-        <div className="max-w-7xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Левая колонка - текст */}
-            <div className="text-left -mt-10">
+            <div className="text-left">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
                 <Icon name="Video" size={16} className="text-white" />
                 ИИ Переводчик Видео
@@ -42,7 +42,7 @@ const Hero: React.FC = () => {
               </p>
 
               {/* Кнопка действия - теперь синяя */}
-              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4 mb-12">
+              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4">
                 <Icon name="Play" size={20} className="mr-2" />
                 Начать Бесплатно
               </Button>

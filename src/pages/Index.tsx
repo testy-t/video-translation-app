@@ -3,7 +3,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
 import HowItWorks from "@/components/home/HowItWorks";
-import AdvantageSection from "@/components/home/AdvantageSection";
+// Удален импорт AdvantageSection
 
 const HomePage: React.FC = () => {
   // Данные для секции "Как это работает"
@@ -33,7 +33,7 @@ const HomePage: React.FC = () => {
       <main className="flex-grow">
         <Hero />
         <HowItWorks steps={workflowSteps} />
-        <AdvantageSection />
+        {/* Удалена секция AdvantageSection */}
       </main>
 
       <Footer />

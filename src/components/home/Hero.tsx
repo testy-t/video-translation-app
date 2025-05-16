@@ -49,8 +49,8 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Правая колонка - плейсхолдер для видео */}
-            <div className="mx-auto w-full">
-              <div className="max-w-[85%] mx-auto aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
+            <div className="w-full flex flex-col items-end">
+              <div className="w-[85%] aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
                 <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
                   <Icon name="Play" size={30} className="text-white ml-1" />
                 </div>
@@ -60,7 +60,7 @@ const Hero: React.FC = () => {
               </div>
 
               {/* Языки */}
-              <div className="mt-5">
+              <div className="mt-5 w-[85%] px-2">
                 <LanguageSelector
                   languages={languages}
                   onSelectLanguage={handleLanguageSelect}

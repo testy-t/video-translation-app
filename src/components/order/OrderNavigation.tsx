@@ -37,6 +37,7 @@ const OrderNavigation: React.FC<OrderNavigationProps> = ({
           onClick={() =>
             currentStep === 0 ? navigate("/") : goToPreviousStep()
           }
+          className="min-w-[150px] whitespace-nowrap"
         >
           {currentStep === 0 ? (
             <>
@@ -49,19 +50,32 @@ const OrderNavigation: React.FC<OrderNavigationProps> = ({
         </Button>
 
         {currentStep < totalSteps - 2 && (
-          <Button onClick={goToNextStep} disabled={isNextDisabled}>
+          <Button
+            onClick={goToNextStep}
+            disabled={isNextDisabled}
+            className="min-w-[120px] whitespace-nowrap"
+          >
             Продолжить
           </Button>
         )}
 
         {currentStep === totalSteps - 2 && (
-          <Button onClick={onPayment} disabled={isProcessingPayment}>
+          <Button
+            onClick={onPayment}
+            disabled={isProcessingPayment}
+            className="min-w-[120px] whitespace-nowrap"
+          >
             {isProcessingPayment ? "Обработка..." : "Оплатить"}
           </Button>
         )}
 
         {currentStep === totalSteps - 1 && (
-          <Button onClick={() => navigate("/")}>На главную</Button>
+          <Button
+            onClick={() => navigate("/")}
+            className="min-w-[120px] whitespace-nowrap"
+          >
+            На главную
+          </Button>
         )}
       </div>
     </div>

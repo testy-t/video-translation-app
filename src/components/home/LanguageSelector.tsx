@@ -26,7 +26,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           key={language.code}
           variant={language.isActive ? "default" : "outline"}
           className={`
-            rounded-full px-4 py-1 text-sm
+            rounded-full text-sm py-0 h-auto
             ${
               isDark
                 ? language.isActive
@@ -39,7 +39,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           `}
           onClick={() => onSelectLanguage(language.code)}
         >
-          <span className="mr-2">{language.flag}</span> {language.name}
+          <span className="mr-1.5">{language.flag}</span> {language.name}
         </Button>
       ))}
     </div>

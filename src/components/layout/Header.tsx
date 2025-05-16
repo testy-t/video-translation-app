@@ -1,13 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Функция для плавной прокрутки к секции
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  // Функция для перехода на страницу генерации
+  const goToOrderPage = () => {
+    navigate("/order");
   };
 
   return (
@@ -45,7 +54,7 @@ const Header: React.FC = () => {
 
             {/* Кнопка CTA */}
             <Button
-              onClick={() => scrollToSection("pricing")}
+              onClick={goToOrderPage}
               className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5 h-8 text-sm"
             >
               Попробовать

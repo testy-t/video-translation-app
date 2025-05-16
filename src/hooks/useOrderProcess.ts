@@ -22,8 +22,14 @@ export const useOrderProcess = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [videoId, setVideoId] = useState<number | null>(null);
-  const [fileKey, setFileKey] = useState<string | null>(null);
+  // Initialize state with values from localStorage if available
+  const [videoId, setVideoId] = useState<number | null>(() => {
+    const savedId = localStorage.getItem('uploadedVideoId');
+    return savedId ? parseInt(savedId, 10) : null;
+  });
+  const [fileKey, setFileKey] = useState<string | null>(() => 
+    localStorage.getItem('uploadedFileKey')
+  );
   const [isUploading, setIsUploading] = useState(false);
   
   // Process steps
@@ -110,6 +116,28 @@ export const useOrderProcess = () => {
   
   const goToNextStep = () => {
     if (currentStep < steps.length - 1) {
+      // Проверка перед переходом со шага загрузки видео на шаг выбора языка
+      if (currentStep === 0) {
+        const isUploaded = localStorage.getItem('isVideoUploaded') === 'true';
+        const hasVideoId = !!localStorage.getItem('uploadedVideoId');
+        const hasFileKey = !!localStorage.getItem('uploadedFileKey');
+        
+        console.log("Navigation: checking video data before proceeding:", { 
+          isUploaded, hasVideoId, hasFileKey 
+        });
+        
+        // Если нет данных о загруженном видео, не переходим дальше
+        if (!isUploaded && !(hasVideoId && hasFileKey)) {
+          console.error("Cannot proceed - no video data available");
+          toast({
+            title: "Необходимо загрузить видео",
+            description: "Пожалуйста, загрузите видео перед тем, как продолжить",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+      
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0); // Scroll to top when changing steps
     }
@@ -132,22 +160,38 @@ export const useOrderProcess = () => {
       localStorage.setItem('uploadedVideoId', videoId.toString());
       localStorage.setItem('uploadedFileKey', fileKey);
       localStorage.setItem('transactionId', transactionId || '');
+      localStorage.setItem('isVideoUploaded', 'true'); // Ensure this flag is always set
     } catch (e) {
       console.error("Failed to save video info to localStorage:", e);
     }
     
-    goToNextStep();
+    // Добавляем небольшую задержку перед переходом, чтобы состояние успело обновиться
+    setTimeout(() => {
+      goToNextStep();
+    }, 100);
   };
 
   // Handle language selection and process video info
   const handleLanguageSelection = async (language: string) => {
-    if (!videoId || !fileKey) {
+    // Пытаемся восстановить ID видео из localStorage, если оно не установлено в состоянии
+    const effectiveVideoId = videoId || parseInt(localStorage.getItem('uploadedVideoId') || '0');
+    const effectiveFileKey = fileKey || localStorage.getItem('uploadedFileKey');
+    
+    if (!effectiveVideoId || !effectiveFileKey) {
       toast({
         title: "Ошибка",
         description: "Сначала загрузите видео",
         variant: "destructive",
       });
       return;
+    }
+    
+    // Обновляем состояние, если значения были получены из localStorage
+    if (!videoId && effectiveVideoId) {
+      setVideoId(effectiveVideoId);
+    }
+    if (!fileKey && effectiveFileKey) {
+      setFileKey(effectiveFileKey);
     }
 
     setIsUploading(true);
@@ -176,8 +220,8 @@ export const useOrderProcess = () => {
           Authorization: `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
-          videoId,
-          fileKey,
+          videoId: effectiveVideoId,
+          fileKey: effectiveFileKey,
           outputLanguage: language
         })
       });

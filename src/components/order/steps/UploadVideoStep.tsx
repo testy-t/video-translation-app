@@ -25,21 +25,44 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
   const [uploadProgress, setUploadProgress] = useState(0);
   // Инициализируем флаг загрузки, проверяя localStorage при загрузке компонента
   const [isVideoUploaded, setIsVideoUploaded] = useState(() => {
-    // Проверяем прямой флаг загрузки
+    // Всегда сначала проверяем прямой флаг загрузки
     const flagUploaded = localStorage.getItem('isVideoUploaded') === 'true';
     
     // Как запасной вариант проверяем, есть ли информация о загруженном видео
     const savedVideoId = localStorage.getItem('uploadedVideoId');
     const savedFileKey = localStorage.getItem('uploadedFileKey');
     
-    // Возвращаем true, если любая из проверок успешна
-    return flagUploaded || !!(savedVideoId && savedFileKey);
+    // Определяем результат
+    const result = flagUploaded || !!(savedVideoId && savedFileKey);
+    
+    // Если информация о загрузке существует, синхронизируем localStorage
+    if (result) {
+      localStorage.setItem('isVideoUploaded', 'true');
+    }
+    
+    console.log("📊 Initial upload state:", { 
+      flagUploaded, 
+      savedVideoId, 
+      savedFileKey,
+      result 
+    });
+    
+    // Возвращаем результат
+    return result;
   });
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log("📊 File selection triggered", e.target.files);
     const files = e.target.files;
+    
+    // Сбрасываем флаг загруженного видео при выборе нового файла
+    if (isVideoUploaded) {
+      console.log("📊 Resetting upload state for new file");
+      setIsVideoUploaded(false);
+      localStorage.removeItem('isVideoUploaded');
+    }
+    
     if (files && files[0]) {
       console.log("📊 File selected:", files[0].name);
       // Create URL for video preview
@@ -73,6 +96,13 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
     e.preventDefault();
     setIsDragging(false);
     console.log("📊 File dropped", e.dataTransfer.files);
+
+    // Сбрасываем флаг загруженного видео при перетаскивании нового файла
+    if (isVideoUploaded) {
+      console.log("📊 Resetting upload state for newly dropped file");
+      setIsVideoUploaded(false);
+      localStorage.removeItem('isVideoUploaded');
+    }
 
     const files = e.dataTransfer.files;
     if (files && files[0]) {
@@ -127,6 +157,35 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
   const uploadVideo = async () => {
     console.log("📊 uploadVideo called, videoFile status:", videoFile ? "Selected" : "Not selected");
     
+    // Проверяем флаг в localStorage
+    const isUploadedInStorage = localStorage.getItem('isVideoUploaded') === 'true';
+    console.log("📊 isVideoUploaded in localStorage:", isUploadedInStorage);
+    
+    // Если видео уже отмечено как загруженное - не загружаем повторно
+    if (isVideoUploaded || isUploadedInStorage) {
+      console.log("📊 Video is already marked as uploaded, skipping upload");
+      // Синхронизируем состояние с localStorage
+      if (!isVideoUploaded && isUploadedInStorage) {
+        setIsVideoUploaded(true);
+      }
+      toast({
+        title: "Информация",
+        description: "Видео уже загружено и готово к обработке",
+      });
+      return;
+    }
+    
+    // Проверяем наличие сохраненных данных о видео в localStorage
+    const savedVideoId = localStorage.getItem('uploadedVideoId');
+    const savedFileKey = localStorage.getItem('uploadedFileKey');
+    
+    if (savedVideoId && savedFileKey && !videoFile) {
+      console.log("📊 Found saved video info in localStorage, marking as uploaded");
+      setIsVideoUploaded(true);
+      localStorage.setItem('isVideoUploaded', 'true');
+      return;
+    }
+    
     if (!videoFile) {
       console.error("📊 No video file selected when uploadVideo was called!");
       
@@ -142,6 +201,13 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
           console.log("📊 Retrying upload with file from input:", file.name);
           uploadVideo();
         }, 100);
+        return;
+      }
+      
+      // Если есть сохраненные данные о загрузке, но нет файла - не показываем ошибку
+      if (isUploadedInStorage || (savedVideoId && savedFileKey)) {
+        console.log("📊 No file, but upload data exists, skipping error");
+        setIsVideoUploaded(true);
         return;
       }
       
@@ -307,6 +373,11 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
       setIsVideoUploaded(true);
       localStorage.setItem('isVideoUploaded', 'true');
       
+      // Сохраняем имя файла для проверки при возврате на этот шаг
+      if (videoFile) {
+        localStorage.setItem('uploadedFileName', videoFile.name);
+      }
+      
       toast({
         title: "Успех",
         description: "Видео успешно загружено",
@@ -334,30 +405,68 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
     }
   };
 
-  // Восстанавливаем информацию о видео при монтировании компонента
+  // Восстанавливаем информацию о видео при получении данных о файле
   useEffect(() => {
-    // Проверяем, нужно ли загрузить сохраненные данные о видео
-    const savedVideoId = localStorage.getItem('uploadedVideoId');
-    const savedFileKey = localStorage.getItem('uploadedFileKey');
+    // Проверяем, есть ли файл и флаг загрузки
+    console.log("📊 File state changed:", { 
+      videoFile: videoFile?.name, 
+      isVideoUploaded
+    });
     
-    console.log("📊 Checking for saved video:", { savedVideoId, savedFileKey, videoFile });
+    // При получении файла сверяем с флагом загрузки
+    if (videoFile && !isVideoUploaded) {
+      // Если у нас есть файл в состоянии, но нет флага загрузки,
+      // проверяем, был ли файл ранее загружен с тем же именем
+      const savedFileName = localStorage.getItem('uploadedFileName');
+      
+      if (savedFileName === videoFile.name) {
+        console.log("📊 Found matching saved file name, setting uploaded state");
+        setIsVideoUploaded(true);
+        localStorage.setItem('isVideoUploaded', 'true');
+      } else {
+        // Файл другой или новый - сбрасываем флаг загрузки
+        console.log("📊 New or different file, reset upload state");
+        setIsVideoUploaded(false);
+        localStorage.removeItem('isVideoUploaded');
+      }
+    } 
     
-    // Если в localStorage есть данные о загруженном видео, но нет самого файла
-    if (savedVideoId && savedFileKey && !videoFile) {
-      console.log("📊 Found saved video data, setting uploaded state", savedVideoId, savedFileKey);
-      // Помечаем видео как загруженное, но без отображения самого файла (его нет в памяти)
-      setIsVideoUploaded(true);
+    // Если есть файл, но нет флага загрузки, значит файл не обработан
+    if (videoFile && isVideoUploaded) {
+      console.log("📊 File present and upload flag set - all good!");
+      // Сохраняем имя файла для сверки при возврате
+      localStorage.setItem('uploadedFileName', videoFile.name);
     }
-  }, [videoFile]);
+    
+    // Если нет файла, но есть флаг загрузки, значит мы вернулись после загрузки
+    if (!videoFile && isVideoUploaded) {
+      console.log("📊 No file but upload flag set - returned after successful upload");
+    }
+  }, [videoFile, isVideoUploaded]);
+  
+  // Дополнительный эффект для проверки флага при монтировании
+  useEffect(() => {
+    console.log("📊 Component mounted, checking flags");
+  }, []);
 
   // Check component props and start upload when videoFile becomes available
   useEffect(() => {
-    console.log("📊 UploadVideoStep props changed:", { 
+    console.log("📊 Auto-upload check:", { 
       videoFile: videoFile?.name, 
       transactionId, 
       isVideoUploaded,
-      uploadProgress
+      uploadProgress,
+      isLoading
     });
+    
+    // Если состояние из localStorage показывает, что видео было загружено,
+    // но в state нет файла, это вероятно означает, что мы вернулись после навигации
+    if (!videoFile && localStorage.getItem('isVideoUploaded') === 'true') {
+      console.log("📊 Video was previously uploaded according to localStorage, but no file in state");
+      // Устанавливаем флаг uploaded, чтобы не показывать ошибку
+      setIsVideoUploaded(true);
+      return;
+    }
     
     // Загружаем видео только если:
     // 1. Есть файл видео
@@ -365,19 +474,48 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
     // 3. Прогресс загрузки 0 (не начата)
     // 4. Видео еще не было загружено ранее
     if (videoFile && !isLoading && uploadProgress === 0 && !isVideoUploaded) {
-      console.log("📊 VideoFile detected in component, starting upload automatically");
-      // Use setTimeout to avoid immediate upload that might conflict with state updates
-      setTimeout(() => {
-        uploadVideo();
-      }, 300);
+      // Проверяем, не является ли это файл, который мы уже загружали
+      const savedFileName = localStorage.getItem('uploadedFileName');
+      
+      if (savedFileName === videoFile.name) {
+        console.log("📊 This file has been uploaded before, not uploading again");
+        setIsVideoUploaded(true);
+      } else {
+        console.log("📊 New file detected, starting upload automatically");
+        // Use setTimeout to avoid immediate upload that might conflict with state updates
+        setTimeout(() => {
+          uploadVideo();
+        }, 300);
+      }
     }
   }, [videoFile, transactionId, isLoading, uploadProgress, isVideoUploaded]);
+
+  // Подготавливаем переменную состояния для видео
+  const hasVideoFile = !!videoFile;
+  const isVideoReady = hasVideoFile || isVideoUploaded;
+  
+  console.log("📊 Render state:", { 
+    hasVideoFile, 
+    isVideoUploaded, 
+    isVideoReady,
+    isLoading 
+  });
 
   return (
     <div className="fade-slide-in">
       <h2 className="text-xl font-semibold mb-6">Загрузите ваше видео</h2>
 
-      {!videoFile && !isVideoUploaded ? (
+      {/* Скрытый инпут для файла */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="video/*"
+        className="hidden"
+      />
+
+      {/* Если нет файла и нет флага загрузки - показываем область загрузки */}
+      {!isVideoReady ? (
         <div
           className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-all
             ${isDragging ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/70"}`}
@@ -386,14 +524,6 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="video/*"
-            className="hidden"
-          />
-
           <div className="flex flex-col items-center">
             <Icon name="Upload" size={48} className="text-gray-400 mb-4" />
             <p className="text-lg font-medium mb-2">
@@ -452,7 +582,7 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
               </div>
 
               {/* Если файл есть в состоянии, показываем информацию о нем */}
-              {videoFile ? (
+              {hasVideoFile ? (
                 <div className="flex items-center bg-white p-4 rounded-md border">
                   <Icon
                     name="FileVideo"
@@ -483,7 +613,7 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
                     </div>
                   </div>
                 </div>
-              ) : (
+              ) : isVideoUploaded ? (
                 /* Если файла нет, но он был загружен ранее (по данным из localStorage) */
                 <div className="flex items-center bg-white p-4 rounded-md border">
                   <Icon
@@ -498,6 +628,29 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
                         <Icon name="Check" size={14} className="mr-1" /> 
                         Файл уже обрабатывается на сервере
                       </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Случай, когда нет файла и нет флага загрузки - показываем сообщение
+                <div className="flex items-center bg-white p-4 rounded-md border">
+                  <Icon
+                    name="AlertCircle"
+                    className="text-amber-500 mr-2"
+                    size={24}
+                  />
+                  <div className="flex-grow">
+                    <div className="font-medium">Файл не выбран</div>
+                    <div className="text-gray-500 text-sm">
+                      Пожалуйста, выберите видео
+                      <Button 
+                        variant="link" 
+                        size="sm"
+                        className="text-xs text-primary p-0 ml-2"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        Выбрать файл
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -528,7 +681,7 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
               )}
               
               {/* Кнопка для выбора другого видео, если текущее уже загружено */}
-              {isVideoUploaded && !videoFile && (
+              {isVideoUploaded && !isLoading && (
                 <div className="mt-4">
                   <Button 
                     variant="outline" 

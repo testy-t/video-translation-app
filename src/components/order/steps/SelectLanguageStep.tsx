@@ -39,12 +39,20 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
   const [isAnimated, setIsAnimated] = useState(false);
   const [localSelectedLanguage, setLocalSelectedLanguage] = useState(selectedLanguage);
 
-  // Анимация появления
+  // Анимация появления и проверка данных видео
   useEffect(() => {
+    // Анимация
     const timer = setTimeout(() => {
       setIsAnimated(true);
     }, 100);
-
+    
+    // Проверяем наличие данных о видео
+    const isUploaded = localStorage.getItem('isVideoUploaded') === 'true';
+    const videoId = localStorage.getItem('uploadedVideoId');
+    const fileKey = localStorage.getItem('uploadedFileKey');
+    
+    console.log("SelectLanguageStep mounted, checking video data:", { isUploaded, videoId, fileKey });
+    
     return () => clearTimeout(timer);
   }, []);
 
@@ -63,7 +71,19 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
   // Обработка подтверждения выбора языка
   const handleConfirmLanguage = () => {
     if (localSelectedLanguage) {
-      setSelectedLanguage(localSelectedLanguage);
+      // Проверяем, что есть загруженное видео в localStorage
+      const isVideoUploaded = localStorage.getItem('isVideoUploaded') === 'true';
+      const hasVideoId = !!localStorage.getItem('uploadedVideoId');
+      const hasFileKey = !!localStorage.getItem('uploadedFileKey');
+      
+      console.log("Language selection - checking video state:", { isVideoUploaded, hasVideoId, hasFileKey });
+      
+      // Переход к следующему шагу только если есть данные о видео
+      if (isVideoUploaded || (hasVideoId && hasFileKey)) {
+        setSelectedLanguage(localSelectedLanguage);
+      } else {
+        console.error("No video info found in localStorage");
+      }
     }
   };
 

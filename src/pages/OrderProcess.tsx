@@ -72,7 +72,8 @@ const OrderProcess: React.FC = () => {
         goToNextStep={goToNextStep}
         goToPreviousStep={goToPreviousStep}
         isNextDisabled={
-          (currentStep === 0 && !videoFile) || 
+          // Для первого шага проверяем либо наличие файла, либо флаг успешной загрузки
+          (currentStep === 0 && !videoFile && !localStorage.getItem('isVideoUploaded')) || 
           (currentStep === 1 && !selectedLanguage) ||
           isUploading
         }

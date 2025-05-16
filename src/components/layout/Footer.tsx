@@ -8,7 +8,7 @@ const Footer: React.FC = () => {
     <footer className="w-full mt-auto">
       <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
         <div className="rounded-t-2xl bg-[#4d4d4d] shadow-lg">
-          <div className="px-6 py-8 relative">
+          <div className="p-6 pb-10 relative min-h-[140px]">
             {/* Логотип в левом верхнем углу */}
             <div className="flex items-center absolute top-6 left-6">
               <Icon name="Mic2" size={32} className="text-[#0070F3] mr-3" />
@@ -22,10 +22,10 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-            {/* Основная сетка */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 pt-16 md:pt-0 md:ml-auto md:w-3/5">
+            {/* Основная сетка - прибитая кверху */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 md:ml-auto md:w-3/5">
               {/* Навигация */}
-              <div className="flex flex-col">
+              <div className="flex flex-col mt-20 md:mt-0">
                 <h3 className="text-white text-sm font-medium mb-3">
                   Навигация
                 </h3>
@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
               </div>
 
               {/* Документы */}
-              <div className="flex flex-col">
+              <div className="flex flex-col md:mt-0">
                 <h3 className="text-white text-sm font-medium mb-3">
                   Документы
                 </h3>

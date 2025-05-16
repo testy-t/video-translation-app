@@ -16,7 +16,7 @@ const HomePage: React.FC = () => {
     {
       icon: "Languages",
       title: "Выберите язык",
-      description: "Выберите один из 70+ языков для перевода вашего контента",
+      description: "Выберите один из 175+ языков для перевода вашего контента",
     },
     {
       icon: "Download",
@@ -39,10 +39,8 @@ const HomePage: React.FC = () => {
           <HowItWorks steps={workflowSteps} />
         </section>
 
-        <PricingSection />
-
-        <section id="about" className="py-24">
-          {/* Здесь будет контент для секции "О нас" */}
+        <section id="pricing">
+          <PricingSection />
         </section>
       </main>
 

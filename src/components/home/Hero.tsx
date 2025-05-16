@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import AnimatedBackground from "./AnimatedBackground";
 import LanguageSelector from "./LanguageSelector";
+import InlineLanguageToggle from "./InlineLanguageToggle";
 
 const Hero: React.FC = () => {
   const navigate = useNavigate();
+  const [activeLanguage, setActiveLanguage] = useState("ru");
 
   // Функция для перехода на страницу генерации
   const goToOrderPage = () => {
@@ -15,15 +17,36 @@ const Hero: React.FC = () => {
 
   // Данные языков
   const languages = [
-    { code: "ru", flag: "🇷🇺", name: "Русский", isActive: true },
-    { code: "en", flag: "🇬🇧", name: "English" },
-    { code: "zh", flag: "🇨🇳", name: "中文" },
-    { code: "es", flag: "🇪🇸", name: "Español" },
-    { code: "de", flag: "🇩🇪", name: "Deutsch" },
+    {
+      code: "ru",
+      flag: "🇷🇺",
+      name: "Русский",
+      isActive: activeLanguage === "ru",
+    },
+    {
+      code: "en",
+      flag: "🇬🇧",
+      name: "English",
+      isActive: activeLanguage === "en",
+    },
+    { code: "zh", flag: "🇨🇳", name: "中文", isActive: activeLanguage === "zh" },
+    {
+      code: "es",
+      flag: "🇪🇸",
+      name: "Español",
+      isActive: activeLanguage === "es",
+    },
+    {
+      code: "de",
+      flag: "🇩🇪",
+      name: "Deutsch",
+      isActive: activeLanguage === "de",
+    },
   ];
 
   // Обработчик выбора языка
   const handleLanguageSelect = (code: string) => {
+    setActiveLanguage(code);
     console.log(`Selected language: ${code}`);
   };
 
@@ -37,13 +60,23 @@ const Hero: React.FC = () => {
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
+              <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
                 <Icon name="Video" size={16} className="text-white" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 md:mb-6 text-white">
+              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-3 md:mb-6 text-white">
                 Ваш голос на любом языке
               </h1>
+
+              {/* Инлайн переключатель языков - только на мобильных */}
+              <div className="md:hidden mb-4">
+                <InlineLanguageToggle
+                  languages={languages}
+                  activeLanguage={activeLanguage}
+                  onSelectLanguage={handleLanguageSelect}
+                />
+              </div>
+
               <p className="text-base md:text-lg text-gray-300 mb-6 md:mb-10 max-w-xl leading-relaxed">
                 Загрузите видео и получите профессиональный перевод на любой
                 язык с идеальной синхронизацией губ за считанные минуты.
@@ -70,8 +103,8 @@ const Hero: React.FC = () => {
                 </p>
               </div>
 
-              {/* Языки */}
-              <div className="mt-4 md:mt-5 w-full md:w-[85%] px-0 md:px-2">
+              {/* Языки - только на десктопе */}
+              <div className="mt-4 md:mt-5 w-full md:w-[85%] px-0 md:px-2 hidden md:block">
                 <LanguageSelector
                   languages={languages}
                   onSelectLanguage={handleLanguageSelect}

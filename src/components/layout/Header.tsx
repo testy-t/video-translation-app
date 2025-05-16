@@ -76,7 +76,9 @@ const Header: React.FC = () => {
               onClick={() => navigate("/")}
             >
               <Icon name="Mic2" size={24} className="text-[#0070F3]" />
-              <span className="text-lg font-semibold text-white">ГолосОК</span>
+              <span className="text-base md:text-lg font-semibold text-white">
+                ГолосОК
+              </span>
             </div>
 
             {/* Навигация по центру */}

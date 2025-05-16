@@ -20,12 +20,12 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative overflow-hidden w-full">
+    <section className="relative overflow-hidden">
       {/* Тёмная секция с минималистичным фоном */}
-      <div className="min-h-[100vh] flex items-center pt-16 pb-16 px-4 relative">
+      <div className="min-h-[100vh] flex items-center pt-16 pb-16 relative">
         <AnimatedBackground />
 
-        <div className="relative z-10 w-full">
+        <div className="max-w-[66rem] mx-auto relative z-10 w-full px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-left">

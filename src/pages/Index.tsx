@@ -1,4 +1,3 @@
-
 import React from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -31,20 +30,18 @@ const HomePage: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-[#0a0f1c]">
       <Header />
 
-      <main className="flex-grow flex flex-col items-center w-full">
-        <div className="w-full max-w-[66rem]">
-          <section id="home">
-            <Hero />
-          </section>
-          
-          <section id="how-it-works">
-            <HowItWorks steps={workflowSteps} />
-          </section>
-          
-          <section id="pricing">
-            <PricingSection />
-          </section>
-        </div>
+      <main className="flex-grow">
+        <section id="home" className="w-full">
+          <Hero />
+        </section>
+
+        <section id="how-it-works" className="w-full py-24 bg-gray-100">
+          <HowItWorks steps={workflowSteps} />
+        </section>
+
+        <section id="pricing" className="w-full py-24 bg-white">
+          <PricingSection />
+        </section>
       </main>
 
       <Footer />

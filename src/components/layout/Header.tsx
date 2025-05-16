@@ -23,31 +23,27 @@ const Header: React.FC = () => {
               Главная
             </Link>
             <Link
+              to="/about"
+              className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              О нас
+            </Link>
+            <Link
               to="/pricing"
               className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
             >
               Тарифы
             </Link>
-            <Link
-              to="/docs"
-              className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
-            >
-              Документация
-            </Link>
           </nav>
 
           {/* Правая часть */}
           <div className="flex items-center gap-3">
-            {/* Кнопка Telegram */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full text-gray-300 hover:text-white"
-            >
-              <Icon name="Send" size={20} />
-            </Button>
+            {/* Информация о стоимости */}
+            <div className="hidden lg:block text-gray-300 text-sm">
+              <span>1 минута перевода — 500 ₽</span>
+            </div>
 
-            {/* Кнопка CTA или профиль */}
+            {/* Кнопка CTA */}
             <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5">
               Попробовать
             </Button>

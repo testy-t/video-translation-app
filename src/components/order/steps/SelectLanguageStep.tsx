@@ -61,26 +61,6 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
       <h2 className="text-xl font-semibold mb-6">Выберите язык для перевода</h2>
 
       <div className="grid grid-cols-1 gap-6">
-        {/* Информация о видео */}
-        <div className={`${isAnimated ? "fade-slide-in" : "opacity-0"}`}>
-          <h3 className="font-medium mb-4">Ваше видео:</h3>
-
-          {/* Заменяем видео превью на простую информацию о файле */}
-          <div className="p-4 bg-gray-50 rounded-md border">
-            <div className="flex items-center">
-              <Icon name="FileVideo" className="text-primary mr-2" size={24} />
-              <div className="flex-grow">
-                <div className="font-medium">{videoFile?.name}</div>
-                <div className="text-gray-500 text-sm">
-                  Размер:{" "}
-                  {Math.round(((videoFile?.size || 0) / 1024 / 1024) * 10) / 10}{" "}
-                  MB
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Выбор языка */}
         <div
           className={`${isAnimated ? "fade-slide-in delay-100" : "opacity-0"}`}
@@ -106,7 +86,7 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
           </div>
 
           {/* Список языков */}
-          <div className="max-h-[300px] overflow-y-auto pr-2 space-y-1">
+          <div className="max-h-[400px] overflow-y-auto pr-2 space-y-1">
             <RadioGroup
               value={selectedLanguage}
               onValueChange={setSelectedLanguage}

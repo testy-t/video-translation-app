@@ -72,10 +72,9 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Убираем звуковую визуализацию и оставляем простой переход */}
-      <div className="absolute -bottom-0 left-0 w-full bg-white h-10">
-        {/* Простой переход без анимации */}
-      </div>
+      {/* Удаляем этот элемент, который создаёт белый промежуток */}
+      {/* <div className="absolute -bottom-0 left-0 w-full bg-white h-10">
+      </div> */}
     </section>
   );
 };

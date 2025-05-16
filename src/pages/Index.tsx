@@ -35,11 +35,12 @@ const HomePage: React.FC = () => {
           <Hero />
         </section>
 
-        <section id="how-it-works" className="w-full py-24 bg-gray-100">
+        {/* Удаляем отступы сверху в секциях */}
+        <section id="how-it-works" className="w-full py-20 bg-gray-100">
           <HowItWorks steps={workflowSteps} />
         </section>
 
-        <section id="pricing" className="w-full py-24 bg-white">
+        <section id="pricing" className="w-full py-20 bg-white">
           <PricingSection />
         </section>
       </main>

@@ -1,8 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 const PricingSection: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Функция для перехода на страницу генерации
+  const goToOrderPage = () => {
+    navigate("/order");
+  };
+
   return (
     <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
       <div className="text-center mb-12">
@@ -56,7 +64,10 @@ const PricingSection: React.FC = () => {
               </li>
             </ul>
 
-            <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 h-auto text-base font-medium rounded-full w-full md:w-auto">
+            <Button
+              className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 h-auto text-base font-medium rounded-full w-full md:w-auto"
+              onClick={goToOrderPage}
+            >
               Начать перевод видео
             </Button>
           </div>

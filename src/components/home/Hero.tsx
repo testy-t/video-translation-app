@@ -1,10 +1,18 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import AnimatedBackground from "./AnimatedBackground";
 import LanguageSelector from "./LanguageSelector";
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
+
+  // Функция для перехода на страницу генерации
+  const goToOrderPage = () => {
+    navigate("/order");
+  };
+
   // Данные языков
   const languages = [
     { code: "ru", flag: "🇷🇺", name: "Русский", isActive: true },
@@ -42,7 +50,10 @@ const Hero: React.FC = () => {
               </p>
 
               {/* Кнопка действия */}
-              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4 h-auto">
+              <Button
+                className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4 h-auto"
+                onClick={goToOrderPage}
+              >
                 <Icon name="Play" size={20} className="mr-2" />
                 Начать Бесплатно
               </Button>

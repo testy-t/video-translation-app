@@ -56,21 +56,21 @@ const Hero: React.FC = () => {
       <div className="min-h-screen flex items-center pt-8 md:pt-16 pb-8 md:pb-16 relative">
         <AnimatedBackground />
 
-        <div className="container mx-auto px-4 w-full max-w-[66rem] relative z-10">
+        <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem] relative z-10">
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Левая колонка - текст */}
-            <div className="text-left">
+            <div className="text-center md:text-left w-full">
               <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
                 <Icon name="Video" size={16} className="text-white" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 text-white">
+              <h1 className="text-4xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 text-white">
                 Ваш голос на любом языке
               </h1>
 
               {/* Видео для мобильной версии размещаем между заголовком и селектором языка */}
-              <div className="w-full mb-4 md:hidden">
-                <div className="w-full aspect-video rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
+              <div className="w-full mb-4 flex justify-center md:hidden">
+                <div className="w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
                   <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
                     <Icon name="Play" size={28} className="text-white ml-1" />
                   </div>
@@ -81,7 +81,7 @@ const Hero: React.FC = () => {
               </div>
 
               {/* Инлайн переключатель языков только для мобильной версии */}
-              <div className="mb-4 md:hidden">
+              <div className="mb-4 flex justify-center md:hidden">
                 <InlineLanguageToggle
                   languages={languages}
                   activeLanguage={activeLanguage}
@@ -89,23 +89,25 @@ const Hero: React.FC = () => {
                 />
               </div>
 
-              <p className="text-base md:text-lg text-gray-300 mb-6 md:mb-10 max-w-xl leading-relaxed">
+              <p className="text-base md:text-lg text-gray-300 mb-6 md:mb-10 max-w-xl mx-auto md:mx-0 leading-relaxed">
                 Загрузите видео и получите профессиональный перевод на любой
                 язык с идеальной синхронизацией губ за считанные минуты.
               </p>
 
               {/* Кнопка действия */}
-              <Button
-                className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-5 md:py-6 text-base font-medium rounded-full h-auto"
-                onClick={goToOrderPage}
-              >
-                <Icon name="Play" size={18} className="mr-2" />
-                Начать Бесплатно
-              </Button>
+              <div className="flex justify-center md:justify-start">
+                <Button
+                  className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-5 md:py-6 text-base font-medium rounded-full h-auto"
+                  onClick={goToOrderPage}
+                >
+                  <Icon name="Play" size={18} className="mr-2" />
+                  Начать Бесплатно
+                </Button>
+              </div>
             </div>
 
             {/* Правая колонка - плейсхолдер для видео - только для десктопа */}
-            <div className="w-full hidden md:flex flex-col items-center md:items-end mt-8 md:mt-0">
+            <div className="w-full hidden md:flex flex-col items-center md:items-end mt-0">
               <div className="w-full md:w-[85%] aspect-video md:aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
                   <Icon name="Play" size={28} className="text-white ml-1" />
@@ -116,7 +118,7 @@ const Hero: React.FC = () => {
               </div>
 
               {/* Языки - только для десктопа */}
-              <div className="mt-4 md:mt-5 w-full md:w-[85%] px-0 md:px-2 hidden md:block">
+              <div className="mt-4 md:mt-5 w-full md:w-[85%] hidden md:block">
                 <LanguageSelector
                   languages={languages}
                   onSelectLanguage={handleLanguageSelect}

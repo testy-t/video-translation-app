@@ -8,21 +8,22 @@ const Footer: React.FC = () => {
     <footer className="w-full mt-auto">
       <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
         <div className="rounded-t-2xl bg-[#4d4d4d] shadow-lg">
-          <div className="px-6 py-8 pb-10">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-              {/* Колонка с логотипом */}
-              <div className="flex items-center">
-                <Icon name="Mic2" size={32} className="text-[#0070F3] mr-3" />
-                <div className="flex flex-col">
-                  <span className="text-xl font-semibold text-white leading-tight">
-                    ГолосОК
-                  </span>
-                  <p className="text-sm text-gray-300 leading-tight">
-                    {currentYear} ©
-                  </p>
-                </div>
+          <div className="px-6 py-8 relative">
+            {/* Логотип в левом верхнем углу */}
+            <div className="flex items-center absolute top-6 left-6">
+              <Icon name="Mic2" size={32} className="text-[#0070F3] mr-3" />
+              <div className="flex flex-col">
+                <span className="text-xl font-semibold text-white leading-tight">
+                  ГолосОК
+                </span>
+                <p className="text-sm text-gray-300 leading-tight">
+                  {currentYear} ©
+                </p>
               </div>
+            </div>
 
+            {/* Основная сетка */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 pt-16 md:pt-0 md:ml-auto md:w-3/5">
               {/* Навигация */}
               <div className="flex flex-col">
                 <h3 className="text-white text-sm font-medium mb-3">

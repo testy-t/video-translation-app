@@ -49,24 +49,24 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Правая колонка - плейсхолдер для видео */}
-            <div className="w-full flex flex-col">
-              <div className="aspect-square w-full bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
-                <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                  <Icon name="Play" size={24} className="text-white ml-1" />
+            <div className="w-full flex justify-center">
+              <div className="w-full max-w-xs aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                  <Icon name="Play" size={20} className="text-white ml-1" />
                 </div>
                 <p className="absolute bottom-4 text-white/70 text-sm">
                   Демонстрация технологии
                 </p>
               </div>
+            </div>
 
-              {/* Языки */}
-              <div className="mt-5">
-                <LanguageSelector
-                  languages={languages}
-                  onSelectLanguage={handleLanguageSelect}
-                  isDark={true}
-                />
-              </div>
+            {/* Языки */}
+            <div className="mt-5">
+              <LanguageSelector
+                languages={languages}
+                onSelectLanguage={handleLanguageSelect}
+                isDark={true}
+              />
             </div>
           </div>
         </div>

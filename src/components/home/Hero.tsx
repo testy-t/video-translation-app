@@ -49,10 +49,10 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Правая колонка - плейсхолдер для видео */}
-            <div className="w-full flex flex-col">
-              <div className="aspect-square w-full bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
-                <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                  <Icon name="Play" size={24} className="text-white ml-1" />
+            <div className="mx-auto w-full">
+              <div className="aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
+                <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                  <Icon name="Play" size={30} className="text-white ml-1" />
                 </div>
                 <p className="absolute bottom-4 text-white/70 text-sm">
                   Демонстрация технологии

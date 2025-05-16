@@ -65,8 +65,6 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
         <div
           className={`${isAnimated ? "fade-slide-in delay-100" : "opacity-0"}`}
         >
-          <h3 className="font-medium mb-4">Целевой язык перевода:</h3>
-
           {/* Поиск языка */}
           <div className="mb-4">
             <div className="relative">

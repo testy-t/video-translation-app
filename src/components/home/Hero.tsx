@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
       <div className="min-h-[100vh] flex items-center pt-16 pb-16 relative">
         <AnimatedBackground />
 
-        <div className="max-w-[66rem] mx-auto relative z-10 w-full px-4">
+        <div className="max-w-[60rem] mx-auto relative z-10 w-full px-4">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-left">
@@ -71,10 +71,6 @@ const Hero: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Удаляем этот элемент, который создаёт белый промежуток */}
-      {/* <div className="absolute -bottom-0 left-0 w-full bg-white h-10">
-      </div> */}
     </section>
   );
 };

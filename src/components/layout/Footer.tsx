@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="px-4 pb-8 pt-12 mt-auto">
-      <div className="max-w-[66rem] mx-auto">
+      <div className="max-w-[60rem] mx-auto">
         <div className="rounded-xl bg-[#1a1a1d] glass-dark shadow-lg border border-white/10 p-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Колонка с логотипом */}

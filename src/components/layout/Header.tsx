@@ -12,8 +12,8 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full flex justify-center px-4">
-      <div className="w-full max-w-[66rem]">
-        <div className="rounded-full bg-[#1a1a1d] p-2 glass-dark shadow-lg border border-white/10">
+      <div className="w-full max-w-[60rem]">
+        <div className="rounded-xl bg-[#1a1a1d] p-2 glass-dark shadow-md">
           <div className="flex items-center justify-between px-4 py-2">
             {/* Логотип */}
             <div className="flex items-center gap-2">

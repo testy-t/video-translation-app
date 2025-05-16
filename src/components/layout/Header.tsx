@@ -33,13 +33,13 @@ const Header: React.FC = () => {
                 onClick={() => scrollToSection("how-it-works")}
                 className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
               >
-                Как это работает
+                О нас
               </button>
               <button
                 onClick={() => scrollToSection("pricing")}
                 className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
               >
-                Тарифы
+                Цена
               </button>
             </nav>
 

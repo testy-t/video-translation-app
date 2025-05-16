@@ -11,11 +11,10 @@ const PricingSection: React.FC = () => {
     navigate("/order");
   };
 
-  // Added handler for pricing button
+  // Обработчик для кнопки выбора тарифа
   const handleClickPricing = () => {
-    // Implement the logic for selecting tariff
-    // For example, navigate or open modal
-    navigate("/pricing");
+    // Перенаправляем пользователя на страницу создания заказа
+    navigate("/order");
   };
 
   return (
@@ -33,7 +32,7 @@ const PricingSection: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           {/* Основная информация о цене */}
           <div className="w-full md:w-2/3 p-10 flex flex-col justify-center">
-            <h3 className="text-4xl md:text-5xl font-bold mb-2">500 ₽</h3>
+            <h3 className="text-4xl md:text-5xl font-bold mb-2">500 24</h3>
             <p className="text-gray-500 mb-6">за минуту переведенного видео</p>
 
             <ul className="space-y-4 mb-8">
@@ -73,9 +72,9 @@ const PricingSection: React.FC = () => {
 
             <Button
               className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto w-full mt-6"
-              onClick={handleClickPricing}
+              onClick={goToOrderPage}
             >
-              Выбрать тариф
+              Начать перевод
             </Button>
           </div>
 

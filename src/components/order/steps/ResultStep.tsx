@@ -105,10 +105,7 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
               Скачать результат
             </Button>
 
-            <Button variant="outline" className="w-full">
-              <Icon name="Share2" className="mr-2" />
-              Поделиться результатом
-            </Button>
+            {/* Удаляем кнопку "Поделиться результатом" */}
 
             <Button variant="outline" className="w-full">
               <Icon name="Plus" className="mr-2" />

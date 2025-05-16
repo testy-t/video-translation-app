@@ -64,9 +64,21 @@ const Hero: React.FC = () => {
                 <Icon name="Video" size={16} className="text-white" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-2 md:mb-6 text-white">
+              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 text-white">
                 Ваш голос на любом языке
               </h1>
+
+              {/* Видео для мобильной версии размещаем между заголовком и селектором языка */}
+              <div className="w-full mb-4 md:hidden">
+                <div className="w-full aspect-video rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
+                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                    <Icon name="Play" size={28} className="text-white ml-1" />
+                  </div>
+                  <p className="absolute bottom-4 text-white/70 text-sm">
+                    Демонстрация технологии
+                  </p>
+                </div>
+              </div>
 
               {/* Инлайн переключатель языков только для мобильной версии */}
               <div className="mb-4 md:hidden">
@@ -92,8 +104,8 @@ const Hero: React.FC = () => {
               </Button>
             </div>
 
-            {/* Правая колонка - плейсхолдер для видео */}
-            <div className="w-full flex flex-col items-center md:items-end mt-8 md:mt-0">
+            {/* Правая колонка - плейсхолдер для видео - только для десктопа */}
+            <div className="w-full hidden md:flex flex-col items-center md:items-end mt-8 md:mt-0">
               <div className="w-full md:w-[85%] aspect-video md:aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
                 <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
                   <Icon name="Play" size={28} className="text-white ml-1" />

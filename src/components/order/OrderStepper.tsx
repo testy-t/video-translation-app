@@ -16,6 +16,7 @@ interface OrderStepperProps {
 
 /**
  * Компонент для отображения прогресса шагов заказа
+ * Дизайн с прямоугольными контейнерами и шевронами между шагами
  */
 const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
   // Прогресс выполнения заказа в процентах
@@ -36,48 +37,51 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
       {/* Прогресс бар */}
       <Progress value={progress} className="h-2 mb-6" />
 
-      {/* Современный степпер */}
-      <div className="flex justify-between px-2">
+      {/* Новый степпер с прямоугольниками и шевронами */}
+      <div className="flex flex-wrap justify-between items-center px-1 gap-2">
         {steps.map((step, index) => (
-          <div
-            key={step.id}
-            className={`relative flex-1 ${
-              index < steps.length - 1
-                ? "after:content-[''] after:absolute after:top-1/2 after:left-[calc(50%+1rem)] after:w-full after:h-[2px] after:-translate-y-1/2 after:bg-gray-200 after:z-0"
-                : ""
-            }`}
-          >
-            <div className="flex flex-col items-center relative z-10">
-              <div
-                className={`
-                  flex items-center justify-center w-10 h-10 rounded-full 
-                  transition-all duration-300 ease-in-out mb-2
-                  ${
-                    index < currentStep
-                      ? "bg-primary text-white shadow-md"
-                      : index === currentStep
-                        ? "bg-white border-2 border-primary text-primary ring-4 ring-primary/20"
-                        : "bg-white border-2 border-gray-200 text-gray-400"
-                  }
-                `}
-              >
-                {index < currentStep ? (
-                  <Icon name="Check" size={18} />
-                ) : (
-                  <span className="text-sm font-medium">{index + 1}</span>
-                )}
+          <React.Fragment key={step.id}>
+            {/* Карточка шага */}
+            <div
+              className={`
+                flex items-center min-w-24 flex-grow sm:flex-grow-0 py-2 px-3 rounded-md border transition-all duration-200
+                ${
+                  index < currentStep
+                    ? "bg-primary/10 border-primary text-primary"
+                    : index === currentStep
+                      ? "bg-primary text-white border-primary shadow-md"
+                      : "bg-gray-50 border-gray-200 text-gray-400"
+                }
+              `}
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex-shrink-0">
+                  {index < currentStep ? (
+                    <Icon name="CheckCircle" size={18} />
+                  ) : (
+                    <div
+                      className={`bg-white w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium border 
+                      ${index === currentStep ? "border-white text-primary" : "border-gray-300 text-gray-500"}`}
+                    >
+                      {index + 1}
+                    </div>
+                  )}
+                </div>
+                <span className="text-sm font-medium whitespace-nowrap">
+                  {step.title}
+                </span>
               </div>
-
-              <span
-                className={`
-                  text-xs font-medium text-center hidden md:block
-                  ${index <= currentStep ? "text-gray-800" : "text-gray-400"}
-                `}
-              >
-                {step.title}
-              </span>
             </div>
-          </div>
+
+            {/* Шеврон между шагами */}
+            {index < steps.length - 1 && (
+              <div
+                className={`hidden sm:block transform transition-all ${index < currentStep ? "text-primary" : "text-gray-300"}`}
+              >
+                <Icon name="ChevronRight" size={20} />
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
     </div>

@@ -117,7 +117,7 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
           ) : (
             <>
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-medium text-lg">Предпросмотр видео</h3>
+                <h3 className="font-medium text-lg">Загруженное видео</h3>
                 <button
                   onClick={clearSelection}
                   className="text-gray-500 hover:text-red-500 transition-colors"
@@ -126,18 +126,19 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
                 </button>
               </div>
 
-              <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
-                {videoSrc && (
-                  <video src={videoSrc} controls className="w-full h-full" />
-                )}
-              </div>
-
-              <div className="flex items-center">
-                <Icon name="FileVideo" className="text-primary mr-2" />
-                <span className="font-medium">{videoFile.name}</span>
-                <span className="text-gray-500 ml-2">
-                  ({Math.round((videoFile.size / 1024 / 1024) * 10) / 10} MB)
-                </span>
+              <div className="flex items-center bg-white p-4 rounded-md border">
+                <Icon
+                  name="FileVideo"
+                  className="text-primary mr-2"
+                  size={24}
+                />
+                <div className="flex-grow">
+                  <div className="font-medium">{videoFile.name}</div>
+                  <div className="text-gray-500 text-sm">
+                    Размер:{" "}
+                    {Math.round((videoFile.size / 1024 / 1024) * 10) / 10} MB
+                  </div>
+                </div>
               </div>
             </>
           )}

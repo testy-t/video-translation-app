@@ -31,25 +31,9 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
   selectedLanguage,
   setSelectedLanguage,
 }) => {
-  const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [visibleLanguages, setVisibleLanguages] = useState(languages);
   const [isAnimated, setIsAnimated] = useState(false);
-
-  // Создаем URL для предпросмотра видео
-  useEffect(() => {
-    if (videoFile) {
-      const fileUrl = URL.createObjectURL(videoFile);
-      setVideoSrc(fileUrl);
-
-      // Для освобождения ресурсов при размонтировании
-      return () => {
-        if (videoSrc) {
-          URL.revokeObjectURL(videoSrc);
-        }
-      };
-    }
-  }, [videoFile]);
 
   // Анимация появления
   useEffect(() => {
@@ -76,29 +60,28 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
     <div className="fade-slide-in">
       <h2 className="text-xl font-semibold mb-6">Выберите язык для перевода</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Левая колонка - предпросмотр видео */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* Информация о видео */}
         <div className={`${isAnimated ? "fade-slide-in" : "opacity-0"}`}>
           <h3 className="font-medium mb-4">Ваше видео:</h3>
-          <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
-            {videoSrc && (
-              <video src={videoSrc} controls className="w-full h-full" />
-            )}
-          </div>
 
+          {/* Заменяем видео превью на простую информацию о файле */}
           <div className="p-4 bg-gray-50 rounded-md border">
             <div className="flex items-center">
-              <Icon name="FileVideo" className="text-primary mr-2" />
-              <span className="font-medium">{videoFile?.name}</span>
-              <span className="text-gray-500 ml-2">
-                ({Math.round(((videoFile?.size || 0) / 1024 / 1024) * 10) / 10}{" "}
-                MB)
-              </span>
+              <Icon name="FileVideo" className="text-primary mr-2" size={24} />
+              <div className="flex-grow">
+                <div className="font-medium">{videoFile?.name}</div>
+                <div className="text-gray-500 text-sm">
+                  Размер:{" "}
+                  {Math.round(((videoFile?.size || 0) / 1024 / 1024) * 10) / 10}{" "}
+                  MB
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Правая колонка - выбор языка */}
+        {/* Выбор языка */}
         <div
           className={`${isAnimated ? "fade-slide-in delay-100" : "opacity-0"}`}
         >

@@ -22,10 +22,10 @@ const Hero: React.FC = () => {
   return (
     <section className="relative overflow-hidden">
       {/* Тёмная секция с минималистичным фоном */}
-      <div className="min-h-[100vh] flex items-center pt-16 pb-16 relative">
+      <div className="min-h-screen flex items-center pt-16 pb-16 relative">
         <AnimatedBackground />
 
-        <div className="max-w-[60rem] mx-auto relative z-10 w-full px-4">
+        <div className="container mx-auto px-4 w-full max-w-[66rem] relative z-10">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-left">
@@ -41,15 +41,15 @@ const Hero: React.FC = () => {
                 язык с идеальной синхронизацией губ за считанные минуты.
               </p>
 
-              {/* Кнопка действия - теперь синяя */}
-              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4">
+              {/* Кнопка действия */}
+              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4 h-auto">
                 <Icon name="Play" size={20} className="mr-2" />
                 Начать Бесплатно
               </Button>
             </div>
 
             {/* Правая колонка - плейсхолдер для видео */}
-            <div className="mx-auto w-full max-w-sm">
+            <div className="mx-auto w-full">
               <div className="aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
                 <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
                   <Icon name="Play" size={30} className="text-white ml-1" />
@@ -59,7 +59,7 @@ const Hero: React.FC = () => {
                 </p>
               </div>
 
-              {/* Уменьшенный отступ между видео и языками */}
+              {/* Языки */}
               <div className="mt-5">
                 <LanguageSelector
                   languages={languages}

@@ -1,16 +1,30 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Функция для плавной прокрутки к секции
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    // Если мы не на главной странице, сначала переходим на неё
+    if (location.pathname !== "/") {
+      navigate("/");
+      // Задержка, чтобы дать время для загрузки главной страницы
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      // Если мы уже на главной, просто прокручиваем к нужной секции
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
@@ -25,7 +39,10 @@ const Header: React.FC = () => {
         <div className="rounded-full bg-[#1a1a1d] glass-dark shadow-md">
           <div className="flex items-center justify-between px-4 py-2">
             {/* Логотип */}
-            <div className="flex items-center gap-2">
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               <Icon name="Mic2" size={24} className="text-[#0070F3]" />
               <span className="text-lg font-semibold text-white">ГолосОК</span>
             </div>

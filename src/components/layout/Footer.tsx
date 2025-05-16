@@ -1,81 +1,123 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Icon from "@/components/ui/icon";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Функция для прокрутки к секции на главной странице
+  const scrollToSection = (id: string) => {
+    // Если мы не на главной странице, сначала переходим на неё
+    if (location.pathname !== "/") {
+      navigate("/");
+      // Задержка для загрузки страницы перед скроллом
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      // Если уже на главной, просто скроллим
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  // Обработчик для перехода по ссылкам с возвратом наверх страницы
+  const handleNavigate = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <footer className="w-full mt-auto">
       <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
         <div className="rounded-t-2xl bg-[#4d4d4d] shadow-lg">
           <div className="p-6 pb-10 relative min-h-[140px]">
-            {/* Логотип в левом верхнем углу */}
-            <div className="flex items-center absolute top-6 left-6">
+            <div
+              className="flex items-center absolute top-6 left-6 cursor-pointer"
+              onClick={() => {
+                navigate("/");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
               <Icon name="Mic2" size={32} className="text-[#0070F3] mr-3" />
               <div className="flex flex-col">
                 <span className="text-xl font-semibold text-white leading-tight">
                   ГолосОК
                 </span>
                 <p className="text-sm text-gray-300 leading-tight">
-                  {currentYear} ©
+                  {currentYear} 9
                 </p>
               </div>
             </div>
 
-            {/* Основная сетка - прибитая кверху */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 md:ml-auto md:w-3/5">
-              {/* Навигация */}
               <div className="flex flex-col mt-20 md:mt-0">
                 <h3 className="text-white text-sm font-medium mb-3">
                   Навигация
                 </h3>
                 <div className="flex flex-col gap-2">
-                  <Link
-                    to="/"
+                  <a
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate("/");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     Главная
-                  </Link>
-                  <Link
-                    to="/#pricing"
+                  </a>
+                  <a
+                    href="/#pricing"
+                    onClick={(e) => scrollToSection("pricing")}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     Цена
-                  </Link>
-                  <Link
-                    to="/order"
+                  </a>
+                  <a
+                    href="/order"
+                    onClick={handleNavigate("/order")}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     Заказать
-                  </Link>
+                  </a>
                 </div>
               </div>
 
-              {/* Документы */}
               <div className="flex flex-col md:mt-0">
                 <h3 className="text-white text-sm font-medium mb-3">
                   Документы
                 </h3>
                 <div className="flex flex-col gap-2">
-                  <Link
-                    to="/offer"
+                  <a
+                    href="/offer"
+                    onClick={handleNavigate("/offer")}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     Оферта
-                  </Link>
-                  <Link
-                    to="/privacy"
+                  </a>
+                  <a
+                    href="/privacy"
+                    onClick={handleNavigate("/privacy")}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     Обработка ПД
-                  </Link>
-                  <Link
-                    to="/confidentiality"
+                  </a>
+                  <a
+                    href="/confidentiality"
+                    onClick={handleNavigate("/confidentiality")}
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
                     Конфиденциальность
-                  </Link>
+                  </a>
                 </div>
               </div>
             </div>

@@ -6,10 +6,10 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="w-full mt-auto">
-      <div className="w-full max-w-[60rem] mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
         <div className="rounded-t-2xl bg-[#4d4d4d] shadow-lg">
-          <div className="px-6 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
+          <div className="px-6 py-8 pb-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
               {/* Колонка с логотипом */}
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
@@ -19,20 +19,6 @@ const Footer: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-sm text-gray-300 mt-2">{currentYear} ©</p>
-              </div>
-
-              {/* Сообщество */}
-              <div className="flex flex-col">
-                <h3 className="text-white text-sm font-medium mb-3">
-                  Сообщество
-                </h3>
-                <a
-                  href="https://t.me/+QgiLIa1gFRY4Y2Iy"
-                  className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
-                >
-                  <Icon name="Send" size={14} />
-                  Телеграм
-                </a>
               </div>
 
               {/* Навигация */}
@@ -51,7 +37,7 @@ const Footer: React.FC = () => {
                     href="#pricing"
                     className="text-sm text-gray-300 hover:text-white transition-colors"
                   >
-                    Тарифы
+                    Цена
                   </a>
                   <a
                     href="#"

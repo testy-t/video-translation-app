@@ -8,13 +8,13 @@ const Footer: React.FC = () => {
     <footer className="w-full mt-auto">
       <div className="w-full max-w-[60rem] mx-auto px-4">
         <div className="rounded-t-2xl bg-[#4d4d4d] shadow-lg">
-          <div className="px-8 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="px-6 py-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10">
               {/* Колонка с логотипом */}
               <div className="flex flex-col">
                 <div className="flex items-center gap-2 mb-2">
                   <Icon name="Mic2" size={22} className="text-[#0070F3]" />
-                  <span className="text-xl font-normal text-white">
+                  <span className="text-lg font-medium text-white">
                     ГолосОК
                   </span>
                 </div>
@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
 
               {/* Сообщество */}
               <div className="flex flex-col">
-                <h3 className="text-white font-normal text-base mb-3">
+                <h3 className="text-white text-sm font-medium mb-3">
                   Сообщество
                 </h3>
                 <a
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
 
               {/* Навигация */}
               <div className="flex flex-col">
-                <h3 className="text-white font-normal text-base mb-3">
+                <h3 className="text-white text-sm font-medium mb-3">
                   Навигация
                 </h3>
                 <div className="flex flex-col gap-2">
@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
 
               {/* Документы */}
               <div className="flex flex-col">
-                <h3 className="text-white font-normal text-base mb-3">
+                <h3 className="text-white text-sm font-medium mb-3">
                   Документы
                 </h3>
                 <div className="flex flex-col gap-2">

@@ -11,14 +11,14 @@ const Footer: React.FC = () => {
           <div className="px-6 py-8 pb-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
               {/* Колонка с логотипом */}
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <Icon name="Mic2" size={24} className="text-[#0070F3]" />
+              <div className="flex items-center">
+                <Icon name="Mic2" size={24} className="text-[#0070F3] mr-2" />
+                <div className="flex flex-col">
                   <span className="text-lg font-medium text-white">
                     ГолосОК
                   </span>
+                  <p className="text-sm text-gray-300">{currentYear} ©</p>
                 </div>
-                <p className="text-sm text-gray-300 mt-2">{currentYear} ©</p>
               </div>
 
               {/* Навигация */}

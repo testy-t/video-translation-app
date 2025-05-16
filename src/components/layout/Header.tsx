@@ -1,23 +1,16 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isHomePage = location.pathname === "/";
 
-  // Функция для плавной прокрутки к секции (только на главной странице)
+  // Функция для плавной прокрутки к секции
   const scrollToSection = (id: string) => {
-    if (isHomePage) {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    } else {
-      // Если мы не на главной, то перейдем на главную и затем к нужной секции
-      navigate(`/#${id}`);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -31,11 +24,8 @@ const Header: React.FC = () => {
       <div className="w-full max-w-[66rem] px-4 md:px-0">
         <div className="rounded-full bg-[#1a1a1d] glass-dark shadow-md">
           <div className="flex items-center justify-between px-4 py-2">
-            {/* Логотип со ссылкой на главную */}
-            <div
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={() => navigate("/")}
-            >
+            {/* Логотип */}
+            <div className="flex items-center gap-2">
               <Icon name="Mic2" size={24} className="text-[#0070F3]" />
               <span className="text-lg font-semibold text-white">ГолосОК</span>
             </div>
@@ -43,9 +33,7 @@ const Header: React.FC = () => {
             {/* Навигация по центру */}
             <nav className="hidden md:flex gap-8 items-center">
               <button
-                onClick={() =>
-                  isHomePage ? scrollToSection("home") : navigate("/")
-                }
+                onClick={() => scrollToSection("home")}
                 className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
               >
                 Главная

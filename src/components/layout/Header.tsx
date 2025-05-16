@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -6,6 +7,29 @@ import Icon from "@/components/ui/icon";
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [scrolled, setScrolled] = useState(false);
+
+  // Отслеживаем скролл страницы
+  useEffect(() => {
+    const handleScroll = () => {
+      // Проверяем, произошла ли прокрутка больше чем на 10px
+      const isScrolled = window.scrollY > 10;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    // Добавляем обработчик события скролла
+    window.addEventListener("scroll", handleScroll);
+    
+    // Вызываем обработчик при монтировании, чтобы установить начальное состояние
+    handleScroll();
+
+    // Убираем обработчик при размонтировании
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [scrolled]);
 
   // Функция для плавной прокрутки к секции
   const scrollToSection = (id: string) => {
@@ -36,7 +60,12 @@ const Header: React.FC = () => {
   return (
     <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full flex justify-center">
       <div className="w-full max-w-[66rem] px-4 md:px-0">
-        <div className="rounded-full bg-[#1a1a1d] glass-dark shadow-md">
+        <div 
+          className={`
+            rounded-full shadow-md transition-all duration-300 ease-in-out
+            ${scrolled ? "bg-[#1a1a1d] glass-dark" : "bg-transparent"}
+          `}
+        >
           <div className="flex items-center justify-between px-4 py-2">
             {/* Логотип */}
             <div
@@ -76,8 +105,6 @@ const Header: React.FC = () => {
             >
               Попробовать
             </Button>
-
-            {/* Убрана кнопка мобильного меню */}
           </div>
         </div>
       </div>

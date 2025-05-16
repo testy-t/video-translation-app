@@ -172,7 +172,7 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
               className="text-green-500 mt-1 mr-2 flex-shrink-0"
               size={16}
             />
-            <span>Оптимальная длительность видео - до 10 минут</span>
+            <span>Оптимальная длительность видео — до 30 минут</span>
           </li>
         </ul>
       </div>

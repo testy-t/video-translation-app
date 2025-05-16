@@ -53,6 +53,17 @@ const OrderProcess: React.FC = () => {
     }
   };
 
+  // Функция для перехода на определенный шаг
+  const goToStep = (stepIndex: number) => {
+    // Проверяем, что невозможно перейти дальше текущего максимального шага,
+    // чтобы нельзя было пропустить необходимые этапы
+    const maxVisitedStep = currentStep;
+    if (stepIndex <= maxVisitedStep) {
+      setCurrentStep(stepIndex);
+      window.scrollTo(0, 0);
+    }
+  };
+
   // Функция-заглушка для имитации оплаты и генерации номера заказа
   const handlePayment = () => {
     // В реальном приложении здесь был бы API-запрос к платежной системе
@@ -70,6 +81,61 @@ const OrderProcess: React.FC = () => {
     <>
       <Header />
       <div className="bg-gray-50 min-h-screen pt-20">
+        {/* Навигация сверху */}
+        <div className="bg-white border-b shadow-sm">
+          <div className="container mx-auto max-w-5xl px-4">
+            <div className="flex py-3 overflow-x-auto">
+              {steps.map((step, index) => (
+                <div
+                  key={step.id}
+                  className={`flex items-center mr-4 last:mr-0 ${
+                    index <= currentStep
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <button
+                    onClick={() => goToStep(index)}
+                    disabled={index > currentStep}
+                    className={`flex items-center px-3 py-2 rounded-md transition-colors ${
+                      index === currentStep
+                        ? "bg-primary/10"
+                        : index < currentStep
+                          ? "hover:bg-primary/5"
+                          : "opacity-50 cursor-not-allowed"
+                    }`}
+                  >
+                    <div
+                      className={`
+                      w-7 h-7 rounded-full flex items-center justify-center mr-2
+                      ${
+                        index < currentStep
+                          ? "bg-primary text-primary-foreground"
+                          : index === currentStep
+                            ? "border-2 border-primary text-primary"
+                            : "border-2 border-muted-foreground text-muted-foreground"
+                      }
+                    `}
+                    >
+                      {index < currentStep ? (
+                        <Icon name="Check" size={14} />
+                      ) : (
+                        <span className="text-xs">{index + 1}</span>
+                      )}
+                    </div>
+                    <span className="font-medium">{step.title}</span>
+                  </button>
+                  {index < steps.length - 1 && (
+                    <div className="ml-2 text-muted-foreground">
+                      <Icon name="ChevronRight" size={18} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="container mx-auto max-w-5xl py-8 px-4">
           {/* Заголовок и индикатор прогресса */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -77,9 +143,8 @@ const OrderProcess: React.FC = () => {
               Перевести ваше видео
             </h1>
             <Progress value={progress} className="h-2 mb-6" />
-
-            {/* Шаги процесса */}
-            <div className="flex justify-between px-4">
+            {/* Шаги процесса - сохраняем для мобильных устройств */}
+            <div className="flex justify-between px-4 md:hidden">
               {steps.map((step, index) => (
                 <div
                   key={step.id}

@@ -1,9 +1,19 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
-import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
+  // Функция для плавного скролла к секции
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      window.scrollTo({
+        top: element.offsetTop - 100, // Отступ сверху для учета высоты хедера
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full max-w-6xl px-4">
       <div className="rounded-full bg-[#1a1a1d] p-2 glass-dark shadow-lg border border-white/10">
@@ -16,35 +26,39 @@ const Header: React.FC = () => {
 
           {/* Навигация по центру */}
           <nav className="hidden md:flex gap-8 items-center">
-            <Link
-              to="/"
+            <button
+              onClick={() => scrollToSection("home")}
               className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
             >
               Главная
-            </Link>
-            <Link
-              to="/about"
+            </button>
+            <button
+              onClick={() => scrollToSection("about")}
               className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
             >
               О нас
-            </Link>
-            <Link
-              to="/pricing"
+            </button>
+            <button
+              onClick={() => scrollToSection("how-it-works")}
+              className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Как это работает
+            </button>
+            <button
+              onClick={() => scrollToSection("pricing")}
               className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
             >
               Тарифы
-            </Link>
+            </button>
           </nav>
 
           {/* Правая часть */}
           <div className="flex items-center gap-3">
-            {/* Информация о стоимости */}
-            <div className="hidden lg:block text-gray-300 text-sm">
-              <span>1 минута перевода — 500 ₽</span>
-            </div>
-
             {/* Кнопка CTA */}
-            <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5">
+            <Button
+              onClick={() => scrollToSection("pricing")}
+              className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5"
+            >
               Попробовать
             </Button>
 

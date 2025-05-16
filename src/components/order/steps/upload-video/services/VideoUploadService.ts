@@ -18,6 +18,17 @@ interface DemoUploadResult {
 }
 
 /**
+ * Интерфейс для уведомления о видео
+ */
+interface VideoNotification {
+  transaction_uniquecode?: string; // опционально
+  original_url: string; // обязательно
+  duration?: number; // опционально
+  output_language?: string; // опционально
+  status?: string; // опционально
+}
+
+/**
  * Сервис для работы с API загрузки видео
  */
 const VideoUploadService = {
@@ -84,6 +95,86 @@ const VideoUploadService = {
       fileKey: result.fileKey,
       videoId: result.videoId
     };
+  },
+  
+  /**
+   * Отправка уведомления о загруженном видео
+   * @param transactionUniqueCode - уникальный код транзакции
+   * @param originalUrl - URL загруженного видео
+   * @param outputLanguage - язык перевода
+   * @param duration - длительность видео в секундах (если известна)
+   * @returns Promise с результатом API вызова
+   */
+  notifyVideoUploaded: async (
+    transactionUniqueCode: string | null,
+    originalUrl: string,
+    outputLanguage: string | null = null,
+    duration: number | null = null
+  ): Promise<{ success: boolean; video_id?: number }> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // Prepare notification data - включаем только обязательные поля
+    const notificationData: VideoNotification = {
+      original_url: originalUrl,
+      status: 'uploaded'
+    };
+    
+    // Добавляем опциональные поля, только если они предоставлены
+    if (transactionUniqueCode) {
+      notificationData.transaction_uniquecode = transactionUniqueCode;
+    }
+    
+    if (outputLanguage) {
+      notificationData.output_language = outputLanguage;
+    }
+    
+    if (duration !== null && duration !== undefined) {
+      notificationData.duration = duration;
+    }
+    
+    console.log("📊 Sending video upload notification:", notificationData);
+
+    // Manually construct the URL for the Supabase Edge Function
+    const projectRef = 'tbgwudnxjwplqtkjihxc';
+    const notificationUrl = `https://${projectRef}.supabase.co/functions/v1/video-notification`;
+    
+    // Create headers for JSON request
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json'
+    };
+    
+    // Add Authorization header if session exists
+    if (session) {
+      headers.Authorization = `Bearer ${session.access_token}`;
+    }
+    
+    try {
+      // Send notification to backend
+      const notificationResponse = await fetch(notificationUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(notificationData)
+      });
+      
+      console.log("📊 Notification response status:", notificationResponse.status);
+      
+      if (!notificationResponse.ok) {
+        const errorText = await notificationResponse.text();
+        console.error("📊 Notification failed:", errorText);
+        return { success: false };
+      }
+      
+      const result = await notificationResponse.json();
+      console.log("📊 Notification response:", result);
+      
+      return { 
+        success: result.success, 
+        video_id: result.video_id 
+      };
+    } catch (error) {
+      console.error("📊 Error sending notification:", error);
+      return { success: false };
+    }
   },
   
   /**

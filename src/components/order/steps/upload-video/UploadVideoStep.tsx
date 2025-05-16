@@ -12,6 +12,9 @@ import {
   VideoRecommendations 
 } from "./components";
 
+// Константы для формирования URL видео
+const S3_ENDPOINT = "https://storage.yandexcloud.net"; // URL хранилища, где размещаются файлы
+
 /**
  * Компонент для загрузки видео
  */
@@ -252,13 +255,92 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
         description: "Видео успешно загружено",
       });
 
-      // Вызываем callback для перехода к следующему шагу
-      setTimeout(() => {
+      // Создаем URL оригинального видео
+      // Проверяем, нужно ли добавить имя бакета в URL
+      const S3_BUCKET = "golosok"; // Правильное имя бакета
+      const originalUrl = `${S3_ENDPOINT}/${S3_BUCKET}/${fileKey}`;
+      console.log("📊 Original video URL:", originalUrl);
+
+      // Сохраняем информацию о загруженном видео и создаем запись в БД
+      try {
+        // Получаем длительность видео через HTML5 Video API
+        console.log("📊 Getting video duration from file");
+        let videoDuration = 0;
+        
+        // Создаем временный видео-элемент для определения длительности
+        if (videoFile) {
+          const videoElement = document.createElement('video');
+          const objectUrl = URL.createObjectURL(videoFile);
+          
+          // Получаем длительность асинхронно
+          videoDuration = await new Promise<number>((resolve) => {
+            videoElement.addEventListener('loadedmetadata', () => {
+              // Длительность в секундах, округленная до целого числа
+              const duration = Math.round(videoElement.duration);
+              URL.revokeObjectURL(objectUrl);
+              resolve(duration);
+            });
+            
+            // Обработка ошибки загрузки метаданных
+            videoElement.addEventListener('error', () => {
+              console.error("📊 Error loading video metadata");
+              URL.revokeObjectURL(objectUrl);
+              resolve(0); // В случае ошибки возвращаем 0
+            });
+            
+            videoElement.src = objectUrl;
+            videoElement.load();
+          });
+          
+          console.log("📊 Video duration:", videoDuration, "seconds");
+        }
+        
+        // Отправляем уведомление о загрузке видео для создания записи в БД
+        console.log("📊 Sending video notification to create record in database");
+        
+        const notificationResult = await VideoUploadService.notifyVideoUploaded(
+          null, // Не передаем transaction_uniquecode
+          originalUrl,
+          null, // Не устанавливаем язык на этом этапе
+          videoDuration || null // Передаем длительность, если удалось получить
+        );
+        
+        console.log("📊 Notification result:", notificationResult);
+        
+        // Если уведомление успешно отправлено и создана запись в БД
+        if (notificationResult.success && notificationResult.video_id) {
+          console.log("📊 Video record created with ID:", notificationResult.video_id);
+          
+          // Сохраняем ID созданной записи и информацию о видео
+          localStorage.setItem('videoDbId', notificationResult.video_id.toString());
+          localStorage.setItem('videoDuration', videoDuration.toString());
+        }
+        
+        // Сохраняем информацию о видео локально в любом случае
+        localStorage.setItem('videoOriginalUrl', originalUrl);
+        
+        console.log("📊 Video uploaded successfully, saved details:", { 
+          videoId, 
+          fileKey, 
+          originalUrl,
+          videoDuration,
+          dbId: notificationResult.video_id
+        });
+        
+        // Переходим к следующему шагу
         if (onUploadSuccess) {
           console.log("📊 Calling onUploadSuccess with:", { videoId, fileKey });
           onUploadSuccess(videoId, fileKey);
         }
-      }, 500);
+      } catch (error) {
+        console.error("📊 Error creating video record:", error);
+        
+        // Вызываем callback для перехода к следующему шагу даже в случае ошибки
+        if (onUploadSuccess) {
+          console.log("📊 Calling onUploadSuccess after error:", { videoId, fileKey });
+          onUploadSuccess(videoId, fileKey);
+        }
+      }
     } catch (error) {
       console.error("📊 Upload error:", error);
       setIsVideoUploaded(false);

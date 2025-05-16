@@ -176,6 +176,7 @@ export const useOrderProcess = () => {
     // Пытаемся восстановить ID видео из localStorage, если оно не установлено в состоянии
     const effectiveVideoId = videoId || parseInt(localStorage.getItem('uploadedVideoId') || '0');
     const effectiveFileKey = fileKey || localStorage.getItem('uploadedFileKey');
+    const effectiveTransactionId = transactionId || localStorage.getItem('transactionId');
     
     if (!effectiveVideoId || !effectiveFileKey) {
       toast({
@@ -196,6 +197,9 @@ export const useOrderProcess = () => {
 
     setIsUploading(true);
     setSelectedLanguage(language);
+    
+    // Сохраняем выбранный язык в localStorage
+    localStorage.setItem('selectedLanguage', language);
 
     try {
       // Get session and token
@@ -208,6 +212,36 @@ export const useOrderProcess = () => {
         });
         setIsUploading(false);
         return;
+      }
+      
+      // Пробуем использовать наш новый метод уведомления для обновления языка перевода
+      try {
+        // Импортируем сервис для отправки уведомлений
+        const { default: VideoUploadService } = await import('@/components/order/steps/upload-video/services/VideoUploadService');
+        
+        // Создаем URL оригинального видео
+        const S3_ENDPOINT = "https://storage.yandexcloud.net";
+        const S3_BUCKET = "golosok"; // Правильное имя бакета
+        const originalUrl = `${S3_ENDPOINT}/${S3_BUCKET}/${effectiveFileKey}`;
+        
+        // Получаем уникальный код транзакции
+        const transactionUniqueCode = effectiveTransactionId || `anon-${Date.now()}`;
+        
+        console.log("📊 Updating video with selected language:", {
+          transactionUniqueCode,
+          originalUrl,
+          language
+        });
+        
+        // Отправляем уведомление с обновленным языком
+        await VideoUploadService.notifyVideoUploaded(
+          transactionUniqueCode,
+          originalUrl,
+          language
+        );
+      } catch (error) {
+        console.error("📊 Error updating video language:", error);
+        // Продолжаем выполнение даже при ошибке
       }
 
       // Call the video-info Edge Function

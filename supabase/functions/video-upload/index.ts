@@ -2,10 +2,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { v4 as uuidv4 } from 'https://esm.sh/uuid@9.0.0'
-
-// Import S3 client that supports presigned URLs
-import { S3Client, PutObjectCommand } from "https://esm.sh/@aws-sdk/client-s3@3.477.0";
-import { getSignedUrl } from "https://esm.sh/@aws-sdk/s3-request-presigner@3.477.0";
+import { hmac } from 'https://deno.land/x/hmac@v2.0.1/mod.ts'
 
 // Backblaze B2 S3-compatible settings
 const B2_REGION = 'eu-central-003'
@@ -23,16 +20,102 @@ const supabaseAdmin = createClient(
     }
 )
 
-// Create S3 client for B2
-const s3Client = new S3Client({
-    region: B2_REGION,
-    endpoint: B2_ENDPOINT,
-    credentials: {
-        accessKeyId: B2_KEY_ID!,
-        secretAccessKey: B2_APPLICATION_KEY!
-    },
-    forcePathStyle: true // Important for B2 compatibility
-});
+// Manual implementation of S3 presigned URL creation compatible with Deno
+async function createPresignedUrl(params: {
+    accessKeyId: string;
+    secretAccessKey: string;
+    bucket: string;
+    key: string;
+    contentType: string;
+    expiresIn: number;
+    endpoint: string;
+}) {
+    const { accessKeyId, secretAccessKey, bucket, key, contentType, expiresIn, endpoint } = params;
+
+    // Calculate expiration time in seconds from now
+    const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
+
+    // Create a URL for the PUT operation (using host-style URL)
+    const objectUrl = new URL(`${endpoint}/${bucket}/${key}`);
+
+    // Create simple query parameters for the presigned URL
+    const query = new URLSearchParams({
+        'X-Amz-Algorithm': 'AWS4-HMAC-SHA256',
+        'X-Amz-Credential': `${accessKeyId}/${getDate()}/eu-central-003/s3/aws4_request`,
+        'X-Amz-Date': getAmzDate(),
+        'X-Amz-Expires': expiresIn.toString(),
+        'X-Amz-SignedHeaders': 'host;content-type',
+    });
+
+    // The canonical request for signature version 4
+    const canonicalRequest = [
+        'PUT',                             // HTTP Method
+        '/' + bucket + '/' + key,          // Canonical URI
+        query.toString(),                  // Canonical Query String
+        'host:' + objectUrl.host + '\n' +  // Canonical Headers
+        'content-type:' + contentType + '\n',
+        'host;content-type',               // Signed Headers
+        'UNSIGNED-PAYLOAD'                 // Payload Hash (unsigned)
+    ].join('\n');
+
+    // The string to sign
+    const stringToSign = [
+        'AWS4-HMAC-SHA256',                // Algorithm
+        getAmzDate(),                      // Request date
+        `${getDate()}/eu-central-003/s3/aws4_request`, // Credential Scope
+        await hexHash(canonicalRequest)    // Hash of canonical request (now async)
+    ].join('\n');
+
+    // Derive the signing key
+    const dateKey = hmacSha256('AWS4' + secretAccessKey, getDate());
+    const dateRegionKey = hmacSha256(dateKey, 'eu-central-003');
+    const dateRegionServiceKey = hmacSha256(dateRegionKey, 's3');
+    const signingKey = hmacSha256(dateRegionServiceKey, 'aws4_request');
+
+    // Calculate the signature
+    const signature = hmacSha256Hex(signingKey, stringToSign);
+
+    // Add the signature to the query parameters
+    query.set('X-Amz-Signature', signature);
+
+    // Create the presigned URL
+    const presignedUrl = objectUrl.toString() + '?' + query.toString();
+    return presignedUrl;
+}
+
+// Helper functions for signing
+function getDate() {
+    return new Date().toISOString().substring(0, 10).replace(/-/g, '');
+}
+
+function getAmzDate() {
+    return new Date().toISOString()
+        .replace(/-/g, '')
+        .replace(/:/g, '')
+        .replace(/\.\d{3}/g, '')
+        .replace('Z', '00Z');
+}
+
+function hmacSha256(key: string | ArrayBuffer, message: string): ArrayBuffer {
+    const keyObj = typeof key === 'string' ? new TextEncoder().encode(key) : key;
+    const messageObj = new TextEncoder().encode(message);
+    return hmac('sha256', keyObj, messageObj);
+}
+
+function hmacSha256Hex(key: ArrayBuffer, message: string): string {
+    const signature = hmacSha256(key, message);
+    return Array.from(new Uint8Array(signature))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+// Changed to async function since crypto.subtle.digest is async
+async function hexHash(text: string): Promise<string> {
+    const data = new TextEncoder().encode(text);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data); // Now async
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 serve(async (req: Request) => {
     console.log("🔧 Received request to video-upload function")
@@ -172,15 +255,17 @@ serve(async (req: Request) => {
         console.log("🔧 Generating presigned URL for B2 upload")
 
         try {
-            // Create a command to put an object
-            const command = new PutObjectCommand({
-                Bucket: B2_BUCKET!,
-                Key: fileKey,
-                ContentType: requestData.fileType,
+            // Use our custom implementation to create a presigned URL
+            const presignedUrl = await createPresignedUrl({  // Now await the async function
+                accessKeyId: B2_KEY_ID!,
+                secretAccessKey: B2_APPLICATION_KEY!,
+                bucket: B2_BUCKET!,
+                key: fileKey,
+                contentType: requestData.fileType,
+                expiresIn: 900, // 15 minutes
+                endpoint: B2_ENDPOINT,
             });
 
-            // Generate a presigned URL (valid for 15 minutes)
-            const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 900 });
             console.log("🔧 Generated presigned URL successfully")
 
             // Only create a database record if authenticated

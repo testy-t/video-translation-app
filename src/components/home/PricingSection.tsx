@@ -5,8 +5,8 @@ import Icon from "@/components/ui/icon";
 
 const PricingSection: React.FC = () => {
   return (
-    <section id="pricing" className="py-24 bg-gray-50 w-full">
-      <div className="max-w-[66rem] mx-auto px-4">
+    <section id="pricing" className="py-24 bg-white w-full rounded-xl shadow-lg mt-12 mb-12">
+      <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Простая и прозрачная стоимость</h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -14,7 +14,7 @@ const PricingSection: React.FC = () => {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="flex flex-col md:flex-row">
             {/* Основная информация о цене */}
             <div className="w-full md:w-2/3 p-10 flex flex-col justify-center">

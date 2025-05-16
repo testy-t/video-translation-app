@@ -1,7 +1,9 @@
 // supabase/functions/video-info/index.ts
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { S3Client, GetObjectCommand } from 'https://esm.sh/@aws-sdk/client-s3'
+// Import a direct S3-compatible client for Deno instead of the AWS SDK
+// This is a much simpler client with fewer dependencies
+import { S3Bucket } from "https://deno.land/x/s3@0.5.0/mod.ts";
 
 // Backblaze B2 S3-совместимые настройки
 const B2_REGION = 'eu-central-003' // Используйте свой регион из эндпоинта
@@ -19,16 +21,15 @@ const supabaseAdmin = createClient(
     }
 )
 
-// Настройка S3 клиента для Backblaze B2
-const s3Client = new S3Client({
+// Create a simpler S3 bucket client for Deno environment
+// This client is specifically designed for Deno and avoids Node.js compatibility issues
+const s3Bucket = new S3Bucket({
+    bucket: B2_BUCKET!,
+    accessKeyID: B2_KEY_ID!,
+    secretKey: B2_APPLICATION_KEY!,
     region: B2_REGION,
     endpoint: B2_ENDPOINT,
-    credentials: {
-        accessKeyId: B2_KEY_ID!,
-        secretAccessKey: B2_APPLICATION_KEY!,
-    },
-    forcePathStyle: true, // Важно для B2
-})
+});
 
 interface RequestBody {
     videoId: number;
@@ -138,31 +139,22 @@ serve(async (req: Request) => {
         }
 
         try {
-            const command = new GetObjectCommand(getObjectParams)
-            const { Body } = await s3Client.send(command)
-
-            if (!Body) {
+            // Use the Deno-native S3 client instead
+            const fileContent = await s3Bucket.getObject(fileKey);
+            
+            if (!fileContent) {
                 return new Response(JSON.stringify({ error: 'File not found in storage' }), {
                     status: 404,
                     headers: { 'Content-Type': 'application/json' },
                 })
             }
-
-            // Преобразуем поток в буфер
-            const chunks = []
-            const reader = Body.getReader()
-
-            let isDone = false
-            while (!isDone) {
-                const { done, value } = await reader.read()
-                if (done) {
-                    isDone = true
-                } else if (value) {
-                    chunks.push(value)
-                }
-            }
-
-            const fileBuffer = await new Blob(chunks).arrayBuffer()
+            
+            // Convert to ArrayBuffer if needed
+            const fileBuffer = fileContent.arrayBuffer ? 
+                await fileContent.arrayBuffer() : 
+                fileContent instanceof Uint8Array ? 
+                    fileContent.buffer : 
+                    new Uint8Array(fileContent).buffer;
 
             // Анализируем длительность видео
             const duration = await getVideoDuration(fileBuffer)

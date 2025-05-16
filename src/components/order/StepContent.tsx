@@ -1,4 +1,3 @@
-
 import React from "react";
 import UploadVideoStep from "./steps/UploadVideoStep";
 import SelectLanguageStep from "./steps/SelectLanguageStep";
@@ -13,6 +12,9 @@ interface StepContentProps {
   setSelectedLanguage: (language: string) => void;
   onPayment: () => void;
   orderNumber: string;
+  transactionId?: string | null;
+  onUploadSuccess?: (videoId: number, fileKey: string) => void;
+  isUploading?: boolean;
 }
 
 /**
@@ -25,14 +27,19 @@ const StepContent: React.FC<StepContentProps> = ({
   selectedLanguage,
   setSelectedLanguage,
   onPayment,
-  orderNumber
+  orderNumber,
+  transactionId,
+  onUploadSuccess,
+  isUploading
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       {currentStep === 0 && (
         <UploadVideoStep 
           videoFile={videoFile} 
-          setVideoFile={setVideoFile} 
+          setVideoFile={setVideoFile}
+          transactionId={transactionId || undefined}
+          onUploadSuccess={onUploadSuccess}
         />
       )}
       
@@ -41,6 +48,7 @@ const StepContent: React.FC<StepContentProps> = ({
           videoFile={videoFile} 
           selectedLanguage={selectedLanguage}
           setSelectedLanguage={setSelectedLanguage}
+          isLoading={isUploading}
         />
       )}
       

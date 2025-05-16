@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import OrderContainer from "@/components/order/OrderContainer";
 import OrderStepper from "@/components/order/OrderStepper";
@@ -18,10 +17,14 @@ const OrderProcess: React.FC = () => {
     setVideoFile,
     selectedLanguage,
     setSelectedLanguage,
+    handleLanguageSelection,
     orderNumber,
     goToNextStep,
     goToPreviousStep,
-    handlePayment
+    handlePayment,
+    transactionId,
+    handleUploadSuccess,
+    isUploading
   } = useOrderProcess();
   
   // Эффект анимации при загрузке страницы
@@ -54,9 +57,12 @@ const OrderProcess: React.FC = () => {
         videoFile={videoFile}
         setVideoFile={setVideoFile}
         selectedLanguage={selectedLanguage}
-        setSelectedLanguage={setSelectedLanguage}
+        setSelectedLanguage={handleLanguageSelection}
         onPayment={handlePayment}
         orderNumber={orderNumber}
+        transactionId={transactionId}
+        onUploadSuccess={handleUploadSuccess}
+        isUploading={isUploading}
       />
 
       {/* Кнопки навигации */}
@@ -65,7 +71,11 @@ const OrderProcess: React.FC = () => {
         totalSteps={steps.length}
         goToNextStep={goToNextStep}
         goToPreviousStep={goToPreviousStep}
-        isNextDisabled={(currentStep === 0 && !videoFile) || (currentStep === 1 && !selectedLanguage)}
+        isNextDisabled={
+          (currentStep === 0 && !videoFile) || 
+          (currentStep === 1 && !selectedLanguage) ||
+          isUploading
+        }
         isCompleted={currentStep === steps.length - 1}
         onPayment={handlePayment}
       />

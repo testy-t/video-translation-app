@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0f1c]">
+    <div className="flex flex-col min-h-screen">
       <Header />
 
       <main className="flex-grow">
@@ -35,7 +35,6 @@ const HomePage: React.FC = () => {
           <Hero />
         </section>
 
-        {/* Удаляем отступы сверху в секциях */}
         <section id="how-it-works" className="w-full py-20 bg-gray-100">
           <HowItWorks steps={workflowSteps} />
         </section>

@@ -77,13 +77,7 @@ const Header: React.FC = () => {
               Попробовать
             </Button>
 
-            {/* Меню мобильное */}
-            <Button
-              variant="ghost"
-              className="md:hidden p-1 text-white rounded-full"
-            >
-              <Icon name="Menu" size={20} />
-            </Button>
+            {/* Убрана кнопка мобильного меню */}
           </div>
         </div>
       </div>

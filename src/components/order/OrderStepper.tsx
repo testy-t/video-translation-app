@@ -20,14 +20,14 @@ interface OrderStepperProps {
 const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      {/* Верхняя панель с логотипом и названием */}
+      {/* Верхняя панель с логотипом и названием - поменяли местами */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-xl font-medium">Перевод видео</h1>
-
         <Link to="/" className="flex items-center gap-2">
           <Icon name="Mic2" size={24} className="text-primary" />
           <span className="text-lg font-semibold">ГолосОК</span>
         </Link>
+
+        <h1 className="text-xl font-medium">Перевод видео</h1>
       </div>
 
       {/* Увеличенный степпер с прямоугольниками и шевронами */}

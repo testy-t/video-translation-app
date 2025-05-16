@@ -4,12 +4,12 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { v4 as uuidv4 } from 'https://esm.sh/uuid@9.0.0'
 import { hmac } from 'https://deno.land/x/hmac@v2.0.1/mod.ts'
 
-// Backblaze B2 S3-compatible settings
-const B2_REGION = 'eu-central-003'
-const B2_ENDPOINT = `https://s3.${B2_REGION}.backblazeb2.com`
-const B2_BUCKET = Deno.env.get('B2_BUCKET')
-const B2_KEY_ID = Deno.env.get('B2_KEY_ID')
-const B2_APPLICATION_KEY = Deno.env.get('B2_APPLICATION_KEY')
+// Yandex Cloud S3 settings
+const S3_REGION = 'ru-central1'
+const S3_ENDPOINT = 'https://storage.yandexcloud.net'
+const S3_BUCKET = Deno.env.get('S3_BUCKET')
+const S3_KEY_ID = Deno.env.get('S3_KEY_ID')
+const S3_KEY_SECRET = Deno.env.get('S3_KEY_SECRET')
 
 // Create Supabase client with service role
 const supabaseAdmin = createClient(
@@ -29,19 +29,20 @@ async function createPresignedUrl(params: {
     contentType: string;
     expiresIn: number;
     endpoint: string;
+    region: string;
 }) {
-    const { accessKeyId, secretAccessKey, bucket, key, contentType, expiresIn, endpoint } = params;
+    const { accessKeyId, secretAccessKey, bucket, key, contentType, expiresIn, endpoint, region } = params;
 
     // Calculate expiration time in seconds from now
     const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
 
-    // Create a URL for the PUT operation (using host-style URL)
+    // Create a URL for the PUT operation
     const objectUrl = new URL(`${endpoint}/${bucket}/${key}`);
 
-    // Create simple query parameters for the presigned URL
+    // Create query parameters for the presigned URL
     const query = new URLSearchParams({
         'X-Amz-Algorithm': 'AWS4-HMAC-SHA256',
-        'X-Amz-Credential': `${accessKeyId}/${getDate()}/eu-central-003/s3/aws4_request`,
+        'X-Amz-Credential': `${accessKeyId}/${getDate()}/${region}/s3/aws4_request`,
         'X-Amz-Date': getAmzDate(),
         'X-Amz-Expires': expiresIn.toString(),
         'X-Amz-SignedHeaders': 'host;content-type',
@@ -62,13 +63,13 @@ async function createPresignedUrl(params: {
     const stringToSign = [
         'AWS4-HMAC-SHA256',                // Algorithm
         getAmzDate(),                      // Request date
-        `${getDate()}/eu-central-003/s3/aws4_request`, // Credential Scope
-        await hexHash(canonicalRequest)    // Hash of canonical request (now async)
+        `${getDate()}/${region}/s3/aws4_request`, // Credential Scope
+        await hexHash(canonicalRequest)    // Hash of canonical request
     ].join('\n');
 
     // Derive the signing key
     const dateKey = hmacSha256('AWS4' + secretAccessKey, getDate());
-    const dateRegionKey = hmacSha256(dateKey, 'eu-central-003');
+    const dateRegionKey = hmacSha256(dateKey, region);
     const dateRegionServiceKey = hmacSha256(dateRegionKey, 's3');
     const signingKey = hmacSha256(dateRegionServiceKey, 'aws4_request');
 
@@ -93,7 +94,7 @@ function getAmzDate() {
         .replace(/-/g, '')
         .replace(/:/g, '')
         .replace(/\.\d{3}/g, '')
-        .replace('Z', '00Z');
+        .replace('Z', 'Z');  // Формат YYYYMMDDTHHMMSSZ
 }
 
 function hmacSha256(key: string | ArrayBuffer, message: string): ArrayBuffer {
@@ -109,10 +110,9 @@ function hmacSha256Hex(key: ArrayBuffer, message: string): string {
         .join('');
 }
 
-// Changed to async function since crypto.subtle.digest is async
 async function hexHash(text: string): Promise<string> {
     const data = new TextEncoder().encode(text);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data); // Now async
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
@@ -247,23 +247,24 @@ serve(async (req: Request) => {
         }
 
         // Generate a unique file key
-        const fileExt = requestData.fileName.split('.').pop()
+        const fileExt = requestData.fileName.split('.').pop() || 'mp4';
         const fileKey = `${userId}/${uuidv4()}.${fileExt}`
         console.log("🔧 Generated file key:", fileKey)
 
         // Create presigned URL for direct upload
-        console.log("🔧 Generating presigned URL for B2 upload")
+        console.log("🔧 Generating presigned URL for Yandex S3 upload")
 
         try {
             // Use our custom implementation to create a presigned URL
-            const presignedUrl = await createPresignedUrl({  // Now await the async function
-                accessKeyId: B2_KEY_ID!,
-                secretAccessKey: B2_APPLICATION_KEY!,
-                bucket: B2_BUCKET!,
+            const presignedUrl = await createPresignedUrl({
+                accessKeyId: S3_KEY_ID!,
+                secretAccessKey: S3_KEY_SECRET!,
+                bucket: S3_BUCKET!,
                 key: fileKey,
                 contentType: requestData.fileType,
                 expiresIn: 900, // 15 minutes
-                endpoint: B2_ENDPOINT,
+                endpoint: S3_ENDPOINT,
+                region: S3_REGION,
             });
 
             console.log("🔧 Generated presigned URL successfully")

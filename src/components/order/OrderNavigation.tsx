@@ -42,7 +42,7 @@ const OrderNavigation: React.FC<OrderNavigationProps> = ({
           {currentStep === 0 ? (
             <>
               <Icon name="ArrowLeft" size={16} className="mr-2" />
-              Вернуться на главную
+              Назад
             </>
           ) : (
             "Назад"

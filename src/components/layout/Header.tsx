@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ const Header: React.FC = () => {
 
     // Добавляем обработчик события скролла
     window.addEventListener("scroll", handleScroll);
-    
+
     // Вызываем обработчик при монтировании, чтобы установить начальное состояние
     handleScroll();
 
@@ -60,10 +59,14 @@ const Header: React.FC = () => {
   return (
     <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full flex justify-center">
       <div className="w-full max-w-[66rem] px-4 md:px-0">
-        <div 
+        <div
           className={`
-            rounded-full shadow-md transition-all duration-300 ease-in-out
-            ${scrolled ? "bg-[#1a1a1d] glass-dark" : "bg-transparent"}
+            rounded-full shadow-md transition-all duration-300 ease-in-out border
+            ${
+              scrolled
+                ? "bg-[#1a1a1d] glass-dark border-white/10"
+                : "bg-transparent border-transparent"
+            }
           `}
         >
           <div className="flex items-center justify-between px-4 py-2">

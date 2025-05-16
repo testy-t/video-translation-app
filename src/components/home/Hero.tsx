@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 import AnimatedBackground from "./AnimatedBackground";
 import LanguageSelector from "./LanguageSelector";
+import OrderProcessDialog from "../order/OrderProcessDialog";
 
 const Hero: React.FC = () => {
+  const [isOrderDialogOpen, setIsOrderDialogOpen] = useState(false);
+
   // Данные языков
   const languages = [
     { code: "ru", flag: "🇷🇺", name: "Русский", isActive: true },
@@ -17,6 +20,11 @@ const Hero: React.FC = () => {
   // Обработчик выбора языка
   const handleLanguageSelect = (code: string) => {
     console.log(`Selected language: ${code}`);
+  };
+
+  // Открытие диалога заказа
+  const openOrderDialog = () => {
+    setIsOrderDialogOpen(true);
   };
 
   return (
@@ -41,8 +49,11 @@ const Hero: React.FC = () => {
                 язык с идеальной синхронизацией губ за считанные минуты.
               </p>
 
-              {/* Кнопка действия - теперь синяя */}
-              <Button className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4">
+              {/* Кнопка действия - теперь с обработчиком */}
+              <Button
+                className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 text-base font-medium rounded-full mt-4"
+                onClick={openOrderDialog}
+              >
                 <Icon name="Play" size={20} className="mr-2" />
                 Начать Бесплатно
               </Button>
@@ -50,7 +61,10 @@ const Hero: React.FC = () => {
 
             {/* Правая колонка - плейсхолдер для видео */}
             <div className="mx-auto w-full max-w-sm">
-              <div className="aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
+              <div
+                className="aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark cursor-pointer"
+                onClick={openOrderDialog}
+              >
                 <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
                   <Icon name="Play" size={30} className="text-white ml-1" />
                 </div>
@@ -76,6 +90,12 @@ const Hero: React.FC = () => {
       <div className="absolute -bottom-0 left-0 w-full bg-white h-10">
         {/* Простой переход без анимации */}
       </div>
+
+      {/* Диалог процесса заказа */}
+      <OrderProcessDialog
+        open={isOrderDialogOpen}
+        onOpenChange={setIsOrderDialogOpen}
+      />
     </section>
   );
 };

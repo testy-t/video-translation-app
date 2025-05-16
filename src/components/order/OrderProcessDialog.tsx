@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -24,7 +23,7 @@ const OrderProcessDialog: React.FC<OrderProcessDialogProps> = ({
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
-  
+
   const steps = [
     { id: "upload", title: "Загрузите видео", icon: "Upload" },
     { id: "language", title: "Выберите язык", icon: "Languages" },
@@ -67,25 +66,28 @@ const OrderProcessDialog: React.FC<OrderProcessDialogProps> = ({
               Перевести ваше видео
             </DialogTitle>
             <Progress value={progress} className="h-2 mt-4" />
-            
-            {/* Шаги процесса */}
+
+            {/* шаги процесса */}
             <div className="flex justify-between mt-4 px-4">
               {steps.map((step, index) => (
-                <div 
-                  key={step.id} 
+                <div
+                  key={step.id}
                   className={`flex flex-col items-center relative ${
-                    index <= currentStep ? "text-primary" : "text-muted-foreground"
+                    index <= currentStep
+                      ? "text-primary"
+                      : "text-muted-foreground"
                   }`}
                 >
-                  <div 
+                  <div
                     className={`
                       w-10 h-10 rounded-full flex items-center justify-center mb-2
                       transition-colors duration-200
-                      ${index < currentStep 
-                        ? "bg-primary text-primary-foreground" 
-                        : index === currentStep 
-                          ? "border-2 border-primary text-primary" 
-                          : "border-2 border-muted-foreground text-muted-foreground"
+                      ${
+                        index < currentStep
+                          ? "bg-primary text-primary-foreground"
+                          : index === currentStep
+                            ? "border-2 border-primary text-primary"
+                            : "border-2 border-muted-foreground text-muted-foreground"
                       }
                     `}
                   >
@@ -95,16 +97,11 @@ const OrderProcessDialog: React.FC<OrderProcessDialogProps> = ({
                       <span>{index + 1}</span>
                     )}
                   </div>
-                  <span className="text-xs font-medium hidden md:block">{step.title}</span>
-                  
-                  {/* Соединительная линия между шагами */}
-                  {index < steps.length - 1 && (
-                    <div 
-                      className={`absolute top-5 w-[calc(100%-2.5rem)] h-[2px] left-[60%] -z-10 ${
-                        index < currentStep ? "bg-primary" : "bg-muted"
-                      }`} 
-                    />
-                  )}
+                  <span className="text-xs font-medium hidden md:block">
+                    {step.title}
+                  </span>
+
+                  {/* Удаляем соединительные линии между шагами */}
                 </div>
               ))}
             </div>
@@ -113,30 +110,26 @@ const OrderProcessDialog: React.FC<OrderProcessDialogProps> = ({
           {/* Содержимое текущего шага */}
           <div className="p-6 flex-grow overflow-auto max-h-[70vh]">
             {currentStep === 0 && (
-              <UploadVideoStep 
-                videoFile={videoFile} 
-                setVideoFile={setVideoFile} 
+              <UploadVideoStep
+                videoFile={videoFile}
+                setVideoFile={setVideoFile}
               />
             )}
             {currentStep === 1 && (
-              <SelectLanguageStep 
-                videoFile={videoFile} 
+              <SelectLanguageStep
+                videoFile={videoFile}
                 selectedLanguage={selectedLanguage}
                 setSelectedLanguage={setSelectedLanguage}
               />
             )}
             {currentStep === 2 && (
-              <PaymentStep 
+              <PaymentStep
                 videoFile={videoFile}
                 selectedLanguage={selectedLanguage}
                 onPayment={handlePayment}
               />
             )}
-            {currentStep === 3 && (
-              <ResultStep 
-                orderNumber={orderNumber}
-              />
-            )}
+            {currentStep === 3 && <ResultStep orderNumber={orderNumber} />}
           </div>
 
           {/* Кнопки навигации */}
@@ -148,29 +141,25 @@ const OrderProcessDialog: React.FC<OrderProcessDialogProps> = ({
             >
               Назад
             </Button>
-            
+
             {currentStep < 2 && (
-              <Button 
+              <Button
                 onClick={goToNextStep}
                 disabled={
-                  (currentStep === 0 && !videoFile) || 
+                  (currentStep === 0 && !videoFile) ||
                   (currentStep === 1 && !selectedLanguage)
                 }
               >
                 Продолжить
               </Button>
             )}
-            
+
             {currentStep === 2 && (
-              <Button onClick={handlePayment}>
-                Оплатить
-              </Button>
+              <Button onClick={handlePayment}>Оплатить</Button>
             )}
-            
+
             {currentStep === 3 && (
-              <Button onClick={() => onOpenChange(false)}>
-                Закрыть
-              </Button>
+              <Button onClick={() => onOpenChange(false)}>Закрыть</Button>
             )}
           </div>
         </div>

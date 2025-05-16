@@ -1,173 +1,180 @@
-
 import React, { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
 
 interface UploadVideoStepProps {
   videoFile: File | null;
   setVideoFile: (file: File | null) => void;
 }
 
-const UploadVideoStep: React.FC<UploadVideoStepProps> = ({ 
-  videoFile, 
-  setVideoFile 
+const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
+  videoFile,
+  setVideoFile,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      simulateUpload(e.target.files[0]);
+  // Обработчик выбора файла
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      setIsLoading(true);
+
+      // Создаем URL для предпросмотра видео
+      const fileUrl = URL.createObjectURL(files[0]);
+      setVideoSrc(fileUrl);
+      setVideoFile(files[0]);
+
+      // Имитируем загрузку
+      setTimeout(() => setIsLoading(false), 800);
     }
   };
 
+  // Обработчики перетаскивания
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const handleDragLeave = () => {
     setIsDragging(false);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      simulateUpload(e.dataTransfer.files[0]);
+
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      setIsLoading(true);
+
+      // Проверяем, является ли файл видео
+      if (files[0].type.startsWith("video/")) {
+        const fileUrl = URL.createObjectURL(files[0]);
+        setVideoSrc(fileUrl);
+        setVideoFile(files[0]);
+      }
+
+      // Имитируем загрузку
+      setTimeout(() => setIsLoading(false), 800);
     }
   };
 
-  // Симуляция загрузки файла
-  const simulateUpload = (file: File) => {
-    setIsUploading(true);
-    setUploadProgress(0);
-    
-    // Проверяем, что это видеофайл
-    if (!file.type.startsWith('video/')) {
-      alert('Пожалуйста, загрузите видеофайл');
-      setIsUploading(false);
-      return;
+  // Очистка выбранного файла
+  const clearSelection = () => {
+    if (videoSrc) {
+      URL.revokeObjectURL(videoSrc);
     }
-    
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsUploading(false);
-          setVideoFile(file);
-          return 100;
-        }
-        return prev + 10;
-      });
-    }, 300);
-  };
-
-  const triggerFileInput = () => {
+    setVideoSrc(null);
+    setVideoFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.click();
+      fileInputRef.current.value = "";
     }
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <h3 className="text-xl font-medium mb-2">Загрузите ваше видео</h3>
-      <p className="text-muted-foreground mb-6 text-center">
-        Загрузите видео, которое хотите перевести на другой язык. Поддерживаются форматы MP4, MOV, AVI и WebM.
-      </p>
-      
+    <div className="fade-slide-in">
+      <h2 className="text-xl font-semibold mb-6">Загрузите ваше видео</h2>
+
       {!videoFile ? (
-        <>
-          <div 
-            className={`
-              w-full p-10 border-2 border-dashed rounded-lg 
-              flex flex-col items-center justify-center
-              transition-colors duration-200 cursor-pointer
-              ${isDragging ? 'border-primary bg-primary/5' : 'border-muted-foreground/30'}
-            `}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={triggerFileInput}
-          >
-            <Icon 
-              name="Upload" 
-              size={48} 
-              className={`mb-4 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} 
-            />
-            <p className="text-center mb-2">
-              Перетащите видеофайл сюда или
+        <div
+          className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-all
+            ${isDragging ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/70"}`}
+          onClick={() => fileInputRef.current?.click()}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="video/*"
+            className="hidden"
+          />
+
+          <div className="flex flex-col items-center">
+            <Icon name="Upload" size={48} className="text-gray-400 mb-4" />
+            <p className="text-lg font-medium mb-2">
+              Перетащите видео или нажмите для выбора
             </p>
-            <Button 
-              variant="secondary" 
-              onClick={(e) => {
-                e.stopPropagation();
-                triggerFileInput();
-              }}
-            >
-              Выберите файл
-            </Button>
-            <Input 
-              ref={fileInputRef}
-              type="file" 
-              accept="video/*" 
-              onChange={handleFileSelect}
-              className="hidden"
-            />
+            <p className="text-gray-500 text-sm">
+              Поддерживаются форматы: MP4, AVI, MOV, MKV (до 2GB)
+            </p>
           </div>
-          
-          <div className="mt-6 w-full">
-            <p className="text-sm text-muted-foreground mb-2">Требования к файлу:</p>
-            <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
-              <li>Максимальный размер: 2 ГБ</li>
-              <li>Форматы: MP4, MOV, AVI, WebM</li>
-              <li>Максимальная длительность: 30 минут</li>
-            </ul>
-          </div>
-        </>
+        </div>
       ) : (
-        <div className="w-full">
-          <div className="p-4 border rounded-lg mb-4 flex items-center">
-            <div className="mr-4 bg-primary/10 p-3 rounded-md">
-              <Icon name="Video" size={24} className="text-primary" />
+        <div className="border rounded-lg p-6 bg-gray-50 fade-slide-in">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-10">
+              <Icon
+                name="Loader2"
+                className="animate-spin text-primary h-10 w-10 mb-4"
+              />
+              <p className="text-center text-gray-600">Загрузка видео...</p>
             </div>
-            <div className="flex-grow">
-              <p className="font-medium truncate">{videoFile.name}</p>
-              <p className="text-sm text-muted-foreground">
-                {(videoFile.size / (1024 * 1024)).toFixed(2)} МБ
-              </p>
-            </div>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => setVideoFile(null)}
-            >
-              <Icon name="Trash2" size={18} />
-            </Button>
-          </div>
-          
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-800 flex items-center">
-            <Icon name="CheckCircle" size={20} className="mr-2 text-green-600" />
-            Видео успешно загружено. Теперь вы можете перейти к следующему шагу.
-          </div>
+          ) : (
+            <>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-medium text-lg">Предпросмотр видео</h3>
+                <button
+                  onClick={clearSelection}
+                  className="text-gray-500 hover:text-red-500 transition-colors"
+                >
+                  <Icon name="X" size={20} />
+                </button>
+              </div>
+
+              <div className="aspect-video bg-black rounded-md overflow-hidden mb-4">
+                {videoSrc && (
+                  <video src={videoSrc} controls className="w-full h-full" />
+                )}
+              </div>
+
+              <div className="flex items-center">
+                <Icon name="FileVideo" className="text-primary mr-2" />
+                <span className="font-medium">{videoFile.name}</span>
+                <span className="text-gray-500 ml-2">
+                  ({Math.round((videoFile.size / 1024 / 1024) * 10) / 10} MB)
+                </span>
+              </div>
+            </>
+          )}
         </div>
       )}
-      
-      {isUploading && (
-        <div className="mt-6 w-full">
-          <div className="flex justify-between mb-2 text-sm">
-            <span>Загрузка...</span>
-            <span>{uploadProgress}%</span>
-          </div>
-          <Progress value={uploadProgress} className="w-full h-2" />
-        </div>
-      )}
+
+      <div className="mt-6">
+        <h3 className="font-medium mb-3">Рекомендации:</h3>
+        <ul className="space-y-2 text-gray-600">
+          <li className="flex items-start">
+            <Icon
+              name="Check"
+              className="text-green-500 mt-1 mr-2 flex-shrink-0"
+              size={16}
+            />
+            <span>
+              Используйте видео хорошего качества для лучших результатов
+            </span>
+          </li>
+          <li className="flex items-start">
+            <Icon
+              name="Check"
+              className="text-green-500 mt-1 mr-2 flex-shrink-0"
+              size={16}
+            />
+            <span>Убедитесь, что речь говорящего четко слышна</span>
+          </li>
+          <li className="flex items-start">
+            <Icon
+              name="Check"
+              className="text-green-500 mt-1 mr-2 flex-shrink-0"
+              size={16}
+            />
+            <span>Оптимальная длительность видео - до 10 минут</span>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

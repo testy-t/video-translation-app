@@ -509,3 +509,40 @@
 .delay-400 {
   animation-delay: 400ms;
 }
+
+/* Анимация для страницы */
+.page-transition {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Анимация для блоков при переходах между шагами */
+.order-step-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.order-step-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.order-step-transition-exit {
+  opacity: 1;
+}
+
+.order-step-transition-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}

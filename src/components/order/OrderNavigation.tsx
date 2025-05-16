@@ -1,5 +1,5 @@
-
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
@@ -8,72 +8,62 @@ interface OrderNavigationProps {
   totalSteps: number;
   goToNextStep: () => void;
   goToPreviousStep: () => void;
-  isNextDisabled: boolean;
-  isCompleted: boolean;
+  isNextDisabled?: boolean;
+  isCompleted?: boolean;
+  isProcessingPayment?: boolean;
   onPayment?: () => void;
 }
 
 /**
- * Компонент навигации для переключения между шагами заказа
+ * Компонент навигации между шагами заказа
  */
 const OrderNavigation: React.FC<OrderNavigationProps> = ({
   currentStep,
   totalSteps,
   goToNextStep,
   goToPreviousStep,
-  isNextDisabled,
-  isCompleted,
-  onPayment
+  isNextDisabled = false,
+  isCompleted = false,
+  isProcessingPayment = false,
+  onPayment,
 }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="mt-8 flex flex-row justify-between gap-4 w-full">
-      {/* Кнопка "Назад" - скрыта на первом и последнем шаге */}
-      {currentStep > 0 && !isCompleted && (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-6 flex justify-between z-10">
+      <div className="container mx-auto max-w-5xl flex justify-between">
         <Button
           variant="outline"
-          className="min-w-[180px] px-6 py-4 h-auto text-base font-medium flex items-center justify-center gap-2"
-          onClick={goToPreviousStep}
+          onClick={() =>
+            currentStep === 0 ? navigate("/") : goToPreviousStep()
+          }
         >
-          <Icon name="ArrowLeft" size={18} />
-          <span>Вернуться на главную</span>
+          {currentStep === 0 ? (
+            <>
+              <Icon name="ArrowLeft" size={16} className="mr-2" />
+              Вернуться на главную
+            </>
+          ) : (
+            "Назад"
+          )}
         </Button>
-      )}
-      
-      {/* Пустое пространство для выравнивания, если нет кнопки "Назад" */}
-      {(currentStep === 0 || isCompleted) && <div />}
-      
-      {/* Кнопка "Продолжить" или "Оплатить" */}
-      {!isCompleted ? (
-        currentStep === totalSteps - 2 ? (
-          // Кнопка "Оплатить" на предпоследнем шаге
-          <Button
-            className="min-w-[180px] px-6 py-4 h-auto text-base font-medium bg-[#0070F3] hover:bg-[#0060d3] flex items-center justify-center gap-2"
-            onClick={onPayment}
-          >
-            <span>Оплатить</span>
-            <Icon name="CreditCard" size={18} />
+
+        {currentStep < totalSteps - 2 && (
+          <Button onClick={goToNextStep} disabled={isNextDisabled}>
+            Продолжить
           </Button>
-        ) : (
-          // Кнопка "Продолжить" на остальных шагах
-          <Button
-            className="min-w-[180px] px-6 py-4 h-auto text-base font-medium bg-[#0070F3] hover:bg-[#0060d3] flex items-center justify-center gap-2"
-            onClick={goToNextStep}
-            disabled={isNextDisabled}
-          >
-            <span>Продолжить</span>
-            <Icon name="ArrowRight" size={18} />
+        )}
+
+        {currentStep === totalSteps - 2 && (
+          <Button onClick={onPayment} disabled={isProcessingPayment}>
+            {isProcessingPayment ? "Обработка..." : "Оплатить"}
           </Button>
-        )
-      ) : (
-        // Кнопка "Вернуться на главную" на последнем шаге
-        <Button
-          className="min-w-[180px] px-6 py-4 h-auto text-base font-medium bg-[#0070F3] hover:bg-[#0060d3] flex items-center justify-center gap-2"
-          onClick={() => window.location.href = '/'}
-        >
-          <span>Вернуться на главную</span>
-          <Icon name="Home" size={18} />
-        </Button>
-      )}
+        )}
+
+        {currentStep === totalSteps - 1 && (
+          <Button onClick={() => navigate("/")}>На главную</Button>
+        )}
+      </div>
     </div>
   );
 };

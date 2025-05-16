@@ -64,12 +64,12 @@ const Hero: React.FC = () => {
                 <Icon name="Video" size={16} className="text-white" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-3 md:mb-6 text-white">
+              <h1 className="text-3xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-2 md:mb-6 text-white">
                 Ваш голос на любом языке
               </h1>
 
-              {/* Инлайн переключатель языков - только на мобильных */}
-              <div className="md:hidden mb-4">
+              {/* Инлайн переключатель языков только для мобильной версии */}
+              <div className="mb-4 md:hidden">
                 <InlineLanguageToggle
                   languages={languages}
                   activeLanguage={activeLanguage}
@@ -103,7 +103,7 @@ const Hero: React.FC = () => {
                 </p>
               </div>
 
-              {/* Языки - только на десктопе */}
+              {/* Языки - только для десктопа */}
               <div className="mt-4 md:mt-5 w-full md:w-[85%] px-0 md:px-2 hidden md:block">
                 <LanguageSelector
                   languages={languages}

@@ -22,8 +22,29 @@ const InlineLanguageToggle: React.FC<InlineLanguageToggleProps> = ({
   activeLanguage,
   onSelectLanguage,
 }) => {
+  // Короткие коды языков для отображения
+  const getShortCode = (code: string): string => {
+    const shortCodes: Record<string, string> = {
+      ru: 'RU',
+      en: 'EN',
+      zh: 'ZH',
+      es: 'ES',
+      de: 'DE',
+      fr: 'FR',
+      it: 'IT',
+      ja: 'JP',
+      ar: 'AR',
+      pt: 'PT',
+      ko: 'KO',
+      hi: 'HI',
+      tr: 'TR',
+    };
+    
+    return shortCodes[code] || code.toUpperCase();
+  };
+
   return (
-    <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-full overflow-x-auto py-1 px-1 max-w-full border border-white/10">
+    <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-full overflow-x-auto py-1 px-1 max-w-full border border-white/10 no-scrollbar">
       {languages.map((language) => (
         <button
           key={language.code}
@@ -37,7 +58,7 @@ const InlineLanguageToggle: React.FC<InlineLanguageToggleProps> = ({
           `}
         >
           <span className="mr-1.5">{language.flag}</span>
-          <span className="text-xs">{language.name}</span>
+          <span>{getShortCode(language.code)}</span>
         </button>
       ))}
     </div>

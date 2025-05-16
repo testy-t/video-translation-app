@@ -546,3 +546,15 @@
   opacity: 0;
   transition: opacity 300ms;
 }
+
+/* Дополнительные стили для скрытия скроллбара */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE и Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

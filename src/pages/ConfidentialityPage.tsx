@@ -1,241 +1,121 @@
-import React from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 
+import React from "react";
+import DocumentLayout from "@/components/legal/DocumentLayout";
+import PolicySection from "@/components/legal/PolicySection";
+import PolicySubsection from "@/components/legal/PolicySubsection";
+import PolicyList from "@/components/legal/PolicyList";
+import PolicyParagraph from "@/components/legal/PolicyParagraph";
+import EmailLink from "@/components/legal/EmailLink";
+
+import {
+  introductionData,
+  informationCollectedData,
+  informationUsageData,
+  informationDisclosureData,
+  dataSecurity,
+  userRights,
+  cookiesPolicy,
+  childrenPolicy,
+  policyChanges,
+  contactInfo
+} from "@/data/confidentialityPolicy";
+
+/**
+ * Страница политики конфиденциальности
+ */
 const ConfidentialityPage: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-
-      <main className="flex-grow container mx-auto max-w-4xl py-24 px-4">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-center mb-8">
-            Политика конфиденциальности
-          </h1>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">1. Введение</h2>
-            <p className="mb-4">
-              Сервис "ГолосОК" (далее - "мы", "нас" или "наш") ценит
-              конфиденциальность наших пользователей (далее - "вы", "ваш"). Эта
-              Политика конфиденциальности объясняет, как мы собираем,
-              используем, раскрываем и защищаем вашу информацию при
-              использовании нашего сервиса.
-            </p>
-            <p>
-              Используя наш сервис, вы соглашаетесь с условиями данной Политики
-              конфиденциальности. Если вы не согласны с этими условиями,
-              пожалуйста, не используйте наш сервис.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              2. Информация, которую мы собираем
-            </h2>
-            <p className="mb-4">Мы можем собирать следующие типы информации:</p>
-            <h3 className="text-lg font-medium mt-4 mb-2">
-              2.1. Личная информация
-            </h3>
-            <p className="mb-4">
-              Мы собираем личную информацию, которую вы предоставляете нам
-              добровольно, такую как:
-            </p>
-            <ul className="list-disc pl-8 mb-4">
-              <li>Имя</li>
-              <li>Адрес электронной почты</li>
-              <li>Информация о платежах</li>
-              <li>
-                Любая другая информация, которую вы предоставляете нам
-                добровольно
-              </li>
-            </ul>
-
-            <h3 className="text-lg font-medium mt-4 mb-2">
-              2.2. Информация о видеоматериалах
-            </h3>
-            <p className="mb-4">
-              Мы собираем и обрабатываем видеоматериалы, которые вы загружаете
-              для использования нашего сервиса.
-            </p>
-
-            <h3 className="text-lg font-medium mt-4 mb-2">
-              2.3. Автоматически собираемая информация
-            </h3>
-            <p>
-              Мы автоматически собираем определенную информацию, когда вы
-              используете наш сервис, включая:
-            </p>
-            <ul className="list-disc pl-8 mb-4">
-              <li>IP-адрес</li>
-              <li>Тип браузера</li>
-              <li>Операционная система</li>
-              <li>Дата и время использования</li>
-              <li>Действия на сайте</li>
-              <li>Статистика использования</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              3. Как мы используем вашу информацию
-            </h2>
-            <p className="mb-4">
-              Мы используем собранную информацию для различных целей, включая:
-            </p>
-            <ul className="list-disc pl-8 mb-4">
-              <li>Предоставление и поддержка нашего сервиса</li>
-              <li>Обработка платежей</li>
-              <li>Улучшение нашего сервиса</li>
-              <li>
-                Связь с вами для предоставления обновлений или ответов на
-                запросы
-              </li>
-              <li>
-                Отправка информационных и маркетинговых материалов (с вашего
-                разрешения)
-              </li>
-              <li>Обнаружение и предотвращение мошенничества</li>
-              <li>Соблюдение юридических обязательств</li>
-            </ul>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              4. Раскрытие информации
-            </h2>
-            <p className="mb-4">
-              Мы можем раскрывать вашу информацию в следующих случаях:
-            </p>
-            <h3 className="text-lg font-medium mt-4 mb-2">
-              4.1. Деловым партнерам
-            </h3>
-            <p className="mb-4">
-              Мы можем делиться информацией с нашими деловыми партнерами для
-              поддержки определенных аспектов нашего сервиса, таких как
-              обработка платежей, хостинг или обслуживание клиентов.
-            </p>
-
-            <h3 className="text-lg font-medium mt-4 mb-2">
-              4.2. Юридические требования
-            </h3>
-            <p className="mb-4">
-              Мы можем раскрывать вашу информацию, если это требуется по закону
-              или в ответ на действительные запросы органов государственной
-              власти (например, в судебном порядке, по постановлению суда или по
-              судебной повестке).
-            </p>
-
-            <h3 className="text-lg font-medium mt-4 mb-2">4.3. Защита прав</h3>
-            <p>
-              Мы можем раскрыть вашу информацию, если мы считаем, что это
-              необходимо для защиты прав, собственности или безопасности нашей
-              компании, наших пользователей или других лиц.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              5. Безопасность данных
-            </h2>
-            <p className="mb-4">
-              Мы применяем коммерчески обоснованные меры безопасности для защиты
-              вашей информации от несанкционированного доступа, изменения,
-              раскрытия или уничтожения. Однако, помните, что ни один метод
-              передачи данных через Интернет или метод электронного хранения не
-              является на 100% безопасным.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">6. Ваши права</h2>
-            <p className="mb-4">
-              В зависимости от вашего местоположения, вы можете иметь
-              определенные права в отношении ваших персональных данных:
-            </p>
-            <ul className="list-disc pl-8 mb-4">
-              <li>Право на доступ к вашей личной информации</li>
-              <li>Право на исправление неточной информации</li>
-              <li>Право на удаление ваших данных</li>
-              <li>Право на ограничение обработки</li>
-              <li>Право на перенос данных</li>
-              <li>Право на возражение против обработки</li>
-            </ul>
-            <p>
-              Для реализации этих прав, пожалуйста, свяжитесь с нами по адресу
-              электронной почты:
-              <a
-                href="mailto:support@golosok.ai"
-                className="text-blue-600 hover:text-blue-800 ml-1"
-              >
-                support@golosok.ai
-              </a>
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">7. Файлы cookie</h2>
-            <p className="mb-4">
-              Мы используем файлы cookie и аналогичные технологии отслеживания
-              для отслеживания активности на нашем сервисе и хранения
-              определенной информации. Файлы cookie - это файлы с небольшим
-              объемом данных, которые могут включать анонимный уникальный
-              идентификатор.
-            </p>
-            <p>
-              Вы можете настроить свой браузер на отказ от всех файлов cookie
-              или на уведомление о том, когда файл cookie отправляется. Однако,
-              если вы не принимаете файлы cookie, возможно, вы не сможете
-              использовать некоторые части нашего сервиса.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">8. Дети</h2>
-            <p>
-              Наш сервис не предназначен для лиц младше 18 лет. Мы сознательно
-              не собираем личную информацию от детей младше 18 лет. Если вы
-              являетесь родителем или опекуном и знаете, что ваш ребенок
-              предоставил нам личную информацию, пожалуйста, свяжитесь с нами.
-            </p>
-          </section>
-
-          <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              9. Изменения в политике конфиденциальности
-            </h2>
-            <p className="mb-4">
-              Мы можем обновлять нашу Политику конфиденциальности время от
-              времени. Мы будем уведомлять вас о любых изменениях, размещая
-              новую Политику конфиденциальности на этой странице.
-            </p>
-            <p>
-              Мы рекомендуем периодически просматривать эту Политику
-              конфиденциальности на предмет изменений. Изменения вступают в силу
-              после публикации на этой странице.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-4">10. Связь с нами</h2>
-            <p className="mb-4">
-              Если у вас есть вопросы об этой Политике конфиденциальности,
-              пожалуйста, свяжитесь с нами по электронной почте:
-            </p>
-            <p>
-              <a
-                href="mailto:support@golosok.ai"
-                className="text-blue-600 hover:text-blue-800"
-              >
-                support@golosok.ai
-              </a>
-            </p>
-          </section>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+    <DocumentLayout title="Политика конфиденциальности">
+      {/* Раздел 1: Введение */}
+      <PolicySection id={introductionData.id} title={introductionData.title}>
+        {introductionData.paragraphs.map((paragraph, index) => (
+          <PolicyParagraph key={index}>{paragraph}</PolicyParagraph>
+        ))}
+      </PolicySection>
+      
+      {/* Раздел 2: Информация, которую мы собираем */}
+      <PolicySection id={informationCollectedData.id} title={informationCollectedData.title}>
+        <PolicyParagraph>{informationCollectedData.intro}</PolicyParagraph>
+        
+        {informationCollectedData.subsections.map((subsection, index) => (
+          <PolicySubsection key={index} id={subsection.id} title={subsection.title}>
+            <PolicyParagraph>{subsection.content}</PolicyParagraph>
+            {subsection.items && <PolicyList items={subsection.items} />}
+          </PolicySubsection>
+        ))}
+      </PolicySection>
+      
+      {/* Раздел 3: Как мы используем информацию */}
+      <PolicySection id={informationUsageData.id} title={informationUsageData.title}>
+        <PolicyParagraph>{informationUsageData.intro}</PolicyParagraph>
+        <PolicyList items={informationUsageData.items} />
+      </PolicySection>
+      
+      {/* Раздел 4: Раскрытие информации */}
+      <PolicySection id={informationDisclosureData.id} title={informationDisclosureData.title}>
+        <PolicyParagraph>{informationDisclosureData.intro}</PolicyParagraph>
+        
+        {informationDisclosureData.subsections.map((subsection, index) => (
+          <PolicySubsection key={index} id={subsection.id} title={subsection.title}>
+            <PolicyParagraph className={index === informationDisclosureData.subsections.length - 1 ? "" : "mb-4"}>
+              {subsection.content}
+            </PolicyParagraph>
+          </PolicySubsection>
+        ))}
+      </PolicySection>
+      
+      {/* Раздел 5: Безопасность данных */}
+      <PolicySection id={dataSecurity.id} title={dataSecurity.title}>
+        <PolicyParagraph>{dataSecurity.content}</PolicyParagraph>
+      </PolicySection>
+      
+      {/* Раздел 6: Ваши права */}
+      <PolicySection id={userRights.id} title={userRights.title}>
+        <PolicyParagraph>{userRights.intro}</PolicyParagraph>
+        <PolicyList items={userRights.rights} />
+        <PolicyParagraph>
+          {userRights.contact}{" "}
+          <EmailLink email="support@golosok.ai" />
+        </PolicyParagraph>
+      </PolicySection>
+      
+      {/* Раздел 7: Файлы cookie */}
+      <PolicySection id={cookiesPolicy.id} title={cookiesPolicy.title}>
+        {cookiesPolicy.paragraphs.map((paragraph, index) => (
+          <PolicyParagraph 
+            key={index} 
+            className={index === cookiesPolicy.paragraphs.length - 1 ? "" : "mb-4"}
+          >
+            {paragraph}
+          </PolicyParagraph>
+        ))}
+      </PolicySection>
+      
+      {/* Раздел 8: Дети */}
+      <PolicySection id={childrenPolicy.id} title={childrenPolicy.title}>
+        <PolicyParagraph>{childrenPolicy.content}</PolicyParagraph>
+      </PolicySection>
+      
+      {/* Раздел 9: Изменения в политике */}
+      <PolicySection id={policyChanges.id} title={policyChanges.title}>
+        {policyChanges.paragraphs.map((paragraph, index) => (
+          <PolicyParagraph 
+            key={index} 
+            className={index === policyChanges.paragraphs.length - 1 ? "" : "mb-4"}
+          >
+            {paragraph}
+          </PolicyParagraph>
+        ))}
+      </PolicySection>
+      
+      {/* Раздел 10: Контакты */}
+      <PolicySection id={contactInfo.id} title={contactInfo.title} className="">
+        <PolicyParagraph>{contactInfo.intro}</PolicyParagraph>
+        <PolicyParagraph className="">
+          <EmailLink email={contactInfo.email} />
+        </PolicyParagraph>
+      </PolicySection>
+    </DocumentLayout>
   );
 };
 

@@ -39,10 +39,27 @@ export const useOrderProcess = () => {
     navigate(`/order?step=${currentStep}`, { replace: true });
   }, [currentStep, navigate]);
   
-  // Create transaction when component mounts
+  // Create transaction and restore data when component mounts
   useEffect(() => {
-    const createTransaction = async () => {
+    const setupOrderProcess = async () => {
       try {
+        // Пытаемся восстановить данные предыдущего заказа из localStorage
+        const savedVideoId = localStorage.getItem('uploadedVideoId');
+        const savedFileKey = localStorage.getItem('uploadedFileKey');
+        const savedTransactionId = localStorage.getItem('transactionId');
+        
+        // Если есть данные о предыдущей загрузке, восстанавливаем их
+        if (savedVideoId && savedFileKey) {
+          setVideoId(parseInt(savedVideoId));
+          setFileKey(savedFileKey);
+          
+          // Если был сохранен ID транзакции, используем его
+          if (savedTransactionId) {
+            setTransactionId(savedTransactionId);
+            return; // Пропускаем создание новой транзакции
+          }
+        }
+        
         // Check if user is authenticated
         const { data: { session } } = await supabase.auth.getSession();
         
@@ -79,7 +96,7 @@ export const useOrderProcess = () => {
           console.log("Created temporary transaction for guest user", tempTransactionId);
         }
       } catch (error) {
-        console.error("Error creating transaction:", error);
+        console.error("Error setting up order process:", error);
         toast({
           title: "Ошибка",
           description: "Не удалось создать заказ. Пожалуйста, попробуйте позже.",
@@ -88,7 +105,7 @@ export const useOrderProcess = () => {
       }
     };
 
-    createTransaction();
+    setupOrderProcess();
   }, []);
   
   const goToNextStep = () => {
@@ -109,6 +126,16 @@ export const useOrderProcess = () => {
   const handleUploadSuccess = (videoId: number, fileKey: string) => {
     setVideoId(videoId);
     setFileKey(fileKey);
+    
+    // Сохраняем информацию о видео в localStorage для возможности восстановления при навигации
+    try {
+      localStorage.setItem('uploadedVideoId', videoId.toString());
+      localStorage.setItem('uploadedFileKey', fileKey);
+      localStorage.setItem('transactionId', transactionId || '');
+    } catch (e) {
+      console.error("Failed to save video info to localStorage:", e);
+    }
+    
     goToNextStep();
   };
 

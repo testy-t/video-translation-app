@@ -4,14 +4,13 @@ import Icon from "@/components/ui/icon";
 
 const PricingSection: React.FC = () => {
   return (
-    <div className="max-w-[60rem] mx-auto px-4">
+    <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
           Простая и прозрачная стоимость
         </h2>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          Никаких скрытых платежей или сложных тарифов. Платите только за то,
-          что используете.
+          Платите только за то, что используете.
         </p>
       </div>
 
@@ -19,11 +18,6 @@ const PricingSection: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           {/* Основная информация о цене */}
           <div className="w-full md:w-2/3 p-10 flex flex-col justify-center">
-            <div className="mb-6">
-              <span className="text-sm font-medium text-[#0070F3] bg-blue-50 py-1 px-3 rounded-full">
-                Базовый тариф
-              </span>
-            </div>
             <h3 className="text-4xl md:text-5xl font-bold mb-2">500 ₽</h3>
             <p className="text-gray-500 mb-6">за минуту переведенного видео</p>
 

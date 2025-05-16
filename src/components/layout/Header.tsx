@@ -13,12 +13,12 @@ const Header: React.FC = () => {
   return (
     <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full flex justify-center px-4">
       <div className="w-full max-w-[60rem]">
-        <div className="rounded-xl bg-[#1a1a1d] glass-dark shadow-md">
-          {/* Уменьшаем внутренние отступы */}
-          <div className="flex items-center justify-between px-4 py-1.5">
+        <div className="rounded-full bg-[#1a1a1d] glass-dark shadow-md">
+          {/* Увеличиваем высоту */}
+          <div className="flex items-center justify-between px-4 py-2">
             {/* Логотип */}
             <div className="flex items-center gap-2">
-              <Icon name="Mic2" size={22} className="text-[#0070F3]" />
+              <Icon name="Mic2" size={24} className="text-[#0070F3]" />
               <span className="text-lg font-semibold text-white">ГолосОК</span>
             </div>
 
@@ -44,10 +44,10 @@ const Header: React.FC = () => {
               </button>
             </nav>
 
-            {/* Кнопка CTA - меняем радиус как у хедера */}
+            {/* Кнопка CTA - возвращаем полностью округлую */}
             <Button
               onClick={() => scrollToSection("pricing")}
-              className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-xl px-4 py-1 h-7 text-sm"
+              className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5 h-8 text-sm"
             >
               Попробовать
             </Button>
@@ -55,9 +55,9 @@ const Header: React.FC = () => {
             {/* Меню мобильное */}
             <Button
               variant="ghost"
-              className="md:hidden p-1 text-white rounded-xl"
+              className="md:hidden p-1 text-white rounded-full"
             >
-              <Icon name="Menu" size={18} />
+              <Icon name="Menu" size={20} />
             </Button>
           </div>
         </div>

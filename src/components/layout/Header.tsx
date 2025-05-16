@@ -11,10 +11,9 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full flex justify-center px-4">
-      <div className="w-full max-w-[60rem]">
+    <header className="fixed top-4 left-0 right-0 z-50 mx-auto w-full flex justify-center">
+      <div className="w-full max-w-[66rem] px-4 md:px-0">
         <div className="rounded-full bg-[#1a1a1d] glass-dark shadow-md">
-          {/* Увеличиваем высоту */}
           <div className="flex items-center justify-between px-4 py-2">
             {/* Логотип */}
             <div className="flex items-center gap-2">
@@ -44,7 +43,7 @@ const Header: React.FC = () => {
               </button>
             </nav>
 
-            {/* Кнопка CTA - возвращаем полностью округлую */}
+            {/* Кнопка CTA */}
             <Button
               onClick={() => scrollToSection("pricing")}
               className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5 h-8 text-sm"

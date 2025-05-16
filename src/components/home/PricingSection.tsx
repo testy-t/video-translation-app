@@ -11,6 +11,13 @@ const PricingSection: React.FC = () => {
     navigate("/order");
   };
 
+  // Added handler for pricing button
+  const handleClickPricing = () => {
+    // Implement the logic for selecting tariff
+    // For example, navigate or open modal
+    navigate("/pricing");
+  };
+
   return (
     <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
       <div className="text-center mb-12">
@@ -65,10 +72,10 @@ const PricingSection: React.FC = () => {
             </ul>
 
             <Button
-              className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-6 h-auto text-base font-medium rounded-full w-full md:w-auto"
-              onClick={goToOrderPage}
+              className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto w-full mt-6"
+              onClick={handleClickPricing}
             >
-              Начать перевод видео
+              Выбрать тариф
             </Button>
           </div>
 

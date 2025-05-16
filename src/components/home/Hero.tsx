@@ -97,11 +97,11 @@ const Hero: React.FC = () => {
               {/* Кнопка действия */}
               <div className="flex justify-center md:justify-start">
                 <Button
-                  className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-5 md:py-6 text-base font-medium rounded-full h-auto"
+                  className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto"
                   onClick={goToOrderPage}
                 >
                   <Icon name="Play" size={18} className="mr-2" />
-                  Начать Бесплатно
+                  Перевести видео
                 </Button>
               </div>
             </div>

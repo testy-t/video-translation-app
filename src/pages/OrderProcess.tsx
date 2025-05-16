@@ -16,7 +16,6 @@ const OrderProcess: React.FC = () => {
     videoFile,
     setVideoFile,
     selectedLanguage,
-    setSelectedLanguage,
     handleLanguageSelection,
     orderNumber,
     goToNextStep,

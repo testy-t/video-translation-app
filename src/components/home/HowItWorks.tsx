@@ -19,8 +19,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({ steps }) => {
           Как это работает
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Просто загрузите видео, выберите язык и получите готовый результат уже
-          через несколько минут
+          От видео от перевода всего несколько минут.
         </p>
       </div>
 

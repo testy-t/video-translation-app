@@ -11,6 +11,7 @@ interface InlineLanguageToggleProps {
   languages: Language[];
   activeLanguage: string;
   onSelectLanguage: (code: string) => void;
+  isDesktop?: boolean;
 }
 
 /**
@@ -20,6 +21,7 @@ const InlineLanguageToggle: React.FC<InlineLanguageToggleProps> = ({
   languages,
   activeLanguage,
   onSelectLanguage,
+  isDesktop = false,
 }) => {
   // Короткие коды языков для отображения
   const getShortCode = (code: string): string => {
@@ -43,17 +45,17 @@ const InlineLanguageToggle: React.FC<InlineLanguageToggleProps> = ({
   };
 
   return (
-    <div className="flex items-center bg-white/5 backdrop-blur-sm rounded-full overflow-x-auto py-1 px-1 max-w-fit border border-white/10 no-scrollbar">
+    <div className={`flex items-center backdrop-blur-sm rounded-full overflow-x-auto ${isDesktop ? 'py-2 px-2 border border-slate-200' : 'py-1 px-1 border border-white/10 bg-white/5'} max-w-fit no-scrollbar`}>
       {languages.map((language) => (
         <button
           key={language.code}
           onClick={() => onSelectLanguage(language.code)}
           className={`
-            flex items-center whitespace-nowrap px-3 py-1 rounded-full text-xs transition-all
+            flex items-center whitespace-nowrap px-3 py-1 rounded-full ${isDesktop ? 'text-sm' : 'text-xs'} transition-all
             ${
               activeLanguage === language.code
-                ? "bg-white/20 text-white"
-                : "text-white/70 hover:text-white"
+                ? isDesktop ? "bg-[#0070F3] text-white" : "bg-white/20 text-white"
+                : isDesktop ? "text-slate-700 hover:text-[#0070F3]" : "text-white/70 hover:text-white"
             }
           `}
         >

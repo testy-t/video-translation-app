@@ -117,12 +117,13 @@ const Hero: React.FC = () => {
                 </p>
               </div>
 
-              {/* Языки - только для десктопа */}
-              <div className="mt-4 md:mt-5 w-full md:w-[85%] hidden md:block">
-                <LanguageSelector
+              {/* Языки - мобильный стиль с увеличенным размером для десктопа */}
+              <div className="mt-4 md:mt-5 w-full md:w-[85%] hidden md:flex justify-center">
+                <InlineLanguageToggle
                   languages={languages}
+                  activeLanguage={activeLanguage}
                   onSelectLanguage={handleLanguageSelect}
-                  isDark={false}
+                  isDesktop={true}
                 />
               </div>
             </div>

@@ -7,6 +7,7 @@ import { VideoInfo } from "../payment/types";
 import PaymentService from "../payment/services/PaymentService";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguageContext } from "@/context/LanguageContext";
+import VideoStorageUtils from "../steps/upload-video/utils/VideoStorageUtils";
 
 // Component to display language name with flag
 const LanguageDisplay: React.FC<{ languageCode: string }> = ({ languageCode }) => {
@@ -286,7 +287,17 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
             <Button 
               variant="outline" 
               className="w-full"
-              onClick={() => window.location.href = '/order?step=0'}
+              onClick={() => {
+                // Clear all video-related data from localStorage
+                VideoStorageUtils.clearVideoInfo();
+                localStorage.removeItem('selectedLanguage');
+                
+                // Set a flag in sessionStorage to indicate we're creating a new video
+                sessionStorage.setItem("previousStep", "3"); // Mark that we came from result step
+                
+                // Navigate to upload step
+                window.location.href = '/order?step=0';
+              }}
             >
               <Icon name="Plus" className="mr-2" />
               Сделать еще один перевод

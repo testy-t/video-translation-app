@@ -76,18 +76,21 @@ const Footer: React.FC = () => {
                     Главная
                   </a>
                   <a
-                    href="/#pricing"
-                    onClick={(e) => scrollToSection("pricing")}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Цена
-                  </a>
-                  <a
                     href="/order"
                     onClick={handleNavigate("/order")}
                     className="text-sm text-black/70 hover:text-black transition-colors"
                   >
                     Заказать
+                  </a>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.jivo_api?.open();
+                    }}
+                    className="text-sm text-black/70 hover:text-black transition-colors"
+                  >
+                    Поддержка
                   </a>
                 </div>
               </div>

@@ -52,13 +52,14 @@ function FloatingPaths({ position }: { position: number }) {
 
 const AnimatedBackground: React.FC = () => {
     return (
-        <div className="absolute inset-0 z-0 overflow-hidden bg-white">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-white opacity-20">
             {/* Animated paths */}
-            <FloatingPaths position={1} />
-            <FloatingPaths position={-1} />
+            <FloatingPaths position={2} />
+            <FloatingPaths position={0} />
+            {/*<FloatingPaths position={-1} />*/}
             
             {/* Subtle gradient overlay */}
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-white/50 to-transparent"></div>
+            <div className="absolute bottom-0 right-0 w-full h-32 bg-gradient-to-t from-white/50 to-transparent"></div>
         </div>
     );
 };

@@ -53,7 +53,7 @@ const Hero: React.FC = () => {
   return (
     <section className="relative overflow-hidden">
       {/* Тёмная секция с минималистичным фоном */}
-      <div className="min-h-screen flex items-center pt-8 md:pt-16 pb-8 md:pb-16 relative">
+      <div className="min-h-screen flex items-center pt-8 md:pt-16 pb-24 md:pb-32 relative">
         <AnimatedBackground />
 
         <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem] relative z-10">
@@ -64,7 +64,7 @@ const Hero: React.FC = () => {
                 <Icon name="Video" size={16} className="text-[#0070F3]" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-4xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 text-slate-900">
+              <h1 className="text-4xl md:text-4xl lg:text-7xl font-bold tracking-tight mb-4 text-slate-900">
                 Ваш голос на любом языке
               </h1>
 

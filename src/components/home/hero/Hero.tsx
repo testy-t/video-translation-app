@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedBackground from "../AnimatedBackground";
@@ -93,32 +92,34 @@ const Hero: React.FC = () => {
             <div className="text-center md:text-left w-full mt-8 md:mt-0">
               {/* Бейдж */}
               <HeroBadge text="ИИ Переводчик Видео" />
-              
+
               {/* Заголовок и описание */}
-              <HeroHeading 
+              <HeroHeading
                 title="Ваш голос на любом языке"
                 description="Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты."
               />
 
-              {/* Видео и переключатель языков для мобильной версии */}
-              <VideoPlayer 
-                activeLanguage={activeLanguage}
-                isMuted={isMuted}
-                onMuteToggle={toggleMute}
-                onLanguageSelect={handleLanguageSelect}
-                languages={languages}
-                isMobile={isMobile}
-              />
+              {/* Видео плеер для мобильной версии */}
+              {isMobile && (
+                <VideoPlayer
+                  activeLanguage={activeLanguage}
+                  isMuted={isMuted}
+                  onMuteToggle={toggleMute}
+                  onLanguageSelect={handleLanguageSelect}
+                  languages={languages}
+                  isMobile={true}
+                />
+              )}
 
               {/* Кнопка действия после выбора языка - для мобильной версии */}
-              <HeroActions 
+              <HeroActions
                 onAction={goToOrderPage}
                 buttonText="Перевести видео"
                 showDesktop={false}
               />
-              
+
               {/* Кнопка действия для десктопа - после описания */}
-              <HeroActions 
+              <HeroActions
                 onAction={goToOrderPage}
                 buttonText="Перевести видео"
                 showMobile={false}
@@ -126,14 +127,16 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Правая колонка - видео с переключателем языков - только для десктопа */}
-            <VideoPlayer 
-              activeLanguage={activeLanguage}
-              isMuted={isMuted}
-              onMuteToggle={toggleMute}
-              onLanguageSelect={handleLanguageSelect}
-              languages={languages}
-              isMobile={isMobile}
-            />
+            {!isMobile && (
+              <VideoPlayer
+                activeLanguage={activeLanguage}
+                isMuted={isMuted}
+                onMuteToggle={toggleMute}
+                onLanguageSelect={handleLanguageSelect}
+                languages={languages}
+                isMobile={false}
+              />
+            )}
           </div>
         </div>
       </div>

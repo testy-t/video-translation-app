@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import Icon from "@/components/ui/icon";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -24,32 +23,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   languages,
   isMobile,
 }) => {
-  const mobileVideoRef = useRef<HTMLVideoElement>(null);
-  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // При изменении языка останавливаем и перезапускаем видео
   useEffect(() => {
-    // Сначала останавливаем все видео
-    if (mobileVideoRef.current) {
-      mobileVideoRef.current.pause();
-    }
-    if (desktopVideoRef.current) {
-      desktopVideoRef.current.pause();
+    // Сначала останавливаем видео
+    if (videoRef.current) {
+      videoRef.current.pause();
     }
 
-    // После короткой задержки запускаем нужное видео
+    // После короткой задержки запускаем видео снова
     setTimeout(() => {
-      if (isMobile && mobileVideoRef.current) {
-        mobileVideoRef.current
+      if (videoRef.current) {
+        videoRef.current
           .play()
-          .catch((e) => console.error("Error playing mobile video:", e));
-      } else if (!isMobile && desktopVideoRef.current) {
-        desktopVideoRef.current
-          .play()
-          .catch((e) => console.error("Error playing desktop video:", e));
+          .catch((e) => console.error("Error playing video:", e));
       }
     }, 50);
-  }, [activeLanguage, isMobile]);
+  }, [activeLanguage]);
 
   const getVideoUrl = (lang: string) => {
     // Преобразуем 'zh' в 'cn' для URL
@@ -57,17 +48,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     return `https://cdn.poehali.dev/golosok/preview/${langCode}.mp4`;
   };
 
-  return (
-    <>
-      {/* Мобильный плеер */}
-      <div className="w-full mb-3 flex justify-center md:hidden">
-        <div
-          className="w-full max-w-md aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
-          onClick={onMuteToggle}
-        >
-          {isMobile && (
+  // Условный рендеринг плеера в зависимости от типа устройства
+  if (isMobile) {
+    return (
+      <>
+        {/* Мобильный плеер */}
+        <div className="w-full mb-3 flex justify-center md:hidden">
+          <div
+            className="w-full max-w-md aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
+            onClick={onMuteToggle}
+          >
             <video
-              ref={mobileVideoRef}
+              ref={videoRef}
               className="w-full h-full object-cover"
               src={getVideoUrl(activeLanguage)}
               autoPlay
@@ -76,53 +68,53 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               playsInline
               key={`mobile-${activeLanguage}`}
             />
-          )}
-          <MuteButton isMuted={isMuted} />
-        </div>
-      </div>
-
-      {/* Мобильный переключатель языков */}
-      <div className="mb-5 flex justify-center md:hidden">
-        <LanguageSwitcher
-          languages={languages}
-          activeLanguage={activeLanguage}
-          onLanguageSelect={onLanguageSelect}
-          isDesktop={false}
-        />
-      </div>
-
-      {/* Десктопный плеер */}
-      <div className="w-full hidden md:flex flex-col items-center md:items-end mt-0">
-        <div
-          className="w-full md:w-[85%] aspect-video md:aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
-          onClick={onMuteToggle}
-        >
-          {!isMobile && (
-            <video
-              ref={desktopVideoRef}
-              className="w-full h-full object-cover"
-              src={getVideoUrl(activeLanguage)}
-              autoPlay
-              loop
-              muted={isMuted}
-              playsInline
-              key={`desktop-${activeLanguage}`}
-            />
-          )}
-          <MuteButton isMuted={isMuted} />
+            <MuteButton isMuted={isMuted} />
+          </div>
         </div>
 
-        {/* Десктопный переключатель языков */}
-        <div className="mt-4 md:mt-5 w-full md:w-[85%] hidden md:flex justify-center">
+        {/* Мобильный переключатель языков */}
+        <div className="mb-5 flex justify-center md:hidden">
           <LanguageSwitcher
             languages={languages}
             activeLanguage={activeLanguage}
             onLanguageSelect={onLanguageSelect}
-            isDesktop={true}
+            isDesktop={false}
           />
         </div>
+      </>
+    );
+  }
+
+  // Десктопная версия
+  return (
+    <div className="w-full hidden md:flex flex-col items-center md:items-end mt-0">
+      <div
+        className="w-full md:w-[85%] aspect-video md:aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
+        onClick={onMuteToggle}
+      >
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          src={getVideoUrl(activeLanguage)}
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          key={`desktop-${activeLanguage}`}
+        />
+        <MuteButton isMuted={isMuted} />
       </div>
-    </>
+
+      {/* Десктопный переключатель языков */}
+      <div className="mt-4 md:mt-5 w-full md:w-[85%] hidden md:flex justify-center">
+        <LanguageSwitcher
+          languages={languages}
+          activeLanguage={activeLanguage}
+          onLanguageSelect={onLanguageSelect}
+          isDesktop={true}
+        />
+      </div>
+    </div>
   );
 };
 

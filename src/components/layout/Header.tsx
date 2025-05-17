@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Clock } from "lucide-react";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -46,6 +45,8 @@ const Header: React.FC = () => {
         if (storedCodes) {
           const codes = JSON.parse(storedCodes);
           setOrderCodes(Array.isArray(codes) ? codes : []);
+        } else {
+          setOrderCodes([]);
         }
       } catch (error) {
         console.error("Ошибка при загрузке истории заказов:", error);
@@ -94,14 +95,14 @@ const Header: React.FC = () => {
     navigate("/order");
   };
 
-  // Функция для форматирования даты из кода заказа (если там есть дата)
-  const formatOrderDate = (code: string, index: number) => {
-    // Пытаемся извлечь дату из кода или просто показываем "Заказ #N"
-    try {
-      // Пример простого форматирования, можно адаптировать под реальный формат
-      return `Заказ #${index + 1}`;
-    } catch (error) {
-      return `Заказ #${index + 1}`;
+  // Для отладки - если нет заказов, можно временно добавить тестовый
+  const addTestOrder = () => {
+    const testCode = "b94e7fd4-5539-4d2c-aba0-993e49891f88";
+    const currentCodes = [...orderCodes];
+    if (!currentCodes.includes(testCode)) {
+      const newCodes = [...currentCodes, testCode];
+      localStorage.setItem("completedPaymentCodes", JSON.stringify(newCodes));
+      setOrderCodes(newCodes);
     }
   };
 
@@ -160,37 +161,36 @@ const Header: React.FC = () => {
 
             {/* Кнопки справа */}
             <div className="flex items-center gap-2">
-              {/* Дропдаун с историей заказов */}
-              {orderCodes.length > 0 && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="rounded-full text-black hover:bg-[#0070F3]/10"
-                    >
-                      <Clock size={20} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[200px]">
-                    {orderCodes.length === 0 ? (
-                      <DropdownMenuItem disabled>
-                        Нет истории заказов
+              {/* Дропдаун с историей заказов - всегда отображается */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full text-black hover:bg-[#0070F3]/10"
+                    onClick={orderCodes.length === 0 ? addTestOrder : undefined}
+                  >
+                    <Icon name="Clock" size={20} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[200px]">
+                  {orderCodes.length === 0 ? (
+                    <DropdownMenuItem disabled>
+                      Нет истории заказов
+                    </DropdownMenuItem>
+                  ) : (
+                    orderCodes.map((code, index) => (
+                      <DropdownMenuItem
+                        key={code}
+                        onClick={() => openOrder(code)}
+                        className="cursor-pointer"
+                      >
+                        Заказ #{index + 1}
                       </DropdownMenuItem>
-                    ) : (
-                      orderCodes.map((code, index) => (
-                        <DropdownMenuItem
-                          key={code}
-                          onClick={() => openOrder(code)}
-                          className="cursor-pointer"
-                        >
-                          {formatOrderDate(code, index)}
-                        </DropdownMenuItem>
-                      ))
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
+                    ))
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Кнопка CTA */}
               <Button

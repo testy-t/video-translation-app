@@ -10,29 +10,33 @@ import { useLanguageContext } from "@/context/LanguageContext";
 import VideoStorageUtils from "../steps/upload-video/utils/VideoStorageUtils";
 
 // Component to display language name with flag
-const LanguageDisplay: React.FC<{ languageCode: string }> = ({ languageCode }) => {
+const LanguageDisplay: React.FC<{ languageCode: string }> = ({
+  languageCode,
+}) => {
   const { getLanguageName, languages } = useLanguageContext();
-  
+
   // Get language info
   const getLanguageInfo = () => {
     if (!languageCode) {
-      return { name: 'Неизвестный язык', flag: '🌐' };
+      return { name: "Неизвестный язык", flag: "🌐" };
     }
-    
+
     const name = getLanguageName(languageCode);
-    const langObj = languages.find(l => 
-      l.code.toLowerCase() === languageCode.toLowerCase() ||
-      l.code.split('-')[0].toLowerCase() === languageCode.split('-')[0].toLowerCase()
+    const langObj = languages.find(
+      (l) =>
+        l.code.toLowerCase() === languageCode.toLowerCase() ||
+        l.code.split("-")[0].toLowerCase() ===
+          languageCode.split("-")[0].toLowerCase(),
     );
-    
-    return { 
-      name, 
-      flag: langObj?.flag || '🌐'
+
+    return {
+      name,
+      flag: langObj?.flag || "🌐",
     };
   };
-  
+
   const { name, flag } = getLanguageInfo();
-  
+
   return (
     <span className="flex items-center">
       <span className="mr-1">{flag}</span>
@@ -55,10 +59,10 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
   const [uniqueCode, setUniqueCode] = useState<string | null>(null);
   // Ref для отслеживания первого рендера
   const isInitialRender = React.useRef(true);
-  
+
   // Получаем uniquecode из URL
   const location = useLocation();
-  
+
   const processingStages = [
     "Инициализация нейросети",
     "Анализ исходного видео",
@@ -67,14 +71,14 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
     "Синхронизация движения губ",
     "Финальная обработка",
   ];
-  
+
   // Обработчик получения готового видео
   const handleVideoReady = (videoData: VideoInfo) => {
     console.log("✅ Получена информация о готовом видео:", videoData);
     setVideoInfo(videoData);
     setIsComplete(true);
     setIsPollingActive(false);
-    
+
     toast({
       title: "Видео готово",
       description: "Ваше переведенное видео готово к скачиванию!",
@@ -88,78 +92,88 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
     if (!isInitialRender.current && !location.search.includes("uniquecode")) {
       return;
     }
-    
+
     // После первого выполнения помечаем, что инициализация завершена
     isInitialRender.current = false;
-    
+
     const params = new URLSearchParams(location.search);
     const code = params.get("uniquecode");
-    
+
     if (code) {
       console.log("📋 Найден uniquecode в URL:", code);
       setUniqueCode(code);
-      
+
       // Проверяем, есть ли в localStorage информация о готовом видео
       const savedVideoInfo = localStorage.getItem(`video_info_${code}`);
       if (savedVideoInfo) {
         try {
           const parsedInfo = JSON.parse(savedVideoInfo);
-          if (parsedInfo.status === 'completed' && parsedInfo.output_url) {
+          if (parsedInfo.status === "completed" && parsedInfo.output_url) {
             console.log("📋 Найдена информация о готовом видео в localStorage");
             setVideoInfo(parsedInfo);
             setIsComplete(true);
             return;
           }
         } catch (e) {
-          console.error("Ошибка при разборе данных о видео из localStorage:", e);
+          console.error(
+            "Ошибка при разборе данных о видео из localStorage:",
+            e,
+          );
         }
       }
-      
+
       // Запускаем поллинг статуса видео, если его еще нет
       if (!isPollingActive && !isComplete) {
         console.log("🔄 Запуск поллинга статуса видео...");
         setIsPollingActive(true);
-        
+
         const timerId = PaymentService.startVideoActivationPolling(
           code,
-          handleVideoReady
+          handleVideoReady,
         );
-        
+
         setPollingTimerId(timerId);
       }
     } else {
       console.warn("⚠️ uniquecode не найден в URL");
-      
+
       // Пробуем получить uniquecode из localStorage
-      const savedUniqueCode = localStorage.getItem('paymentUniqueCode');
+      const savedUniqueCode = localStorage.getItem("paymentUniqueCode");
       if (savedUniqueCode) {
         console.log("📋 Найден uniquecode в localStorage:", savedUniqueCode);
         setUniqueCode(savedUniqueCode);
-        
+
         // Проверяем, есть ли в localStorage информация о готовом видео
-        const savedVideoInfo = localStorage.getItem(`video_info_${savedUniqueCode}`);
+        const savedVideoInfo = localStorage.getItem(
+          `video_info_${savedUniqueCode}`,
+        );
         if (savedVideoInfo) {
           try {
             const parsedInfo = JSON.parse(savedVideoInfo);
-            if (parsedInfo.status === 'completed' && parsedInfo.output_url) {
-              console.log("📋 Найдена информация о готовом видео в localStorage");
+            if (parsedInfo.status === "completed" && parsedInfo.output_url) {
+              console.log(
+                "📋 Найдена информация о готовом видео в localStorage",
+              );
               setVideoInfo(parsedInfo);
               setIsComplete(true);
               return;
             }
           } catch (e) {
-            console.error("Ошибка при разборе данных о видео из localStorage:", e);
+            console.error(
+              "Ошибка при разборе данных о видео из localStorage:",
+              e,
+            );
           }
         }
       }
     }
-  // Убрали videoInfo из зависимостей, т.к. оно вызывает лишние обновления
+    // Убрали videoInfo из зависимостей, т.к. оно вызывает лишние обновления
   }, [location.search, isPollingActive, isComplete]);
-  
+
   // Эффект для периодической смены стадии обработки
   useEffect(() => {
     if (isComplete) return;
-    
+
     const stageInterval = setInterval(() => {
       setProcessingStage((prev) => {
         if (prev >= processingStages.length - 1) {
@@ -168,12 +182,12 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
         return prev + 1;
       });
     }, 5000);
-    
+
     return () => {
       clearInterval(stageInterval);
     };
   }, [isComplete, processingStages.length]);
-  
+
   // Эффект для очистки таймера поллинга при размонтировании компонента
   useEffect(() => {
     return () => {
@@ -187,18 +201,18 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
   const formatOrderNumber = (num: string) => {
     // Если номер заказа короткий, возвращаем как есть
     if (num.length < 6) return num;
-    
+
     // Форматируем номер заказа для лучшей читабельности
     return num.replace(/(\w{3})(\w{3})(\w{3})/, "$1-$2-$3");
   };
-  
+
   // Функция для скачивания видео
   const handleDownloadVideo = () => {
     if (videoInfo && videoInfo.output_url) {
       // Создаем ссылку для скачивания
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = videoInfo.output_url;
-      link.target = '_blank';
+      link.target = "_blank";
       link.download = `translated_video.mp4`;
       document.body.appendChild(link);
       link.click();
@@ -211,20 +225,20 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
       });
     }
   };
-  
+
   // Функция для перезапуска поллинга
   const handleRefreshStatus = () => {
     if (!uniqueCode || isComplete || isPollingActive) return;
-    
+
     setIsPollingActive(true);
-    
+
     const timerId = PaymentService.startVideoActivationPolling(
       uniqueCode,
-      handleVideoReady
+      handleVideoReady,
     );
-    
+
     setPollingTimerId(timerId);
-    
+
     toast({
       title: "Обновление статуса",
       description: "Проверяем статус вашего видео...",
@@ -251,19 +265,20 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
 
           <div className="border rounded-lg p-4 mb-8">
             <div className="flex flex-col space-y-3">
-              {uniqueCode &&
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Номер заказа:</span>
-                <span className="font-medium">
-                  {formatOrderNumber(uniqueCode.slice(0, 12)).toUpperCase()}
-                </span>
-              </div>}
+              {uniqueCode && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Номер заказа:</span>
+                  <span className="font-medium">
+                    {formatOrderNumber(uniqueCode.slice(0, 12)).toUpperCase()}
+                  </span>
+                </div>
+              )}
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Статус:</span>
                 <span className="font-medium text-green-600">Готово</span>
               </div>
-              
+
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Язык перевода:</span>
                 <span className="font-medium">
@@ -284,19 +299,19 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
               Скачать видео
             </Button>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full"
               onClick={() => {
                 // Clear all video-related data from localStorage
                 VideoStorageUtils.clearVideoInfo();
-                localStorage.removeItem('selectedLanguage');
-                
+                localStorage.removeItem("selectedLanguage");
+
                 // Set a flag in sessionStorage to indicate we're creating a new video
                 sessionStorage.setItem("previousStep", "3"); // Mark that we came from result step
-                
+
                 // Navigate to upload step
-                window.location.href = '/order?step=0';
+                window.location.href = "/order?step=0";
               }}
             >
               <Icon name="Plus" className="mr-2" />
@@ -306,71 +321,72 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
         </div>
       ) : (
         // Экран в процессе обработки
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-6">
-              <Icon
-                  name="Loader2"
-                  size={60}
-                  className="text-primary animate-spin"
-              />
-            </div>
-            <h3 className="text-xl font-medium mb-0">Обрабатываем ваше видео</h3>
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="mb-6">
+            <Icon
+              name="Loader2"
+              size={60}
+              className="text-primary animate-spin"
+            />
+          </div>
+          <h3 className="text-xl font-medium mb-0">Обрабатываем ваше видео</h3>
 
-
-            {/* Информация о заказе */}
-            {uniqueCode && (
-                <div className="border rounded-lg p-4 my-5 w-full max-w-sm">
-                  <div className="flex flex-col space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Номер заказа:</span>
-                      <span className="font-medium">
+          {/* Информация о заказе */}
+          {uniqueCode && (
+            <div className="border rounded-lg p-4 my-5 w-full max-w-sm">
+              <div className="flex flex-col space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Номер заказа:</span>
+                  <span className="font-medium">
                     {formatOrderNumber(uniqueCode.slice(0, 12)).toUpperCase()}
                   </span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Статус:</span>
-                      <span className="font-medium text-amber-600">В обработке</span>
-                    </div>
-                    
-                    {/* Show selected language if available in localStorage */}
-                    {(() => {
-                      const selectedLang = localStorage.getItem('selectedLanguage');
-                      if (selectedLang) {
-                        return (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Язык перевода:</span>
-                            <span className="font-medium">
-                              <LanguageDisplay languageCode={selectedLang} />
-                            </span>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })()}
-
-                  </div>
                 </div>
-            )}
-            <p className="text-muted-foreground max-w-md mx-auto mb-6">
-              Перевод видео занимает примерно 15 минут. Вы получите уведомление на почту после завершения перевода.
-              Вы можете закрыть это окно.
-            </p>
 
-            {/* Кнопка обновления статуса (если поллинг неактивен) */}
-            {!isPollingActive && uniqueCode && (
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRefreshStatus}
-                    className="mt-2"
-                >
-                  <Icon name="RefreshCw" className="mr-2 w-4 h-4"/>
-                  Проверить статус
-                </Button>
-            )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Статус:</span>
+                  <span className="font-medium text-amber-600">
+                    В обработке
+                  </span>
+                </div>
 
-          </div>
+                {/* Show selected language if available in localStorage */}
+                {(() => {
+                  const selectedLang = localStorage.getItem("selectedLanguage");
+                  if (selectedLang) {
+                    return (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          Язык перевода:
+                        </span>
+                        <span className="font-medium">
+                          <LanguageDisplay languageCode={selectedLang} />
+                        </span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+            </div>
+          )}
+          <p className="text-muted-foreground max-w-md mx-auto mb-6">
+            Перевод видео занимает примерно 15 минут. Вы получите уведомление на
+            почту после завершения перевода.
+          </p>
+
+          {/* Кнопка обновления статуса (если поллинг неактивен) */}
+          {!isPollingActive && uniqueCode && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefreshStatus}
+              className="mt-2"
+            >
+              <Icon name="RefreshCw" className="mr-2 w-4 h-4" />
+              Проверить статус
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

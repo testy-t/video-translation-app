@@ -141,7 +141,7 @@ serve(async (req: Request) => {
         // Формируем список товаров (в данном случае один товар)
         const items = [
             {
-                label: `Перевод видео на ${videoDuration} минут`, // Название товара/услуги
+                label: `Перевод видео (${videoDuration} мин.)`, // Название товара/услуги
                 price: fullTransaction.amount,
                 quantity: 1,
             }
@@ -156,7 +156,7 @@ serve(async (req: Request) => {
             url: null,
             data: {
                 publicId: CP_PUBLIC_ID,
-                description: `Перевод видео на ${videoDuration} минут`,
+                description: `Перевод видео (${videoDuration} мин.)`,
                 amount: fullTransaction.amount,
                 currency: "RUB",
                 invoiceId: uniquecode,

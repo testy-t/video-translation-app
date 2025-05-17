@@ -170,7 +170,7 @@ const Header: React.FC = () => {
                     className="rounded-full text-black hover:bg-[#0070F3]/10"
                     onClick={orderCodes.length === 0 ? addTestOrder : undefined}
                   >
-                    <Icon name="Clock" size={20} />
+                    <Icon name="ShoppingBag" size={20} />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">

@@ -160,7 +160,7 @@ async function sendCompletionEmail(userEmail: string, videoDetails: any) {
                     </head>
                     <body>
                         <div class="email-container">
-                            <div class="logo">Golosok.app</div>
+                            <div class="logo">ГолосОК</div>
                             
                             <h1>🎉 Всё готово</h1>
                             

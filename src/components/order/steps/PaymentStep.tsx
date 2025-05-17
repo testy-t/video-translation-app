@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 // Импорт типов
 import { PaymentStepProps } from "../payment/types";
 
 // Импорт компонентов
 import OrderDetails from "../payment/OrderDetails";
-import OrderSummary from "../payment/OrderSummary";
 
 // Импорт хуков
 import { useOrderPrice } from "../payment/hooks/useOrderPrice";
-// Больше не импортируем контекст, т.к. используем его в OrderDetails
+
+// Импорт сервисов
+import PaymentService from "../payment/services/PaymentService";
 
 /**
  * Компонент шага оплаты в процессе заказа
@@ -21,11 +23,10 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   videoDuration,
   onPayment,
 }) => {
-  // Больше не нуждаемся в явном доступе к контексту здесь, 
-  // т.к. OrderDetails сам получает данные из контекста
-  
   // Состояние процесса оплаты
   const [isProcessing, setIsProcessing] = useState(false);
+  // Состояние статуса процесса оплаты
+  const [paymentStatus, setPaymentStatus] = useState("");
   
   // Получаем ID видео и ключ файла из localStorage
   // Используем videoDbId, который устанавливается на шаге выбора языка,
@@ -147,7 +148,8 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
       const languageCode = data.outputLanguage || selectedLanguage || "en";
       const videoData = {
         duration: data.duration,
-        outputLanguage: languageCode
+        outputLanguage: languageCode,
+        outputLanguageName: ""
       };
       
       console.log(`✅ Получен язык перевода: ${languageCode}`);
@@ -165,7 +167,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
       setVideoInfo({
         duration: videoDuration || 180,
         outputLanguage: selectedLanguage || "en",
-        outputLanguageName: getLanguageName(selectedLanguage || "en")
+        outputLanguageName: ""
       });
     } finally {
       setIsLoading(false);
@@ -186,24 +188,65 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   const actualDuration = videoInfo?.duration || videoDuration;
   const actualLanguage = videoInfo?.outputLanguage || selectedLanguage;
   
-  // Больше не нужно получать имя языка здесь, т.к. это делается в OrderDetails
-  // с помощью контекста
-  
   // Получаем цену заказа из хука
   const price = useOrderPrice(videoFile, actualDuration);
 
   /**
-   * Обработчик отправки платежа
-   * Имитирует процесс оплаты и вызывает колбэк onPayment при успехе
+   * Обработчик отправки платежа с использованием CloudPayments
+   * @param email Email пользователя
    */
-  const handleSubmitPayment = () => {
+  const handleSubmitPayment = async (email: string) => {
+    // Проверяем необходимые данные перед оплатой
+    if (!videoId) {
+      toast({
+        title: "Ошибка",
+        description: "Не найдено ID видео. Пожалуйста, загрузите видео заново.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
 
-    // Имитация обработки платежа
-    setTimeout(() => {
+    try {
+      // Получаем URL для перенаправления после успешной оплаты
+      const redirectUrl = `${window.location.origin}/order?step=3`; // Редиректим на шаг результата
+      
+      // Запускаем процесс оплаты
+      await PaymentService.processPayment(
+        email, 
+        videoId, 
+        redirectUrl,
+        // Колбэк при успешной оплате
+        () => {
+          console.log("Оплата успешно завершена");
+          setIsProcessing(false);
+          onPayment(); // Вызываем колбэк из props для перехода к следующему шагу
+        },
+        // Колбэк при ошибке оплаты
+        (error: string) => {
+          console.error("Ошибка оплаты:", error);
+          setIsProcessing(false);
+          toast({
+            title: "Ошибка оплаты",
+            description: error || "Произошла ошибка при оплате. Пожалуйста, попробуйте еще раз.",
+            variant: "destructive",
+          });
+        },
+        // Колбэк для обновления статуса процесса
+        (status: string) => {
+          setPaymentStatus(status);
+        }
+      );
+    } catch (error) {
+      console.error("Ошибка в процессе оплаты:", error);
       setIsProcessing(false);
-      onPayment();
-    }, 2000);
+      toast({
+        title: "Ошибка оплаты",
+        description: error instanceof Error ? error.message : "Произошла ошибка при оплате. Пожалуйста, попробуйте еще раз.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -216,6 +259,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
         isLoading={isLoading}
         price={price}
         isProcessing={isProcessing}
+        processingStatus={paymentStatus}
         onPayment={handleSubmitPayment}
       />
     </div>

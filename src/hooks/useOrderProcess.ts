@@ -262,28 +262,44 @@ export const useOrderProcess = () => {
     }
   };
 
-  // Placeholder for payment handling
+  /**
+   * Обработчик успешной оплаты
+   * Вызывается после успешного завершения оплаты через CloudPayments
+   */
   const handlePayment = () => {
-    // In a real app, this would make API request to payment system
-    setTimeout(() => {
-      const randomOrderId = Math.floor(Math.random() * 1000000);
-      setOrderNumber(`OR-${randomOrderId}`);
-      
-      // Update transaction status
-      if (transactionId) {
-        supabase
-          .from('transactions')
-          .update({ status: 'paid' })
-          .eq('id', transactionId)
-          .then(({ error }) => {
-            if (error) {
-              console.error("Error updating transaction:", error);
-            }
-          });
-      }
-      
-      goToNextStep();
-    }, 1500);
+    console.log("🔄 Платеж успешно завершен");
+    
+    // Получаем uniqueCode из localStorage
+    const uniqueCode = localStorage.getItem('paymentUniqueCode');
+    
+    // Генерируем номер заказа
+    const randomOrderId = Math.floor(Math.random() * 1000000);
+    setOrderNumber(`OR-${randomOrderId}`);
+    
+    // Обновляем статус транзакции в БД, если есть transactionId
+    if (transactionId) {
+      supabase
+        .from('transactions')
+        .update({ status: 'paid' })
+        .eq('id', transactionId)
+        .then(({ error }) => {
+          if (error) {
+            console.error("Error updating transaction:", error);
+          } else {
+            console.log("Transaction status updated to 'paid'");
+          }
+        });
+    }
+    
+    // Переходим к следующему шагу
+    goToNextStep();
+    
+    // Показываем уведомление об успешной оплате
+    toast({
+      title: "Оплата выполнена",
+      description: "Ваш видеоролик обрабатывается. Результат будет готов в течение 15 минут.",
+      variant: "default",
+    });
   };
 
   return {

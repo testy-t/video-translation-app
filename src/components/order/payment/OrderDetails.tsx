@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { useLanguageContext } from "@/context/LanguageContext";
@@ -30,7 +30,8 @@ interface OrderDetailsProps {
   isLoading?: boolean;
   price: number;
   isProcessing: boolean;
-  onPayment: () => void;
+  processingStatus?: string;
+  onPayment: (email: string) => void;
 }
 
 /**
@@ -46,10 +47,11 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   isLoading = false,
   price,
   isProcessing,
+  processingStatus = "",
   onPayment
 }) => {
   // Состояние для email
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>(() => localStorage.getItem('userEmail') || '');
   const [emailError, setEmailError] = useState<string>('');
   
   // Получаем функцию для получения имени языка из контекста
@@ -85,6 +87,69 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   const pricePerMinute = 149;
   const totalPrice = roundedMinutes * pricePerMinute;
 
+  // Обработчик изменения email
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    
+    // Проверяем формат при вводе
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail) && newEmail) {
+      setEmailError('Введите корректный email');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  // Обработчик клика по кнопке оплаты
+  const handlePayButtonClick = () => {
+    // Проверяем валидность email перед оплатой
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError('Введите email для получения результата');
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError('Введите корректный email');
+      return;
+    }
+    
+    // Если email валидный, сохраняем его в localStorage
+    localStorage.setItem('userEmail', email);
+    
+    // И продолжаем оплату
+    onPayment(email);
+  };
+
+  // Текст кнопки в зависимости от статуса
+  const getButtonText = () => {
+    if (isProcessing) {
+      if (processingStatus) {
+        return (
+          <>
+            <Icon name="Loader2" className="mr-2 animate-spin" />
+            {processingStatus}
+          </>
+        );
+      }
+      return (
+        <>
+          <Icon name="Loader2" className="mr-2 animate-spin" />
+          Обработка...
+        </>
+      );
+    }
+    return <>Оплатить {totalPrice} ₽</>;
+  };
+
+  // Загружаем сохраненный email при монтировании компонента
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('userEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+    }
+  }, []);
+
   return (
     <Card className="mb-6 border-0 shadow-none">
       <CardContent className="p-6 px-0">
@@ -100,7 +165,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
         
         {/* Инфографика с тремя блоками */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          {/* Все блоки с одинаковой высотой */}
+          {/* Блок длительности */}
           <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-muted/30 h-[150px]">
             <Icon name="Clock" className="mb-2 mt-1 text-primary" size={24} />
             <div className="text-2xl font-bold text-foreground/80">{formatDuration(videoDuration)}</div>
@@ -150,16 +215,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
               type="email" 
               placeholder="example@mail.ru" 
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                // Проверяем формат при вводе
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(e.target.value) && e.target.value) {
-                  setEmailError('Введите корректный email');
-                } else {
-                  setEmailError('');
-                }
-              }}
+              onChange={handleEmailChange}
               className={`focus-visible:ring-0 focus-visible:ring-offset-0 border-2 
                 ${emailError ? "border-red-500" : email && !emailError ? "border-green-500" : "border-primary/30"}`
               }
@@ -170,34 +226,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
         {/* Кнопка оплаты */}
         <Button 
           className="w-full py-6 text-lg"
-          onClick={() => {
-            // Проверяем валидность email перед оплатой
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email) {
-              setEmailError('Введите email для получения результата');
-              return;
-            }
-            if (!emailRegex.test(email)) {
-              setEmailError('Введите корректный email');
-              return;
-            }
-            
-            // Если email валидный, сохраняем его в localStorage
-            localStorage.setItem('userEmail', email);
-            
-            // И продолжаем оплату
-            onPayment();
-          }}
+          onClick={handlePayButtonClick}
           disabled={isProcessing}
         >
-          {isProcessing ? (
-            <>
-              <Icon name="Loader2" className="mr-2 animate-spin" />
-              Обработка...
-            </>
-          ) : (
-            <>Оплатить {totalPrice} ₽</>
-          )}
+          {getButtonText()}
         </Button>
         
         <div className="mt-4 text-xs text-center text-muted-foreground">
@@ -206,7 +238,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
         
         <div className="mt-4 flex items-center justify-center space-x-1 text-muted-foreground">
           <Icon name="Shield" size={16} />
-          <span className="text-xs">Безопасная оплата</span>
+          <span className="text-xs">Безопасная оплата через CloudPayments</span>
         </div>
       </CardContent>
     </Card>

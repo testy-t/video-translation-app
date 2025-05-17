@@ -60,21 +60,21 @@ const Hero: React.FC = () => {
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-center md:text-left w-full">
-              <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-white/10 text-white backdrop-blur-sm border border-white/10">
-                <Icon name="Video" size={16} className="text-white" />
+              <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-[#0070F3]/10 text-[#0070F3] backdrop-blur-sm border border-[#0070F3]/20">
+                <Icon name="Video" size={16} className="text-[#0070F3]" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-4xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 text-white">
+              <h1 className="text-4xl md:text-4xl lg:text-7xl font-medium tracking-tight mb-4 text-slate-900">
                 Ваш голос на любом языке
               </h1>
 
               {/* Видео для мобильной версии размещаем между заголовком и селектором языка */}
               <div className="w-full mb-4 flex justify-center md:hidden">
-                <div className="w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
-                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                    <Icon name="Play" size={28} className="text-white ml-1" />
+                <div className="w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-slate-200 flex flex-col items-center justify-center relative shadow-lg">
+                  <div className="w-14 h-14 rounded-full bg-[#0070F3]/10 flex items-center justify-center backdrop-blur-sm">
+                    <Icon name="Play" size={28} className="text-[#0070F3] ml-1" />
                   </div>
-                  <p className="absolute bottom-4 text-white/70 text-sm">
+                  <p className="absolute bottom-4 text-slate-700 text-sm">
                     Демонстрация технологии
                   </p>
                 </div>
@@ -89,7 +89,7 @@ const Hero: React.FC = () => {
                 />
               </div>
 
-              <p className="text-base md:text-lg text-gray-300 mb-6 md:mb-10 max-w-xl mx-auto md:mx-0 leading-relaxed">
+              <p className="text-base md:text-lg text-slate-700 mb-6 md:mb-10 max-w-xl mx-auto md:mx-0 leading-relaxed">
                 Загрузите видео и получите профессиональный перевод на любой
                 язык с идеальной синхронизацией губ за считанные минуты.
               </p>
@@ -108,11 +108,11 @@ const Hero: React.FC = () => {
 
             {/* Правая колонка - плейсхолдер для видео - только для десктопа */}
             <div className="w-full hidden md:flex flex-col items-center md:items-end mt-0">
-              <div className="w-full md:w-[85%] aspect-video md:aspect-square bg-black/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10 flex flex-col items-center justify-center relative glass-dark">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                  <Icon name="Play" size={28} className="text-white ml-1" />
+              <div className="w-full md:w-[85%] aspect-video md:aspect-square bg-[#f8fafc] backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-200 flex flex-col items-center justify-center relative shadow-lg">
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#0070F3]/10 flex items-center justify-center backdrop-blur-sm">
+                  <Icon name="Play" size={28} className="text-[#0070F3] ml-1" />
                 </div>
-                <p className="absolute bottom-4 text-white/70 text-sm">
+                <p className="absolute bottom-4 text-slate-700 text-sm">
                   Демонстрация технологии
                 </p>
               </div>
@@ -122,7 +122,7 @@ const Hero: React.FC = () => {
                 <LanguageSelector
                   languages={languages}
                   onSelectLanguage={handleLanguageSelect}
-                  isDark={true}
+                  isDark={false}
                 />
               </div>
             </div>

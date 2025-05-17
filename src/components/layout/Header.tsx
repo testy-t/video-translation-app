@@ -61,10 +61,10 @@ const Header: React.FC = () => {
       <div className="w-full max-w-[66rem] px-4 md:px-0">
         <div
           className={`
-            rounded-full transition-all duration-300 ease-in-out border
+            rounded-full transition-all duration-300 ease-in-out border backdrop-blur-md
             ${
               scrolled
-                ? "bg-[#1a1a1d] glass-dark border-white/10 shadow-md"
+                ? "bg-[#ffffff1a] border-[#ffffff1a] shadow-md"
                 : "bg-transparent border-transparent"
             }
           `}
@@ -76,7 +76,7 @@ const Header: React.FC = () => {
               onClick={() => navigate("/")}
             >
               <Icon name="Mic2" size={24} className="text-[#0070F3]" />
-              <span className="text-base md:text-lg font-semibold text-white">
+              <span className="text-base md:text-lg font-semibold text-black">
                 ГолосОК
               </span>
             </div>
@@ -85,19 +85,19 @@ const Header: React.FC = () => {
             <nav className="hidden md:flex gap-8 items-center">
               <button
                 onClick={() => scrollToSection("home")}
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-black hover:text-black/80 transition-colors"
               >
                 Главная
               </button>
               <button
                 onClick={() => scrollToSection("how-it-works")}
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-black hover:text-black/80 transition-colors"
               >
                 О нас
               </button>
               <button
                 onClick={() => scrollToSection("pricing")}
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+                className="text-sm font-medium text-black hover:text-black/80 transition-colors"
               >
                 Цена
               </button>

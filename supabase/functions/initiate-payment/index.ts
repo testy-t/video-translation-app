@@ -1,24 +1,14 @@
-// supabase/functions/initiate-payment/index.ts
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import md5 from 'https://esm.sh/md5@2.3.0'
+import { v4 as uuidv4 } from 'https://esm.sh/uuid@9.0.0'
 
 // Supabase клиент
 const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
 const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
-// FreeKassa конфигурация
-const MERCHANT_ID = Deno.env.get('FREEKASSA_MERCHANT_ID') || '';
-const SECRET_KEY_1 = Deno.env.get('FREEKASSA_SECRET_KEY_1') || '';
-const APP_URL = Deno.env.get('APP_URL') || 'https://golosok.app';
-
-// Доступные платежные методы
-const PAYMENT_METHODS = {
-    36: "CARD",    // Visa/MasterCard/МИР
-    35: "QIWI",    // QIWI
-    44: "SBP",     // СБП
-};
+// CloudPayments конфигурация
+const CP_PUBLIC_ID = Deno.env.get('CP_PUBLIC_ID') || '';
 
 serve(async (req: Request) => {
     // CORS для предварительных запросов
@@ -48,8 +38,11 @@ serve(async (req: Request) => {
     }
 
     try {
-        // Получаем uniquecode из тела запроса
-        const { uniquecode } = await req.json();
+        // Получаем параметры из тела запроса
+        const {
+            uniquecode, // Уникальный код транзакции
+            redirect_url // URL для возврата после оплаты (опционально)
+        } = await req.json();
 
         // Проверка обязательного параметра
         if (!uniquecode) {
@@ -65,7 +58,10 @@ serve(async (req: Request) => {
             );
         }
 
-        // Получаем данные о транзакции
+        // Логируем полученный uniquecode для отладки
+        console.log("Searching for transaction with uniquecode:", uniquecode);
+
+        // Сначала получаем основную информацию о транзакции
         const { data: transaction, error: transactionError } = await supabaseClient
             .from('transactions')
             .select(`
@@ -75,19 +71,18 @@ serve(async (req: Request) => {
         product_id, 
         amount, 
         status,
-        video_id,
-        instrument_id,
-        users (
-          id,
-          email
-        )
+        video_id
       `)
             .eq('uniquecode', uniquecode)
             .single();
 
         if (transactionError || !transaction) {
             return new Response(
-                JSON.stringify({ error: 'Transaction not found' }),
+                JSON.stringify({
+                    error: 'Transaction not found',
+                    uniquecode: uniquecode,
+                    details: transactionError ? transactionError.message : 'No transaction with this uniquecode'
+                }),
                 {
                     status: 404,
                     headers: {
@@ -98,12 +93,40 @@ serve(async (req: Request) => {
             );
         }
 
+        // Теперь получаем информацию о пользователе
+        const { data: user } = await supabaseClient
+            .from('users')
+            .select('id, email')
+            .eq('id', transaction.user_id)
+            .single();
+
+        // И получаем информацию о видео отдельным запросом по video_id
+        let videoDuration = "?";
+        if (transaction.video_id) {
+            const { data: video } = await supabaseClient
+                .from('videos')
+                .select('duration')
+                .eq('id', transaction.video_id)
+                .single();
+
+            if (video) {
+                videoDuration = Math.ceil(video.duration / 60);
+            }
+        }
+
+        // Объединяем данные
+        const fullTransaction = {
+            ...transaction,
+            users: user,
+            videos: { duration: videoDuration !== "?" ? videoDuration * 60 : null }
+        };
+
         // Проверяем, что транзакция в статусе pending
-        if (transaction.status !== 'pending') {
+        if (fullTransaction.status !== 'pending') {
             return new Response(
                 JSON.stringify({
                     error: 'Transaction is not in pending status',
-                    status: transaction.status
+                    status: fullTransaction.status
                 }),
                 {
                     status: 400,
@@ -115,56 +138,64 @@ serve(async (req: Request) => {
             );
         }
 
-        // Формируем подпись для FreeKassa
-        // md5(merchant_id:amount:secret_word_1:currency:uniquecode)
-        const signString = `${MERCHANT_ID}:${transaction.amount}:${SECRET_KEY_1}:RUB:${uniquecode}`;
-        const sign = md5(signString);
+        // Формируем список товаров (в данном случае один товар)
+        const items = [
+            {
+                label: `Перевод видео на ${videoDuration} минут`, // Название товара/услуги
+                price: fullTransaction.amount,
+                quantity: 1,
+            }
+        ];
 
-        // Формируем URL для оплаты
-        const paymentUrl = new URL('https://pay.fk.money/');
-        paymentUrl.searchParams.append('m', MERCHANT_ID);
-        paymentUrl.searchParams.append('oa', transaction.amount.toString());
-        paymentUrl.searchParams.append('o', uniquecode);
-        paymentUrl.searchParams.append('s', sign);
-        paymentUrl.searchParams.append('currency', 'RUB');
-        paymentUrl.searchParams.append('email', transaction.users.email);
+        // Создаем чек
+        const receipt = buildReceipt(items);
 
-        // Если указан метод оплаты, добавляем его в URL
-        if (transaction.instrument_id) {
-            paymentUrl.searchParams.append('i', transaction.instrument_id.toString());
+        // Собираем данные для виджета
+        const paymentData = {
+            type: "CLOUDPAYMENTS_WIDGET",
+            url: null,
+            data: {
+                publicId: CP_PUBLIC_ID,
+                description: `Перевод видео на ${videoDuration} минут`,
+                amount: fullTransaction.amount,
+                currency: "RUB",
+                invoiceId: uniquecode,
+                accountId: fullTransaction.user_id.toString(),
+                autoClose: 3,
+                data: {
+                    CloudPayments: { CustomerReceipt: receipt }
+                }
+            }
+        };
+
+        // Если указан redirect_url, добавляем его
+        if (redirect_url) {
+            paymentData.data.data.successUrl = redirect_url;
         }
-
-        // Добавляем параметр для скрытия логотипа FreeKassa
-        paymentUrl.searchParams.append('cn', 'KASSA');
-
-        // Опционально - добавляем пользовательские поля
-        paymentUrl.searchParams.append('us_user_id', transaction.user_id.toString());
-        paymentUrl.searchParams.append('us_product_id', transaction.product_id.toString());
-        paymentUrl.searchParams.append('us_video_id', transaction.video_id.toString());
 
         // Логируем событие инициализации платежа
         await supabaseClient
             .from('payment_logs')
             .insert({
-                transaction_id: transaction.id,
+                transaction_id: fullTransaction.id,
                 event_type: 'payment_initiated',
                 data: {
                     uniquecode,
-                    amount: transaction.amount,
-                    payment_method: PAYMENT_METHODS[transaction.instrument_id] || 'UNKNOWN',
-                    payment_url: paymentUrl.toString()
+                    amount: fullTransaction.amount,
+                    payment_method: 'CloudPayments',
+                    payment_data: paymentData
                 },
                 ip_address: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip')
             });
 
-        // Возвращаем URL для перенаправления и данные о транзакции
+        // Возвращаем данные для инициализации платежа через виджет CloudPayments
         return new Response(
             JSON.stringify({
                 success: true,
-                payment_url: paymentUrl.toString(),
-                transaction_id: transaction.id,
+                payment_data: paymentData,
+                transaction_id: fullTransaction.id,
                 uniquecode,
-                amount: transaction.amount
+                amount: fullTransaction.amount
             }),
             {
                 status: 200,
@@ -188,3 +219,35 @@ serve(async (req: Request) => {
         );
     }
 });
+
+// Функция для формирования чека
+function buildReceipt(items: Array<{ label: string, price: number, quantity: number }>) {
+    // Сумма всех позиций
+    const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    // Преобразуем товары в нужный формат
+    const receiptItems = items.map(item => ({
+        label: item.label,
+        price: Number(item.price.toFixed(2)),
+        quantity: Number(item.quantity.toFixed(3)),
+        amount: Number((item.price * item.quantity).toFixed(2)),
+        vat: 0, // Ставка НДС 0%
+        method: 0, // тег-1214 (полная оплата)
+        object: 0, // тег-1212 (товар)
+        measurementUnit: "шт",
+    }));
+
+    return {
+        Items: receiptItems,
+        calculationPlace: "golosok.app", // или ваш домен
+        customerInfo: "",
+        isBso: false,
+        AgentSign: null,
+        amounts: {
+            electronic: Number(totalAmount.toFixed(2)),
+            advancePayment: 0.00,
+            credit: 0.00,
+            provision: 0.00,
+        },
+    };
+}

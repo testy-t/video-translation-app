@@ -52,10 +52,10 @@ serve(async (req: Request) => {
             );
         }
 
-        // Запрашиваем статус транзакции из БД
+        // Запрашиваем данные о транзакции из БД
         const { data: transaction, error: transactionError } = await supabaseClient
             .from('transactions')
-            .select('id, is_paid, status')
+            .select('id, uniquecode, is_paid, is_activated, status')
             .eq('uniquecode', uniquecode)
             .single();
 
@@ -76,12 +76,31 @@ serve(async (req: Request) => {
             );
         }
 
-        // Возвращаем статус платежа
+        // Получаем данные о связанном видео
+        const { data: video, error: videoError } = await supabaseClient
+            .from('videos')
+            .select('id, original_url, translated_url, output_language, heygen_job_id, status')
+            .eq('transaction_uniquecode', uniquecode)
+            .single();
+
+        // Формируем ответ
+        const response = {
+            is_paid: transaction.is_paid === true,
+            is_activated: transaction.is_activated === true,
+            status: transaction.status,
+            video: video ? {
+                id: video.id,
+                input_url: video.original_url,
+                output_url: video.translated_url,
+                status: video.status,
+                heygen_job_id: video.heygen_job_id,
+                output_language: video.output_language
+            } : null
+        };
+
+        // Возвращаем информацию
         return new Response(
-            JSON.stringify({
-                is_paid: transaction.is_paid === true,
-                status: transaction.status
-            }),
+            JSON.stringify(response),
             {
                 status: 200,
                 headers: {

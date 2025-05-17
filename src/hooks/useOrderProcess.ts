@@ -372,7 +372,7 @@ export const useOrderProcess = () => {
       const checkPaymentStatus = async () => {
         try {
           console.log("🔄 Проверяем статус оплаты для:", uniqueCode);
-          const response = await fetch(`https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/transaction-is-paid?uniquecode=${uniqueCode}`);
+          const response = await fetch(`https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/transaction-info?uniquecode=${uniqueCode}`);
           const data = await response.json();
           
           console.log("📊 Статус оплаты:", data);
@@ -382,13 +382,22 @@ export const useOrderProcess = () => {
             console.log("✅ Оплата подтверждена");
             localStorage.setItem('orderPaid', 'true');
             
+            // Сохраняем информацию о видео, если она доступна
+            if (data.video) {
+              console.log("📊 Информация о видео получена:", data.video);
+              localStorage.setItem(`video_info_${uniqueCode}`, JSON.stringify(data.video));
+            }
+            
             // Сохраняем информацию о заказе
             const orderInfo = {
               uniquecode: uniqueCode,
               date: new Date().toISOString(),
               email: localStorage.getItem('userEmail') || '',
               language: localStorage.getItem('selectedLanguage') || '',
-              videoDuration: localStorage.getItem('videoDuration') || ''
+              videoDuration: localStorage.getItem('videoDuration') || '',
+              is_activated: data.is_activated || false,
+              status: data.status || 'pending',
+              videoInfo: data.video || null
             };
             
             // Добавляем uniquecode в список завершенных платежей, если его там еще нет

@@ -60,6 +60,24 @@ export interface CloudPaymentsParams {
 }
 
 /**
+ * Информация о видео из API
+ */
+export interface VideoInfo {
+  /** ID видео */
+  id: number;
+  /** URL исходного видео */
+  input_url: string;
+  /** URL переведенного видео */
+  output_url: string;
+  /** Статус обработки видео */
+  status: string;
+  /** ID задачи на перевод в HeyGen */
+  heygen_job_id: string;
+  /** Язык перевода */
+  output_language: string;
+}
+
+/**
  * Информация о заказе для хранения в localStorage
  */
 export interface OrderInfo {
@@ -77,4 +95,8 @@ export interface OrderInfo {
   orderNumber?: string;
   /** Статус заказа (опционально) */
   status?: string;
+  /** Флаг активации (опционально) */
+  is_activated?: boolean;
+  /** Информация о видео (опционально) */
+  videoInfo?: VideoInfo | null;
 }

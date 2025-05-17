@@ -112,14 +112,26 @@ export class PaymentService {
   }
 
   /**
-   * Проверяет статус платежа
+   * Проверяет статус платежа и получает информацию о видео
    * @param uniquecode Уникальный код транзакции
-   * @returns Статус оплаты ({is_paid: boolean, status: string})
+   * @returns Информация о транзакции и видео
    */
-  static async checkPaymentStatus(uniquecode: string): Promise<{is_paid: boolean, status: string}> {
+  static async checkPaymentStatus(uniquecode: string): Promise<{
+    is_paid: boolean;
+    is_activated: boolean;
+    status: string;
+    video?: {
+      id: number;
+      input_url: string;
+      output_url: string;
+      status: string;
+      heygen_job_id: string;
+      output_language: string;
+    }
+  }> {
     try {
       const response = await fetch(
-        `https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/transaction-is-paid?uniquecode=${uniquecode}`,
+        `https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/transaction-info?uniquecode=${uniquecode}`,
         {
           method: "GET",
           headers: {
@@ -131,12 +143,23 @@ export class PaymentService {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Не удалось проверить статус платежа");
+        throw new Error(data.error || "Не удалось получить информацию о платеже");
+      }
+
+      // Сохраняем информацию о видео в localStorage, если она доступна
+      if (data.video) {
+        try {
+          localStorage.setItem(`video_info_${uniquecode}`, JSON.stringify(data.video));
+        } catch (e) {
+          console.error("Ошибка при сохранении информации о видео:", e);
+        }
       }
 
       return {
         is_paid: data.is_paid || false,
-        status: data.status || "pending"
+        is_activated: data.is_activated || false,
+        status: data.status || "pending",
+        video: data.video
       };
     } catch (error) {
       console.error("Ошибка при проверке статуса платежа:", error);
@@ -166,9 +189,12 @@ export class PaymentService {
       
       try {
         console.log(`🔄 Проверка статуса платежа (попытка ${attempts}/${maxAttempts})...`);
-        const { is_paid, status } = await this.checkPaymentStatus(uniquecode);
+        const { is_paid, is_activated, status, video } = await this.checkPaymentStatus(uniquecode);
         
-        console.log(`📊 Статус платежа: is_paid=${is_paid}, status=${status}`);
+        console.log(`📊 Статус платежа: is_paid=${is_paid}, is_activated=${is_activated}, status=${status}`);
+        if (video) {
+          console.log(`📊 Информация о видео: id=${video.id}, status=${video.status}, output_url=${video.output_url}`);
+        }
         
         // Если платеж подтвержден, останавливаем поллинг и вызываем колбэк
         if (is_paid) {
@@ -191,7 +217,10 @@ export class PaymentService {
             date: new Date().toISOString(),
             email: localStorage.getItem('userEmail') || '',
             language: localStorage.getItem('selectedLanguage') || '',
-            videoDuration: localStorage.getItem('videoDuration') || ''
+            videoDuration: localStorage.getItem('videoDuration') || '',
+            is_activated: is_activated || false,
+            status: status,
+            videoInfo: video || null
           };
           
           try {

@@ -179,7 +179,7 @@ const Header: React.FC = () => {
                       Тут будут ваши заказы
                     </DropdownMenuItem>
                   ) : (
-                    orderCodes.map((code) => (
+                    [...orderCodes].reverse().map((code) => (
                       <DropdownMenuItem
                         key={code}
                         onClick={() => openOrder(code)}

@@ -28,76 +28,86 @@ const PricingSection: React.FC = () => {
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+      <div className="rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
         <div className="flex flex-col md:flex-row">
-          {/* Основная информация о цене */}
-          <div className="w-full md:w-2/3 p-10 flex flex-col justify-center">
-            <h3 className="text-4xl md:text-5xl font-bold mb-2">500 ₽</h3>
-            <p className="text-gray-500 mb-6">
-              за 1 минуту переведенного видео
-            </p>
-
-            <ul className="space-y-4 mb-8">
-              <li className="flex items-start">
-                <Icon
-                  name="Check"
-                  size={20}
-                  className="text-green-500 mr-2 mt-1 shrink-0"
-                />
-                <span>175+ языков</span>
-              </li>
-              <li className="flex items-start">
-                <Icon
-                  name="Check"
-                  size={20}
-                  className="text-green-500 mr-2 mt-1 shrink-0"
-                />
-                <span>Идеальная синхронизация губ говорящего</span>
-              </li>
-              <li className="flex items-start">
-                <Icon
-                  name="Check"
-                  size={20}
-                  className="text-green-500 mr-2 mt-1 shrink-0"
-                />
-                <span>Сохранение естественного тембра голоса</span>
-              </li>
-              <li className="flex items-start">
-                <Icon
-                  name="Check"
-                  size={20}
-                  className="text-green-500 mr-2 mt-1 shrink-0"
-                />
-                <span>Результат в течение 5 минут</span>
-              </li>
-            </ul>
-
+          {/* Хайлайты (преимущества) */}
+          <div className="w-full md:w-2/3 p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-5 rounded-xl">
+                <div className="flex items-start">
+                  <Icon
+                    name="Globe"
+                    size={28}
+                    className="text-[#0070F3] mr-3 mt-1 shrink-0"
+                  />
+                  <div>
+                    <h4 className="text-lg font-semibold mb-1">175+ языков</h4>
+                    <p className="text-gray-600 text-sm">Широкий выбор языков для перевода вашего контента</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-5 rounded-xl">
+                <div className="flex items-start">
+                  <Icon
+                    name="MessageSquare"
+                    size={28}
+                    className="text-[#0070F3] mr-3 mt-1 shrink-0"
+                  />
+                  <div>
+                    <h4 className="text-lg font-semibold mb-1">Синхронизация губ</h4>
+                    <p className="text-gray-600 text-sm">Идеальная синхронизация движений губ говорящего</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-5 rounded-xl">
+                <div className="flex items-start">
+                  <Icon
+                    name="Mic"
+                    size={28}
+                    className="text-[#0070F3] mr-3 mt-1 shrink-0"
+                  />
+                  <div>
+                    <h4 className="text-lg font-semibold mb-1">Естественный голос</h4>
+                    <p className="text-gray-600 text-sm">Сохранение естественного тембра и интонаций голоса</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white p-5 rounded-xl">
+                <div className="flex items-start">
+                  <Icon
+                    name="Clock"
+                    size={28}
+                    className="text-[#0070F3] mr-3 mt-1 shrink-0"
+                  />
+                  <div>
+                    <h4 className="text-lg font-semibold mb-1">Быстрый результат</h4>
+                    <p className="text-gray-600 text-sm">Готовое видео в течение 15 минут после загрузки</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <Button
-              className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto w-full mt-6"
+              className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-3 text-base font-medium rounded-full h-auto w-full md:w-2/3 mx-auto block mt-8"
               onClick={goToOrderPage}
             >
               Начать перевод
             </Button>
           </div>
-
-          {/* Боковая панель */}
-          <div className="w-full md:w-1/3 bg-[#0070F3] text-white p-10 flex flex-col justify-center">
-            <h4 className="text-xl font-bold mb-4">Корпоративные решения</h4>
-            <p className="mb-6 text-blue-100">
-              Для компаний с большими объемами видеоконтента предлагаем
-              индивидуальные тарифы со скидками.
+          
+          {/* Цена */}
+          <div className="w-full md:w-1/3 bg-[#0070F3] text-white p-8 flex flex-col justify-center items-center text-center">
+            <h3 className="text-5xl md:text-6xl font-bold mb-2">149 ₽</h3>
+            <p className="text-xl text-blue-100">
+              за 1 минуту видео
             </p>
-            <Button className="bg-white text-[#0070F3] hover:bg-blue-50 hover:text-[#0070F3] border-none rounded-full">
-              Запросить предложение
-            </Button>
           </div>
         </div>
       </div>
 
-      <div className="mt-10 text-center text-gray-500 text-sm">
-        * Минимальный заказ от 1 минуты. Округление до целой минуты в большую
-        сторону.
-      </div>
     </div>
   );
 };

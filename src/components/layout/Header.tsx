@@ -68,19 +68,21 @@ const Header: React.FC = () => {
   // Предотвращаем скачки страницы при открытии/закрытии дропдауна
   useEffect(() => {
     if (isDropdownOpen) {
-      // Сохраняем ширину скролла перед добавлением padding
+      // Вычисляем ширину скроллбара
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-      document.body.style.overflow = "hidden";
+      // Только добавляем padding-right к header, чтобы он не смещался
+      document
+        .querySelector("header")
+        ?.setAttribute("style", `padding-right: ${scrollbarWidth}px`);
     } else {
-      document.body.style.paddingRight = "";
-      document.body.style.overflow = "";
+      // Убираем padding-right при закрытии дропдауна
+      document.querySelector("header")?.removeAttribute("style");
     }
 
     return () => {
-      document.body.style.paddingRight = "";
-      document.body.style.overflow = "";
+      // Очищаем стили при размонтировании компонента
+      document.querySelector("header")?.removeAttribute("style");
     };
   }, [isDropdownOpen]);
 

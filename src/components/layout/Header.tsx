@@ -101,6 +101,12 @@ const Header: React.FC = () => {
               >
                 Цена
               </button>
+              <button
+                onClick={() => window.jivo_api?.open()}
+                className="text-sm font-medium text-black hover:text-black/80 transition-colors"
+              >
+                Поддержка
+              </button>
             </nav>
 
             {/* Кнопка CTA */}

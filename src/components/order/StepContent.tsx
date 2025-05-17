@@ -15,6 +15,7 @@ interface StepContentProps {
   transactionId?: string | null;
   onUploadSuccess?: (videoId: number, fileKey: string) => void;
   isUploading?: boolean;
+  videoDuration?: number;
 }
 
 /**
@@ -30,7 +31,8 @@ const StepContent: React.FC<StepContentProps> = ({
   orderNumber,
   transactionId,
   onUploadSuccess,
-  isUploading
+  isUploading,
+  videoDuration = 180 // По умолчанию 3 минуты, но должно приходить из API
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -56,6 +58,7 @@ const StepContent: React.FC<StepContentProps> = ({
         <PaymentStep 
           videoFile={videoFile}
           selectedLanguage={selectedLanguage}
+          videoDuration={videoDuration}
           onPayment={onPayment}
         />
       )}

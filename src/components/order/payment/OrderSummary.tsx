@@ -11,6 +11,8 @@ interface OrderSummaryProps {
   isProcessing: boolean;
   /** Функция обратного вызова при нажатии на кнопку оплаты */
   onPayment: () => void;
+  /** Длительность видео в секундах (опционально) */
+  videoDuration?: number;
 }
 
 /**
@@ -19,19 +21,24 @@ interface OrderSummaryProps {
 const OrderSummary: React.FC<OrderSummaryProps> = ({ 
   price, 
   isProcessing, 
-  onPayment 
+  onPayment,
+  videoDuration = 120 // По умолчанию используем 2 минуты
 }) => (
   <div className="bg-gray-50 border rounded-lg p-6 sticky top-4">
     <h4 className="text-lg font-medium mb-6">Итого</h4>
     
     <div className="space-y-3 mb-6">
       <div className="flex justify-between">
-        <span className="text-muted-foreground">Стоимость перевода</span>
-        <span>{price} ₽</span>
+        <span className="text-muted-foreground">Длительность видео</span>
+        <span>{Math.ceil(videoDuration / 60)} мин.</span>
       </div>
       <div className="flex justify-between">
-        <span className="text-muted-foreground">Сервисный сбор</span>
-        <span>0 ₽</span>
+        <span className="text-muted-foreground">Стоимость минуты</span>
+        <span>149 ₽</span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Стоимость перевода</span>
+        <span>{price} ₽</span>
       </div>
     </div>
     

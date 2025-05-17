@@ -31,6 +31,10 @@ export const useOrderProcess = () => {
     localStorage.getItem('uploadedFileKey')
   );
   const [isUploading, setIsUploading] = useState(false);
+  const [videoDuration, setVideoDuration] = useState<number>(() => {
+    const savedDuration = localStorage.getItem('videoDuration');
+    return savedDuration ? parseInt(savedDuration) : 180; // По умолчанию 3 минуты
+  });
   
   // Process steps
   const steps = [
@@ -151,9 +155,14 @@ export const useOrderProcess = () => {
   };
 
   // Handle successful video upload
-  const handleUploadSuccess = (videoId: number, fileKey: string) => {
+  const handleUploadSuccess = (videoId: number, fileKey: string, duration?: number) => {
     setVideoId(videoId);
     setFileKey(fileKey);
+    
+    // Если передана длительность, обновляем ее
+    if (duration) {
+      setVideoDuration(duration);
+    }
     
     // Сохраняем информацию о видео в localStorage для возможности восстановления при навигации
     try {
@@ -161,6 +170,11 @@ export const useOrderProcess = () => {
       localStorage.setItem('uploadedFileKey', fileKey);
       localStorage.setItem('transactionId', transactionId || '');
       localStorage.setItem('isVideoUploaded', 'true'); // Ensure this flag is always set
+      
+      // Сохраняем длительность видео
+      if (duration) {
+        localStorage.setItem('videoDuration', duration.toString());
+      }
     } catch (e) {
       console.error("Failed to save video info to localStorage:", e);
     }
@@ -286,6 +300,7 @@ export const useOrderProcess = () => {
     handlePayment,
     transactionId,
     handleUploadSuccess,
-    isUploading
+    isUploading,
+    videoDuration
   };
 };

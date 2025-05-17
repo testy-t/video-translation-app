@@ -1,25 +1,23 @@
 
 /**
- * Хук для расчёта стоимости заказа на основе видеофайла
+ * Хук для расчёта стоимости заказа на основе видеофайла и его длительности
  * @param videoFile - Файл видео для анализа
+ * @param videoDuration - Длительность видео в секундах
  * @returns Расчитанная стоимость
  */
-export const useOrderPrice = (videoFile: File | null): number => {
-  // Базовая стоимость перевода минуты видео
-  const BASE_PRICE = 299;
+export const useOrderPrice = (videoFile: File | null, videoDuration: number): number => {
+  // Стоимость перевода за минуту видео
+  const PRICE_PER_MINUTE = 149;
   
-  // Стоимость за 1 МБ размера файла
-  const PRICE_PER_MB = 1;
-  
-  // Рассчитываем стоимость на основе размера файла
+  // Рассчитываем стоимость на основе длительности видео
   const calculatePrice = (): number => {
     if (!videoFile) return 0;
     
-    // Плюс дополнительная стоимость за размер файла
-    const fileSizeInMB = videoFile.size / (1024 * 1024);
-    const sizePrice = Math.ceil(fileSizeInMB * PRICE_PER_MB);
+    // Округляем в большую сторону до минут
+    const minutes = Math.ceil(videoDuration / 60);
     
-    return BASE_PRICE + sizePrice;
+    // 149 рублей за минуту
+    return PRICE_PER_MINUTE * minutes;
   };
 
   return calculatePrice();

@@ -23,7 +23,8 @@ const OrderProcess: React.FC = () => {
     handlePayment,
     transactionId,
     handleUploadSuccess,
-    isUploading
+    isUploading,
+    videoDuration
   } = useOrderProcess();
   
   // Эффект анимации при загрузке страницы
@@ -62,6 +63,7 @@ const OrderProcess: React.FC = () => {
         transactionId={transactionId}
         onUploadSuccess={handleUploadSuccess}
         isUploading={isUploading}
+        videoDuration={videoDuration}
       />
 
       {/* Кнопки навигации */}

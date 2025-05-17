@@ -2,11 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Clock } from "lucide-react";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const [orderCodes, setOrderCodes] = useState<string[]>([]);
 
   // Отслеживаем скролл страницы
   useEffect(() => {
@@ -29,6 +37,36 @@ const Header: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [scrolled]);
+
+  // Загружаем коды заказов из localStorage
+  useEffect(() => {
+    const loadOrderCodes = () => {
+      try {
+        const storedCodes = localStorage.getItem("completedPaymentCodes");
+        if (storedCodes) {
+          const codes = JSON.parse(storedCodes);
+          setOrderCodes(Array.isArray(codes) ? codes : []);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке истории заказов:", error);
+        setOrderCodes([]);
+      }
+    };
+
+    loadOrderCodes();
+
+    // Обновляем историю заказов при любых изменениях в localStorage
+    window.addEventListener("storage", loadOrderCodes);
+
+    return () => {
+      window.removeEventListener("storage", loadOrderCodes);
+    };
+  }, []);
+
+  // Функция для открытия заказа по коду
+  const openOrder = (code: string) => {
+    navigate(`/order?step=3&uniquecode=${code}`);
+  };
 
   // Функция для плавной прокрутки к секции
   const scrollToSection = (id: string) => {
@@ -54,6 +92,17 @@ const Header: React.FC = () => {
   // Функция для перехода на страницу генерации
   const goToOrderPage = () => {
     navigate("/order");
+  };
+
+  // Функция для форматирования даты из кода заказа (если там есть дата)
+  const formatOrderDate = (code: string, index: number) => {
+    // Пытаемся извлечь дату из кода или просто показываем "Заказ #N"
+    try {
+      // Пример простого форматирования, можно адаптировать под реальный формат
+      return `Заказ #${index + 1}`;
+    } catch (error) {
+      return `Заказ #${index + 1}`;
+    }
   };
 
   return (
@@ -109,13 +158,48 @@ const Header: React.FC = () => {
               </button>
             </nav>
 
-            {/* Кнопка CTA */}
-            <Button
-              onClick={goToOrderPage}
-              className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5 h-8 text-sm"
-            >
-              Попробовать
-            </Button>
+            {/* Кнопки справа */}
+            <div className="flex items-center gap-2">
+              {/* Дропдаун с историей заказов */}
+              {orderCodes.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="rounded-full text-black hover:bg-[#0070F3]/10"
+                    >
+                      <Clock size={20} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[200px]">
+                    {orderCodes.length === 0 ? (
+                      <DropdownMenuItem disabled>
+                        Нет истории заказов
+                      </DropdownMenuItem>
+                    ) : (
+                      orderCodes.map((code, index) => (
+                        <DropdownMenuItem
+                          key={code}
+                          onClick={() => openOrder(code)}
+                          className="cursor-pointer"
+                        >
+                          {formatOrderDate(code, index)}
+                        </DropdownMenuItem>
+                      ))
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {/* Кнопка CTA */}
+              <Button
+                onClick={goToOrderPage}
+                className="bg-[#0070F3] hover:bg-[#0060d3] text-white rounded-full px-5 h-8 text-sm"
+              >
+                Попробовать
+              </Button>
+            </div>
           </div>
         </div>
       </div>

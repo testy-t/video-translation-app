@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -14,7 +14,9 @@ const Header: React.FC = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [orderCodes, setOrderCodes] = useState<string[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Отслеживаем скролл страницы
   useEffect(() => {
@@ -65,26 +67,18 @@ const Header: React.FC = () => {
     };
   }, []);
 
-  // Предотвращаем скачки страницы при открытии/закрытии дропдауна
+  // Эффект для восстановления скролла страницы при открытии дропдауна
   useEffect(() => {
-    if (isDropdownOpen) {
-      // Вычисляем ширину скроллбара
-      const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
-      // Только добавляем padding-right к header, чтобы он не смещался
-      document
-        .querySelector("header")
-        ?.setAttribute("style", `padding-right: ${scrollbarWidth}px`);
-    } else {
-      // Убираем padding-right при закрытии дропдауна
-      document.querySelector("header")?.removeAttribute("style");
+    if (isOpen) {
+      // Маленькая задержка, чтобы дать время Radix UI установить стили
+      setTimeout(() => {
+        // Находим элемент, который блокирует скролл (добавленный Radix)
+        document.body.style.overflow = "";
+        // Находим и удаляем padding-right
+        document.body.style.paddingRight = "";
+      }, 0);
     }
-
-    return () => {
-      // Очищаем стили при размонтировании компонента
-      document.querySelector("header")?.removeAttribute("style");
-    };
-  }, [isDropdownOpen]);
+  }, [isOpen]);
 
   // Функция для открытия заказа по коду
   const openOrder = (code: string) => {
@@ -183,36 +177,59 @@ const Header: React.FC = () => {
 
             {/* Кнопки справа */}
             <div className="flex items-center gap-2">
-              {/* Дропдаун с историей заказов - всегда отображается */}
-              <DropdownMenu onOpenChange={setIsDropdownOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="rounded-full text-black hover:bg-[#0070F3]/10 focus:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-                    onClick={orderCodes.length === 0 ? addTestOrder : undefined}
-                  >
-                    <Icon name="ShoppingBag" size={20} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[200px]">
-                  {orderCodes.length === 0 ? (
-                    <DropdownMenuItem disabled>
-                      Тут будут ваши заказы
-                    </DropdownMenuItem>
-                  ) : (
-                    [...orderCodes].reverse().map((code) => (
-                      <DropdownMenuItem
-                        key={code}
-                        onClick={() => openOrder(code)}
-                        className="cursor-pointer"
-                      >
-                        Заказ #{code.slice(0, 6).toUpperCase()}
-                      </DropdownMenuItem>
-                    ))
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* Создаем кастомный дропдаун вместо DropdownMenu */}
+              <div className="relative">
+                <Button
+                  ref={triggerRef}
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full text-black hover:bg-[#0070F3]/10 focus:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (orderCodes.length === 0) {
+                      addTestOrder();
+                    }
+                    setIsOpen(!isOpen);
+                  }}
+                >
+                  <Icon name="ShoppingBag" size={20} />
+                </Button>
+
+                {isOpen && (
+                  <>
+                    {/* Клик вне дропдауна для закрытия */}
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setIsOpen(false)}
+                    />
+
+                    {/* Контент дропдауна */}
+                    <div
+                      ref={dropdownRef}
+                      className="absolute right-0 mt-2 w-[200px] rounded-md border bg-popover p-1 text-popover-foreground shadow-md z-50"
+                    >
+                      {orderCodes.length === 0 ? (
+                        <div className="px-2 py-1.5 text-sm text-muted-foreground cursor-not-allowed">
+                          Тут будут ваши заказы
+                        </div>
+                      ) : (
+                        [...orderCodes].reverse().map((code) => (
+                          <div
+                            key={code}
+                            onClick={() => {
+                              openOrder(code);
+                              setIsOpen(false);
+                            }}
+                            className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground"
+                          >
+                            Заказ #{code.slice(0, 6).toUpperCase()}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* Кнопка CTA */}
               <Button

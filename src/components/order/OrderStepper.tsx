@@ -50,7 +50,7 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
               <div className="flex items-center gap-3">
                 <div className="flex-shrink-0">
                   {index < currentStep ? (
-                    <Icon name="CheckCircle" size={22} />
+                    <Icon name="CircleCheck" className="text-primary" size={22} />
                   ) : (
                     <div
                       className={`bg-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium border 

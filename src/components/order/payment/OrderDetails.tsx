@@ -86,8 +86,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   const totalPrice = roundedMinutes * pricePerMinute;
 
   return (
-    <Card className="mb-6">
-      <CardContent className="p-6">
+    <Card className="mb-6 border-0 shadow-none">
+      <CardContent className="p-6 px-0">
         <h4 className="text-2xl font-bold mb-6 text-center">
           Детали заказа
         </h4>

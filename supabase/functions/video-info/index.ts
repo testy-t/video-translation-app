@@ -65,26 +65,37 @@ serve(async (req: Request) => {
 
     // Подготавливаем ответ с информацией о видео
     if (videoError || !videoRecord) {
-      console.log('Video not found in DB, returning default values')
+      console.log('Video not found in DB, returning error')
       
-      // Если видео не найдено в БД, возвращаем стандартные значения
+      // Если видео не найдено в БД, возвращаем ошибку
+      statusCode = 404
       responseData = {
-        success: true,
-        videoId,
-        duration: 185, // ~3 минуты по умолчанию
-        outputLanguage,
-        finalAmount: 149 * Math.ceil(185 / 60) // Расчет стоимости
+        success: false,
+        error: 'Video not found',
+        message: `Video with ID ${videoId} not found in database`,
+        videoId
       }
     } else {
       // Если видео найдено, используем данные из БД
-      const duration = videoRecord.duration || 185
+      const duration = videoRecord.duration
       
-      responseData = {
-        success: true,
-        videoId,
-        duration,
-        outputLanguage: videoRecord.output_language || outputLanguage,
-        finalAmount: 149 * Math.ceil(duration / 60) // Расчет стоимости
+      // Проверка на наличие duration
+      if (!duration) {
+        statusCode = 400
+        responseData = {
+          success: false,
+          error: 'Invalid video data',
+          message: 'Video duration is missing',
+          videoId
+        }
+      } else {
+        responseData = {
+          success: true,
+          videoId,
+          duration,
+          outputLanguage: videoRecord.output_language || outputLanguage,
+          finalAmount: 149 * Math.ceil(duration / 60) // Расчет стоимости
+        }
       }
 
       // Обновляем язык в БД, если он отличается

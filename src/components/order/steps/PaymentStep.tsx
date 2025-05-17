@@ -28,8 +28,10 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Получаем ID видео и ключ файла из localStorage
-  const videoId = localStorage.getItem('uploadedVideoId') 
-    ? parseInt(localStorage.getItem('uploadedVideoId') || '0') 
+  // Используем videoDbId, который устанавливается на шаге выбора языка,
+  // вместо uploadedVideoId, т.к. он является правильным ID в базе данных
+  const videoId = localStorage.getItem('videoDbId') 
+    ? parseInt(localStorage.getItem('videoDbId') || '0') 
     : null;
   const fileKey = localStorage.getItem('uploadedFileKey');
   
@@ -47,6 +49,17 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   const fetchVideoInfo = async () => {
     if (!videoId || !fileKey) {
       console.log('⚠️ Нет данных для загрузки информации о видео', { videoId, fileKey });
+      // Если нет ID видео, показываем ошибку и перенаправляем на шаг загрузки
+      toast({
+        title: "Ошибка",
+        description: "Не найдена информация о загруженном видео. Пожалуйста, загрузите видео заново.",
+        variant: "destructive",
+      });
+      
+      // Очищаем данные и перенаправляем
+      setTimeout(() => {
+        window.location.href = '/order?step=0';
+      }, 2000);
       return;
     }
     
@@ -93,20 +106,51 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
       }
 
       if (!response.ok) {
-        console.error(`Ошибка API: ${response.status}`);
-        throw new Error(data.error || "Не удалось получить информацию о видео");
+        const errorMessage = data.error || `Ошибка API: ${response.status}`;
+        console.error(errorMessage, data);
+        
+        // Показываем пользователю информацию об ошибке
+        toast({
+          title: "Ошибка получения информации о видео",
+          description: data.message || errorMessage,
+          variant: "destructive",
+        });
+        
+        // Очищаем некорректные данные из localStorage
+        if (response.status === 404) {
+          localStorage.removeItem('videoDbId');
+          localStorage.removeItem('uploadedVideoId');
+          localStorage.removeItem('uploadedFileKey');
+          localStorage.removeItem('videoDuration');
+          
+          // Перенаправляем на шаг загрузки, так как видео не найдено
+          window.location.href = '/order?step=0';
+          throw new Error("Видео не найдено. Перенаправление на шаг загрузки...");
+        }
+        
+        throw new Error(errorMessage);
       }
+      
+      if (!data.success) {
+        console.error('Ошибка данных API:', data);
+        throw new Error(data.error || "Некорректные данные от API");
+      }
+      
       console.log('✅ Получены данные о видео из API:', data);
+      
+      // Проверяем, что в данных точно есть необходимые поля
+      if (!data.duration) {
+        throw new Error("В ответе API отсутствует длительность видео");
+      }
       
       // Преобразуем данные и сохраняем в состояние
       const languageCode = data.outputLanguage || selectedLanguage || "en";
       const videoData = {
-        duration: data.duration || videoDuration || 180,
+        duration: data.duration,
         outputLanguage: languageCode
       };
       
       console.log(`✅ Получен язык перевода: ${languageCode}`);
-      
       console.log('✅ Преобразованные данные о видео:', videoData);
       setVideoInfo(videoData);
       

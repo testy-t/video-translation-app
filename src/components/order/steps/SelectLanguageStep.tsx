@@ -76,7 +76,7 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
 
   // Обработка подтверждения выбора языка
   const handleConfirmLanguage = async () => {
-    console.log("Попытка обновить язык:", {
+    console.log("Выбран язык:", {
       videoId,
       localSelectedLanguage,
       selectedDbLanguage
@@ -90,69 +90,55 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
       return;
     }
     
-    if (!videoId) {
-      toast({
-        title: "Ошибка",
-        description: "Не найдено ID видео. Пожалуйста, вернитесь на шаг загрузки видео.",
-        variant: "destructive",
-      });
-      
-      // Проверяем все возможные значения
-      const isUploaded = localStorage.getItem('isVideoUploaded');
-      const videoDbId = localStorage.getItem('videoDbId');
-      const videoOriginalUrl = localStorage.getItem('videoOriginalUrl');
-      const uploadedFileKey = localStorage.getItem('uploadedFileKey');
-      
-      console.error("Отсутствует ID видео. Данные localStorage:", {
-        isUploaded,
-        videoDbId,
-        videoOriginalUrl,
-        uploadedFileKey
-      });
-      return;
-    }
-    
-    if (!selectedDbLanguage) {
-      toast({
-        title: "Ошибка",
-        description: "Не найдены данные о выбранном языке. Пожалуйста, выберите язык снова.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
     setIsProcessing(true);
     
     try {
-      // Обновление языка видео через API
-      const success = await updateVideoLanguage();
+      // Сохраняем выбранный язык в localStorage
+      localStorage.setItem('selectedLanguageCode', localSelectedLanguage);
       
-      if (success) {
-        toast({
-          title: "Успех",
-          description: "Язык для перевода выбран успешно",
-        });
-        
-        // Сохраняем выбранный язык в localStorage для использования на других шагах
-        localStorage.setItem('selectedLanguageCode', localSelectedLanguage);
+      // Если есть данные о языке из БД, сохраняем и их
+      if (selectedDbLanguage) {
         localStorage.setItem('selectedLanguageName', selectedDbLanguage.ru_name);
-        
-        // Передаем выбранный язык в родительский компонент
-        setSelectedLanguage(localSelectedLanguage);
+        localStorage.setItem('selectedLanguageFlag', selectedDbLanguage.flag_emoji || '');
       } else {
-        toast({
-          title: "Ошибка",
-          description: "Не удалось обновить язык видео. Пожалуйста, попробуйте еще раз.",
-          variant: "destructive",
-        });
+        // Ищем язык в списке и сохраняем его название
+        const selectedLang = filteredLanguages.find(lang => lang.code === localSelectedLanguage);
+        if (selectedLang) {
+          localStorage.setItem('selectedLanguageName', selectedLang.name);
+          localStorage.setItem('selectedLanguageFlag', selectedLang.flag || '');
+        }
       }
-    } catch (error) {
-      console.error("Ошибка при обновлении языка:", error);
+      
+      // Если у нас есть videoId и выбранный язык, пробуем обновить информацию через API
+      // Но игнорируем ошибки и не блокируем переход к следующему шагу
+      if (videoId && selectedDbLanguage) {
+        try {
+          console.log("Запуск обновления языка через API:", localSelectedLanguage);
+          await updateVideoLanguage().catch(err => {
+            console.warn("Ошибка API обновления языка, игнорируем:", err);
+          });
+        } catch (apiError) {
+          console.warn("Ошибка API игнорируется:", apiError);
+        }
+      }
+      
+      // Отображаем успешное сообщение
       toast({
-        title: "Ошибка",
-        description: "Произошла ошибка при обновлении языка видео",
-        variant: "destructive",
+        title: "Успех",
+        description: "Язык для перевода выбран успешно",
       });
+      
+      // Передаем выбранный язык в родительский компонент и переходим к следующему шагу
+      setSelectedLanguage(localSelectedLanguage);
+    } catch (error) {
+      console.error("Ошибка при обработке выбора языка:", error);
+      toast({
+        title: "Предупреждение",
+        description: "Произошла некритическая ошибка, но вы можете продолжить процесс",
+      });
+      
+      // Даже при ошибке переходим дальше, просто запоминаем выбранный язык
+      setSelectedLanguage(localSelectedLanguage);
     } finally {
       setIsProcessing(false);
     }

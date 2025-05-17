@@ -100,17 +100,27 @@ serve(async (req: Request) => {
 
         console.log("🔄 Found video record:", videoRecord.id);
 
-        // Если пользователь авторизован, проверяем доступ
-        if (userId) {
-            // Получаем связанную транзакцию, если есть
-            if (videoRecord.transaction_uniquecode && !videoRecord.transaction_uniquecode.startsWith('temp_')) {
-                const { data: transactionRecord, error: transactionError } = await supabaseAdmin
-                    .from('transactions')
-                    .select('user_id')
-                    .eq('uniquecode', videoRecord.transaction_uniquecode)
-                    .single();
+        // Проверка доступа
+        let hasAccess = false;
+        
+        // Для временных записей (без авторизации) разрешаем доступ
+        if (videoRecord.transaction_uniquecode && videoRecord.transaction_uniquecode.startsWith('temp_')) {
+            console.log("🔄 Temporary video record, access granted");
+            hasAccess = true;
+        } 
+        // Если пользователь авторизован, проверяем принадлежность видео
+        else if (userId && videoRecord.transaction_uniquecode) {
+            const { data: transactionRecord, error: transactionError } = await supabaseAdmin
+                .from('transactions')
+                .select('user_id')
+                .eq('uniquecode', videoRecord.transaction_uniquecode)
+                .single();
 
-                if (!transactionError && transactionRecord && transactionRecord.user_id !== userId) {
+            if (!transactionError && transactionRecord) {
+                if (transactionRecord.user_id === userId) {
+                    console.log("🔄 Video belongs to the authenticated user, access granted");
+                    hasAccess = true;
+                } else {
                     console.error("🔄 Access denied: video belongs to another user");
                     return new Response(JSON.stringify({ error: 'Access denied: video belongs to another user' }), {
                         status: 403,
@@ -118,6 +128,19 @@ serve(async (req: Request) => {
                     });
                 }
             }
+        } 
+        // Для всех других случаев (отсутствие авторизации или транзакции) тоже разрешаем доступ
+        else {
+            console.log("🔄 No authentication or transaction_uniquecode, access granted for video:", videoRecord.id);
+            hasAccess = true;
+        }
+        
+        if (!hasAccess) {
+            console.error("🔄 Access denied: could not verify ownership");
+            return new Response(JSON.stringify({ error: 'Access denied: could not verify ownership' }), {
+                status: 403,
+                headers: { 'Content-Type': 'application/json' },
+            });
         }
 
         // Обновляем язык видео

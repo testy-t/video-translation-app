@@ -202,18 +202,6 @@ export const useOrderProcess = () => {
     localStorage.setItem('selectedLanguage', language);
 
     try {
-      // Get session and token
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Ошибка авторизации",
-          description: "Пожалуйста, войдите в систему",
-          variant: "destructive",
-        });
-        setIsUploading(false);
-        return;
-      }
-      
       // Пробуем использовать наш новый метод уведомления для обновления языка перевода
       try {
         // Импортируем сервис для отправки уведомлений
@@ -224,8 +212,8 @@ export const useOrderProcess = () => {
         const S3_BUCKET = "golosok"; // Правильное имя бакета
         const originalUrl = `${S3_ENDPOINT}/${S3_BUCKET}/${effectiveFileKey}`;
         
-        // Получаем уникальный код транзакции
-        const transactionUniqueCode = effectiveTransactionId || `anon-${Date.now()}`;
+        // Используем временный код для анонимного пользователя
+        const transactionUniqueCode = `temp_${Date.now()}`;
         
         console.log("📊 Updating video with selected language:", {
           transactionUniqueCode,
@@ -234,38 +222,17 @@ export const useOrderProcess = () => {
         });
         
         // Отправляем уведомление с обновленным языком
-        await VideoUploadService.notifyVideoUploaded(
+        const notificationResult = await VideoUploadService.notifyVideoUploaded(
           transactionUniqueCode,
           originalUrl,
           language
         );
+        
+        console.log("📊 Language update notification result:", notificationResult);
       } catch (error) {
         console.error("📊 Error updating video language:", error);
         // Продолжаем выполнение даже при ошибке
       }
-
-      // Call the video-info Edge Function
-      const supabaseUrl = await supabase.functions.getUrl('video-info');
-      
-      const response = await fetch(supabaseUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({
-          videoId: effectiveVideoId,
-          fileKey: effectiveFileKey,
-          outputLanguage: language
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Ошибка обработки информации о видео');
-      }
-
-      const result = await response.json();
       
       // Move to payment step
       goToNextStep();

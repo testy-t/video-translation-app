@@ -52,10 +52,10 @@ serve(async (req: Request) => {
             );
         }
 
-        // Запрашиваем данные о транзакции из БД
+        // Запрашиваем данные о транзакции из БД с видео
         const { data: transaction, error: transactionError } = await supabaseClient
             .from('transactions')
-            .select('id, uniquecode, is_paid, is_activated, status')
+            .select('id, uniquecode, is_paid, is_activated, status, video_id')
             .eq('uniquecode', uniquecode)
             .single();
 
@@ -76,27 +76,35 @@ serve(async (req: Request) => {
             );
         }
 
-        // Получаем данные о связанном видео
-        const { data: video, error: videoError } = await supabaseClient
-            .from('videos')
-            .select('id, original_url, translated_url, output_language, heygen_job_id, status')
-            .eq('transaction_uniquecode', uniquecode)
-            .single();
-
-        // Формируем ответ
+        // Инициализируем объект ответа с данными о транзакции
         const response = {
             is_paid: transaction.is_paid === true,
             is_activated: transaction.is_activated === true,
             status: transaction.status,
-            video: video ? {
-                id: video.id,
-                input_url: video.original_url,
-                output_url: video.translated_url,
-                status: video.status,
-                heygen_job_id: video.heygen_job_id,
-                output_language: video.output_language
-            } : null
+            video: null
         };
+
+        // Проверяем наличие video_id
+        if (transaction.video_id) {
+            // Получаем данные о связанном видео по video_id
+            const { data: video, error: videoError } = await supabaseClient
+                .from('videos')
+                .select('id, original_url, translated_url, output_language, heygen_job_id, status')
+                .eq('id', transaction.video_id)
+                .single();
+
+            // Добавляем данные о видео в ответ, если оно найдено
+            if (video && !videoError) {
+                response.video = {
+                    id: video.id,
+                    input_url: video.original_url,
+                    output_url: video.translated_url,
+                    status: video.status,
+                    heygen_job_id: video.heygen_job_id,
+                    output_language: video.output_language
+                };
+            }
+        }
 
         // Возвращаем информацию
         return new Response(
@@ -112,7 +120,7 @@ serve(async (req: Request) => {
     } catch (error) {
         console.error('Unexpected error:', error);
         return new Response(
-            JSON.stringify({ error: 'Internal server error' }),
+            JSON.stringify({ error: 'Internal server error', details: String(error) }),
             {
                 status: 500,
                 headers: {

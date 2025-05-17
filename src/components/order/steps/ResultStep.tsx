@@ -207,12 +207,13 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
 
           <div className="border rounded-lg p-4 mb-8">
             <div className="flex flex-col space-y-3">
+              {uniqueCode &&
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Номер заказа:</span>
                 <span className="font-medium">
-                  {formatOrderNumber(orderNumber)}
+                  {formatOrderNumber(uniqueCode.slice(0, 12)).toUpperCase()}
                 </span>
-              </div>
+              </div>}
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Статус:</span>

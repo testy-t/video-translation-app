@@ -35,7 +35,7 @@ const DropZone: React.FC<DropZoneProps> = ({
           Перетащите видео или нажмите для выбора
         </p>
         <p className="text-gray-500 text-sm">
-          Поддерживаются форматы: MP4, AVI, MOV, MKV (до 2GB)
+          Поддерживаются форматы: MP4, AVI, MOV, MKV (до 5GB)
         </p>
       </div>
     </div>

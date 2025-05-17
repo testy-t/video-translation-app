@@ -14,6 +14,10 @@ import {
 
 // Константы для формирования URL видео
 const S3_ENDPOINT = "https://storage.yandexcloud.net"; // URL хранилища, где размещаются файлы
+const S3_BUCKET = "golosok"; // Правильное имя бакета
+
+// Константа для максимального размера файла
+const MAX_FILE_SIZE = 5 * 1024 * 1024 * 1024; // 5GB в байтах
 
 /**
  * Компонент для загрузки видео
@@ -38,20 +42,30 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
   // Обработчики событий для файлов
   //////////////////////////////////
   
+  // Используется MAX_FILE_SIZE, объявленная выше
+  
   // Обработка выбора файла из диалога
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("📊 File selection triggered", e.target.files);
     const files = e.target.files;
     
     // Сбрасываем флаг загруженного видео при выборе нового файла
     if (isVideoUploaded) {
-      console.log("📊 Resetting upload state for new file");
       setIsVideoUploaded(false);
       VideoStorageUtils.setUploadStatus(false);
     }
     
     if (files && files[0]) {
-      console.log("📊 File selected:", files[0].name);
+      // Проверка размера файла
+      if (files[0].size > MAX_FILE_SIZE) {
+        console.error("📊 File too large:", files[0].size, "bytes");
+        toast({
+          title: "Ошибка",
+          description: "Размер файла превышает лимит в 5GB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       // Create URL for video preview
       const fileUrl = URL.createObjectURL(files[0]);
       setVideoSrc(fileUrl);
@@ -59,11 +73,8 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
       
       // Start upload automatically
       setTimeout(() => {
-        console.log("📊 Starting upload from file selection handler");
         uploadVideo();
       }, 100);
-    } else {
-      console.log("📊 No file selected in file input");
     }
   };
 
@@ -80,40 +91,44 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    console.log("📊 File dropped", e.dataTransfer.files);
 
     // Сбрасываем флаг загруженного видео при перетаскивании нового файла
     if (isVideoUploaded) {
-      console.log("📊 Resetting upload state for newly dropped file");
       setIsVideoUploaded(false);
       VideoStorageUtils.setUploadStatus(false);
     }
 
     const files = e.dataTransfer.files;
     if (files && files[0]) {
-      console.log("📊 Checking dropped file:", files[0].name, files[0].type);
-      // Check if file is a video
-      if (files[0].type.startsWith("video/")) {
-        console.log("📊 Video file dropped:", files[0].name);
-        const fileUrl = URL.createObjectURL(files[0]);
-        setVideoSrc(fileUrl);
-        setVideoFile(files[0]);
-        
-        // Start upload automatically
-        setTimeout(() => {
-          console.log("📊 Starting upload from drop handler");
-          uploadVideo();
-        }, 100);
-      } else {
-        console.log("📊 Dropped file is not a video:", files[0].type);
+      // Сначала проверяем тип файла
+      if (!files[0].type.startsWith("video/")) {
         toast({
           title: "Недопустимый формат",
           description: "Пожалуйста, выберите видеофайл",
           variant: "destructive",
         });
+        return;
       }
-    } else {
-      console.log("📊 No file in drop event");
+      
+      // Затем проверяем размер файла
+      if (files[0].size > MAX_FILE_SIZE) {
+        toast({
+          title: "Ошибка",
+          description: "Размер файла превышает лимит в 5GB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Если все проверки пройдены, продолжаем с загрузкой
+      const fileUrl = URL.createObjectURL(files[0]);
+      setVideoSrc(fileUrl);
+      setVideoFile(files[0]);
+      
+      // Start upload automatically
+      setTimeout(() => {
+        uploadVideo();
+      }, 100);
     }
   };
 
@@ -136,15 +151,11 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
 
   // Основной метод загрузки видео
   const uploadVideo = async () => {
-    console.log("📊 uploadVideo called, videoFile status:", videoFile ? "Selected" : "Not selected");
-    
     // Проверяем флаг в localStorage
     const isUploadedInStorage = VideoStorageUtils.getUploadStatus();
-    console.log("📊 isVideoUploaded in localStorage:", isUploadedInStorage);
     
     // Если видео уже отмечено как загруженное - не загружаем повторно
     if (isVideoUploaded || isUploadedInStorage) {
-      console.log("📊 Video is already marked as uploaded, skipping upload");
       // Синхронизируем состояние с localStorage
       if (!isVideoUploaded && isUploadedInStorage) {
         setIsVideoUploaded(true);
@@ -168,8 +179,6 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
     }
     
     if (!videoFile) {
-      console.error("📊 No video file selected when uploadVideo was called!");
-      
       // Проверяем наличие файла в input как резервный вариант
       const fileInput = fileInputRef.current;
       if (fileInput && fileInput.files && fileInput.files[0]) {
@@ -177,12 +186,22 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
         const file = fileInput.files[0];
         setVideoFile(file);
         
-        // Повторяем попытку загрузки
-        setTimeout(() => {
-          console.log("📊 Retrying upload with file from input:", file.name);
-          uploadVideo();
-        }, 100);
-        return;
+        // Устанавливаем флаг для одноразовой повторной попытки
+        const retryAttempted = sessionStorage.getItem('upload_retry_attempted');
+        if (!retryAttempted) {
+          sessionStorage.setItem('upload_retry_attempted', 'true');
+          // Повторяем попытку загрузки только один раз
+          setTimeout(() => {
+            console.log("📊 Retrying upload with file from input:", file.name);
+            uploadVideo();
+          }, 100);
+          return;
+        } else {
+          console.log("📊 Already attempted retry, not trying again");
+          sessionStorage.removeItem('upload_retry_attempted');
+        }
+      } else {
+        console.error("📊 No video file selected when uploadVideo was called!");
       }
       
       // Если есть сохраненные данные о загрузке, но нет файла - не показываем ошибку
@@ -195,6 +214,17 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
       toast({
         title: "Ошибка",
         description: "Не выбран файл",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Проверка размера файла перед загрузкой
+    if (videoFile.size > MAX_FILE_SIZE) {
+      console.error("📊 File too large:", videoFile.size, "bytes");
+      toast({
+        title: "Ошибка",
+        description: "Размер файла превышает лимит в 5GB",
         variant: "destructive",
       });
       return;
@@ -256,8 +286,6 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
       });
 
       // Создаем URL оригинального видео
-      // Проверяем, нужно ли добавить имя бакета в URL
-      const S3_BUCKET = "golosok"; // Правильное имя бакета
       const originalUrl = `${S3_ENDPOINT}/${S3_BUCKET}/${fileKey}`;
       console.log("📊 Original video URL:", originalUrl);
 
@@ -362,22 +390,15 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
   ////////////////////
   
   // Эффект для синхронизации состояния файла и флага загрузки
-  useEffect(() => {
-    console.log("📊 File state changed:", { 
-      videoFile: videoFile?.name, 
-      isVideoUploaded
-    });
-    
+  useEffect(() => {    
     // При получении файла сверяем с флагом загрузки
     if (videoFile && !isVideoUploaded) {
       const videoInfo = VideoStorageUtils.getVideoInfo();
       
       if (videoInfo.fileName === videoFile.name) {
-        console.log("📊 Found matching saved file name, setting uploaded state");
         setIsVideoUploaded(true);
         VideoStorageUtils.setUploadStatus(true);
       } else {
-        console.log("📊 New or different file, reset upload state");
         setIsVideoUploaded(false);
         VideoStorageUtils.setUploadStatus(false);
       }
@@ -385,40 +406,22 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
     
     // Если есть файл и флаг загрузки - сохраняем имя файла
     if (videoFile && isVideoUploaded) {
-      console.log("📊 File present and upload flag set - all good!");
       localStorage.setItem('uploadedFileName', videoFile.name);
-    }
-    
-    // Если нет файла, но есть флаг загрузки - возврат после успешной загрузки
-    if (!videoFile && isVideoUploaded) {
-      console.log("📊 No file but upload flag set - returned after successful upload");
     }
   }, [videoFile, isVideoUploaded]);
   
   // Эффект для проверки флага при монтировании компонента
   useEffect(() => {
-    console.log("📊 Component mounted, checking flags");
-    
     // Проверяем, был ли флаг загрузки установлен в localStorage
     if (!videoFile && VideoStorageUtils.getUploadStatus()) {
-      console.log("📊 No file but upload flag set in localStorage");
       setIsVideoUploaded(true);
     }
   }, [videoFile]);
 
   // Эффект для автоматической загрузки при изменении состояния файла
   useEffect(() => {
-    console.log("📊 Auto-upload check:", { 
-      videoFile: videoFile?.name, 
-      transactionId, 
-      isVideoUploaded,
-      uploadProgress,
-      isLoading
-    });
-    
     // Если флаг загрузки установлен в localStorage, но нет файла
     if (!videoFile && VideoStorageUtils.getUploadStatus()) {
-      console.log("📊 Video was previously uploaded according to localStorage, but no file in state");
       setIsVideoUploaded(true);
       return;
     }
@@ -432,10 +435,10 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
       const videoInfo = VideoStorageUtils.getVideoInfo();
       
       if (videoInfo.fileName === videoFile.name) {
-        console.log("📊 This file has been uploaded before, not uploading again");
         setIsVideoUploaded(true);
       } else {
-        console.log("📊 New file detected, starting upload automatically");
+        // Для предотвращения множественных загрузок
+        sessionStorage.removeItem('upload_retry_attempted');
         setTimeout(() => {
           uploadVideo();
         }, 300);
@@ -446,13 +449,6 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
   // Индикаторы состояния для рендера
   const hasVideoFile = !!videoFile;
   const isVideoReady = hasVideoFile || isVideoUploaded;
-  
-  console.log("📊 Render state:", { 
-    hasVideoFile, 
-    isVideoUploaded, 
-    isVideoReady,
-    isLoading 
-  });
 
   return (
     <div className="fade-slide-in">

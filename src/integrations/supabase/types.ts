@@ -47,6 +47,32 @@ export type Database = {
           amount?: number | null
         }
       }
+      languages: {
+        Row: {
+          id: number
+          original_name: string
+          ru_name: string
+          iso_code: string
+          flag_emoji: string | null
+          is_active: boolean
+        }
+        Insert: {
+          id?: number
+          original_name: string
+          ru_name: string
+          iso_code: string
+          flag_emoji?: string | null
+          is_active?: boolean
+        }
+        Update: {
+          id?: number
+          original_name?: string
+          ru_name?: string
+          iso_code?: string
+          flag_emoji?: string | null
+          is_active?: boolean
+        }
+      }
       users: {
         Row: {
           id: string

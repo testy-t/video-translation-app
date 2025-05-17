@@ -40,7 +40,7 @@ const PricingSection: React.FC = () => {
             <ul className="space-y-4 mb-8">
               <li className="flex items-start">
                 <Icon
-                  name="CheckCircle"
+                  name="Check"
                   size={20}
                   className="text-green-500 mr-2 mt-1 shrink-0"
                 />
@@ -48,7 +48,7 @@ const PricingSection: React.FC = () => {
               </li>
               <li className="flex items-start">
                 <Icon
-                  name="CheckCircle"
+                  name="Check"
                   size={20}
                   className="text-green-500 mr-2 mt-1 shrink-0"
                 />
@@ -56,7 +56,7 @@ const PricingSection: React.FC = () => {
               </li>
               <li className="flex items-start">
                 <Icon
-                  name="CheckCircle"
+                  name="Check"
                   size={20}
                   className="text-green-500 mr-2 mt-1 shrink-0"
                 />
@@ -64,7 +64,7 @@ const PricingSection: React.FC = () => {
               </li>
               <li className="flex items-start">
                 <Icon
-                  name="CheckCircle"
+                  name="Check"
                   size={20}
                   className="text-green-500 mr-2 mt-1 shrink-0"
                 />

@@ -236,7 +236,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           setIsProcessing(false);
           toast({
             title: "Ошибка оплаты",
-            description: error || "Произошла ошибка при оплате. Пожалуйста, попробуйте еще раз.",
+            description: "Пожалуйста, попробуйте еще раз.",
             variant: "destructive",
           });
         },
@@ -250,7 +250,7 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
       setIsProcessing(false);
       toast({
         title: "Ошибка оплаты",
-        description: error instanceof Error ? error.message : "Произошла ошибка при оплате. Пожалуйста, попробуйте еще раз.",
+        description: "Пожалуйста, попробуйте еще раз.",
         variant: "destructive",
       });
     }

@@ -1,9 +1,11 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
 import { useLanguageContext } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface InfoBlockProps {
   icon: string;
@@ -46,6 +48,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   isProcessing,
   onPayment
 }) => {
+  // Состояние для email
+  const [email, setEmail] = useState<string>('');
+  const [emailError, setEmailError] = useState<string>('');
+  
   // Получаем функцию для получения имени языка из контекста
   const { getLanguageName, languages, isLoading: isLoadingLanguages } = useLanguageContext();
 
@@ -82,24 +88,23 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   return (
     <Card className="mb-6">
       <CardContent className="p-6">
-        <h4 className="text-lg font-medium mb-4 flex items-center justify-center">
-          <Icon name="Star" className="text-amber-400 mr-2" size={20} />
+        <h4 className="text-2xl font-bold mb-6 text-center">
           Детали заказа
         </h4>
         
         {/* Время обработки */}
-        <div className="flex items-center justify-center my-6 p-3 rounded-lg bg-primary/10 text-primary">
-          <Icon name="Rocket" className="mr-2" />
-          <span className="font-medium">Время обработки: до 15 минут</span>
+        <div className="flex items-center justify-center my-6 p-3 rounded-lg bg-primary/10">
+          <Icon name="Rocket" className="mr-2 text-primary" />
+          <span className="font-medium text-foreground/80">Время обработки: до 15 минут</span>
         </div>
         
         {/* Инфографика с тремя блоками */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           {/* Все блоки с одинаковой высотой */}
           <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-muted/30 h-[150px]">
-            <Icon name="Clock" className="mb-2 text-primary" size={24} />
-            <div className="text-xl font-bold">{formatDuration(videoDuration)}</div>
-            <div className="text-sm text-muted-foreground">Длительность</div>
+            <Icon name="Clock" className="mb-2 mt-1 text-primary" size={24} />
+            <div className="text-2xl font-bold text-foreground/80">{formatDuration(videoDuration)}</div>
+            <div className="text-sm text-muted-foreground/90">Длительность</div>
           </div>
           
           {/* Блок языка перевода */}
@@ -107,32 +112,82 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
             {isLoading || isLoadingLanguages ? (
               <>
                 <Icon name="Translate" className="mb-2 text-primary" size={24} />
-                <div className="text-xl font-bold flex items-center">
-                  <Icon name="Loader2" className="mr-2 w-5 h-5 animate-spin" />
+                <div className="text-2xl font-bold flex items-center text-foreground/80">
+                  <Icon name="Loader2" className="mr-2 w-5 h-5 animate-spin text-primary" />
                   <span>Загрузка...</span>
                 </div>
               </>
             ) : (
               <>
                 <div className="text-3xl mb-1">{languageInfo.flag}</div>
-                <div className="text-xl font-bold mb-0">Язык</div>
-                <div className="text-sm text-muted-foreground">{languageInfo.name}</div>
+                <div className="text-2xl font-bold mb-0 text-foreground/80">Язык</div>
+                <div className="text-sm text-muted-foreground/90">{languageInfo.name}</div>
               </>
             )}
           </div>
           
           {/* Блок стоимости */}
           <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-muted/30 h-[150px]">
-            <Icon name="Wallet" className="mb-2 text-primary" size={24} />
-            <div className="text-xl font-bold">{`${totalPrice} ₽`}</div>
-            <div className="text-sm text-muted-foreground">{`${roundedMinutes} мин × ${pricePerMinute} ₽`}</div>
+            <Icon name="Wallet" className="mb-2 mt-1 text-primary" size={24} />
+            <div className="text-2xl font-bold text-foreground/80">{`${totalPrice} ₽`}</div>
+            <div className="text-sm text-muted-foreground/90">{`${roundedMinutes} мин × ${pricePerMinute} ₽`}</div>
+          </div>
+        </div>
+        
+        {/* Ввод почты */}
+        <div className="mb-6">
+          <div className="h-6 mb-2 flex items-center">
+            <Label 
+              htmlFor="email" 
+              className={`text-sm font-normal ${emailError ? "text-red-500" : "text-muted-foreground"}`}
+            >
+              {emailError || "Укажите почту для получения результата"} <span className="text-primary">*</span>
+            </Label>
+          </div>
+          <div className="relative">
+            <Input 
+              id="email" 
+              type="email" 
+              placeholder="example@mail.ru" 
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                // Проверяем формат при вводе
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(e.target.value) && e.target.value) {
+                  setEmailError('Введите корректный email');
+                } else {
+                  setEmailError('');
+                }
+              }}
+              className={`focus-visible:ring-0 focus-visible:ring-offset-0 border-2 
+                ${emailError ? "border-red-500" : email && !emailError ? "border-green-500" : "border-primary/30"}`
+              }
+            />
           </div>
         </div>
         
         {/* Кнопка оплаты */}
         <Button 
           className="w-full py-6 text-lg"
-          onClick={onPayment}
+          onClick={() => {
+            // Проверяем валидность email перед оплатой
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email) {
+              setEmailError('Введите email для получения результата');
+              return;
+            }
+            if (!emailRegex.test(email)) {
+              setEmailError('Введите корректный email');
+              return;
+            }
+            
+            // Если email валидный, сохраняем его в localStorage
+            localStorage.setItem('userEmail', email);
+            
+            // И продолжаем оплату
+            onPayment();
+          }}
           disabled={isProcessing}
         >
           {isProcessing ? (
@@ -141,12 +196,12 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
               Обработка...
             </>
           ) : (
-            <>Оплатить {price} ₽</>
+            <>Оплатить {totalPrice} ₽</>
           )}
         </Button>
         
         <div className="mt-4 text-xs text-center text-muted-foreground">
-          Нажимая кнопку, вы соглашаетесь с нашими <a href="#" className="underline">условиями</a> и <a href="#" className="underline">политикой конфиденциальности</a>
+          Нажимая кнопку, вы соглашаетесь с нашей <a href="/offer" className="underline hover:text-primary">офертой</a> и <a href="/confidentiality" className="underline hover:text-primary">политикой конфиденциальности</a>
         </div>
         
         <div className="mt-4 flex items-center justify-center space-x-1 text-muted-foreground">

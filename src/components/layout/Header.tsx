@@ -185,7 +185,7 @@ const Header: React.FC = () => {
                         onClick={() => openOrder(code)}
                         className="cursor-pointer"
                       >
-                        {code.slice(0, 12).toUpperCase()}
+                        Заказ #{code.slice(0, 6).toUpperCase()}
                       </DropdownMenuItem>
                     ))
                   )}

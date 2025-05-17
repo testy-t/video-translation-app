@@ -1,14 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-
-// Интерфейс для языка из API
-interface LanguageFromAPI {
-  id: number;
-  original_name: string;
-  ru_name: string;
-  iso_code: string;
-  flag_emoji: string;
-  is_active: boolean;
-}
+import { LanguagesService, Language as DbLanguage } from '@/integrations/supabase';
 
 // Упрощенный интерфейс для использования в компонентах
 export interface Language {
@@ -27,38 +18,14 @@ interface LanguageContextType {
 // Создаем контекст
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// API для получения языков из Supabase REST API
-const fetchLanguages = async (): Promise<Language[]> => {
-  try {
-    // Используем REST API для получения списка языков
-    const response = await fetch('https://tbgwudnxjwplqtkjihxc.supabase.co/rest/v1/languages', {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      console.error(`Ошибка API languages: ${response.status} ${response.statusText}`);
-      throw new Error(`Ошибка API: ${response.status}`);
-    }
-    
-    // Получаем данные в формате LanguageFromAPI[]
-    const apiLanguages: LanguageFromAPI[] = await response.json();
-    console.log('🌍 Получено языков из API:', apiLanguages.length);
-    
-    // Преобразуем в наш формат
-    return apiLanguages
-      .filter(lang => lang.is_active) // Только активные языки
-      .map(lang => ({
-        code: lang.iso_code,
-        name: lang.ru_name,
-        flag: lang.flag_emoji
-      }));
-  } catch (error) {
-    console.error('Ошибка при получении языков:', error);
-    return [];
-  }
-};
+/**
+ * Преобразует объект языка из БД в формат, используемый в приложении
+ */
+const mapDbLanguageToAppLanguage = (dbLang: DbLanguage): Language => ({
+  code: dbLang.iso_code,
+  name: dbLang.ru_name,
+  flag: dbLang.flag_emoji || '🌐'
+});
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -70,9 +37,35 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
       try {
         setIsLoading(true);
         console.log('🌍 Загружаем данные о языках из API...');
-        const data = await fetchLanguages();
-        console.log(`🌍 Загружено ${data.length} языков`);
-        setLanguages(data);
+        
+        // Используем тот же сервис, что и в useLanguages
+        const response = await LanguagesService.getLanguages();
+        
+        if (response.success && response.languages.length > 0) {
+          // Преобразуем языки из БД в формат приложения и убеждаемся в уникальности кодов
+          const uniqueLanguages = new Map();
+          
+          // Сначала добавляем все языки в Map для проверки дубликатов
+          response.languages.forEach(dbLang => {
+            // Если уже есть язык с таким iso_code, используем версию с наивысшим id (самую свежую)
+            const existingLang = uniqueLanguages.get(dbLang.iso_code);
+            if (!existingLang || dbLang.id > existingLang.id) {
+              uniqueLanguages.set(dbLang.iso_code, dbLang);
+            }
+          });
+          
+          // Преобразуем уникальные языки из Map в массив
+          const appLanguages = Array.from(uniqueLanguages.values())
+            .map(mapDbLanguageToAppLanguage);
+            
+          console.log(`🌍 Загружено ${appLanguages.length} языков`);
+          console.log('🌍 Коды языков:', appLanguages.map(l => l.code).join(', '));
+          
+          setLanguages(appLanguages);
+        } else {
+          console.error('Не удалось загрузить языки:', response.error);
+          setError('Не удалось загрузить актуальный список языков');
+        }
       } catch (err) {
         console.error('🚨 Ошибка при загрузке языков:', err);
         setError(err instanceof Error ? err.message : 'Ошибка при получении языков');
@@ -91,16 +84,36 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const getLanguageName = (code: string): string => {
     if (!code) return 'Неизвестный язык';
     
-    // Сначала ищем точное совпадение
-    const exactMatch = languages.find(lang => lang.code === code);
-    if (exactMatch) return exactMatch.name;
+    console.log(`🔍 Ищем язык по коду: "${code}" среди ${languages.length} языков`);
+    
+    // Сначала ищем точное совпадение (с учетом регистра)
+    const exactMatch = languages.find(lang => 
+      lang.code.toLowerCase() === code.toLowerCase()
+    );
+    
+    if (exactMatch) {
+      console.log(`✅ Найдено точное совпадение для "${code}": ${exactMatch.name}`);
+      return exactMatch.name;
+    }
     
     // Если код имеет расширенный формат (например, en-US, en-AA), 
     // пробуем получить основную часть кода до дефиса
-    const baseLangCode = code.split('-')[0];
-    const baseMatch = languages.find(lang => lang.code === baseLangCode);
+    const baseLangCode = code.split('-')[0].toLowerCase();
+    console.log(`🔍 Проверяем основной код языка: "${baseLangCode}"`);
     
-    return baseMatch ? baseMatch.name : 'Неизвестный язык';
+    // Ищем по базовому коду (en из en-IE)
+    const baseMatch = languages.find(lang => 
+      lang.code.toLowerCase() === baseLangCode || 
+      lang.code.split('-')[0].toLowerCase() === baseLangCode
+    );
+    
+    if (baseMatch) {
+      console.log(`✅ Найдено совпадение по основному коду: ${baseMatch.name}`);
+      return baseMatch.name;
+    }
+    
+    console.log(`❌ Язык не найден для кода: "${code}"`);
+    return 'Неизвестный язык';
   };
 
   const value = {

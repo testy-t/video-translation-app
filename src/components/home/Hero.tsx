@@ -63,24 +63,24 @@ const Hero: React.FC = () => {
       name: "Русский",
       isActive: activeLanguage === "ru",
     },
+    { code: "zh", flag: "🇨🇳", name: "中文", isActive: activeLanguage === "zh" },
+    {
+      code: "de",
+      flag: "🇩🇪",
+      name: "Deutsch",
+      isActive: activeLanguage === "de",
+    },
     {
       code: "en",
       flag: "🇬🇧",
       name: "English",
       isActive: activeLanguage === "en",
     },
-    { code: "zh", flag: "🇨🇳", name: "中文", isActive: activeLanguage === "zh" },
     {
       code: "es",
       flag: "🇪🇸",
       name: "Español",
       isActive: activeLanguage === "es",
-    },
-    {
-      code: "de",
-      flag: "🇩🇪",
-      name: "Deutsch",
-      isActive: activeLanguage === "de",
     },
   ];
 

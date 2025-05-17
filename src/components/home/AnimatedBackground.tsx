@@ -52,7 +52,7 @@ function FloatingPaths({ position }: { position: number }) {
 
 const AnimatedBackground: React.FC = () => {
     return (
-        <div className="absolute inset-0 z-0 overflow-hidden bg-white opacity-20">
+        <div className="absolute inset-0 z-0 overflow-hidden bg-white opacity-20 scale-[3] md:scale-100">
             {/* Animated paths */}
             <FloatingPaths position={2} />
             <FloatingPaths position={0} />

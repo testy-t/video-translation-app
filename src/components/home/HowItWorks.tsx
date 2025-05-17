@@ -19,7 +19,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({ steps }) => {
           Как это работает
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          От видео от перевода всего несколько минут.
+          От видео от перевода за несколько минут.
         </p>
       </div>
 

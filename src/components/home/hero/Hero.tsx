@@ -99,6 +99,13 @@ const Hero: React.FC = () => {
                 description="Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты."
               />
 
+              {/* Кнопка действия для десктопа - после описания */}
+              <HeroActions
+                onAction={goToOrderPage}
+                buttonText="Перевести видео"
+                showMobile={false}
+              />
+
               {/* Видео плеер для мобильной версии */}
               {isMobile && (
                 <VideoPlayer
@@ -116,13 +123,6 @@ const Hero: React.FC = () => {
                 onAction={goToOrderPage}
                 buttonText="Перевести видео"
                 showDesktop={false}
-              />
-
-              {/* Кнопка действия для десктопа - после описания */}
-              <HeroActions
-                onAction={goToOrderPage}
-                buttonText="Перевести видео"
-                showMobile={false}
               />
             </div>
 

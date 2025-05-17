@@ -117,7 +117,8 @@ const Hero: React.FC = () => {
     <section className="relative overflow-hidden">
       {/* Тёмная секция с минималистичным фоном */}
       <div className="min-h-screen flex items-center pt-14 md:pt-16 pb-24 md:pb-32 relative">
-        <AnimatedBackground />
+        {!isMobile && <AnimatedBackground />}
+
 
         <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem] relative z-10">
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">

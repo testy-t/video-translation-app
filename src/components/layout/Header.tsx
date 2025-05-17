@@ -14,6 +14,7 @@ const Header: React.FC = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [orderCodes, setOrderCodes] = useState<string[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Отслеживаем скролл страницы
   useEffect(() => {
@@ -63,6 +64,25 @@ const Header: React.FC = () => {
       window.removeEventListener("storage", loadOrderCodes);
     };
   }, []);
+
+  // Предотвращаем скачки страницы при открытии/закрытии дропдауна
+  useEffect(() => {
+    if (isDropdownOpen) {
+      // Сохраняем ширину скролла перед добавлением padding
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.paddingRight = "";
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.paddingRight = "";
+      document.body.style.overflow = "";
+    };
+  }, [isDropdownOpen]);
 
   // Функция для открытия заказа по коду
   const openOrder = (code: string) => {
@@ -162,12 +182,12 @@ const Header: React.FC = () => {
             {/* Кнопки справа */}
             <div className="flex items-center gap-2">
               {/* Дропдаун с историей заказов - всегда отображается */}
-              <DropdownMenu>
+              <DropdownMenu onOpenChange={setIsDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full text-black hover:bg-[#0070F3]/10"
+                    className="rounded-full text-black hover:bg-[#0070F3]/10 focus:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                     onClick={orderCodes.length === 0 ? addTestOrder : undefined}
                   >
                     <Icon name="ShoppingBag" size={20} />

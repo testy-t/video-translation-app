@@ -163,26 +163,17 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-      {/* Информация о заказе (3 колонки) */}
-      <div className="md:col-span-3">
-        <OrderDetails
-          videoFile={videoFile}
-          selectedLanguage={actualLanguage}
-          videoDuration={actualDuration}
-          isLoading={isLoading}
-        />
-      </div>
-
-      {/* Итого (2 колонки) */}
-      <div className="md:col-span-2">
-        <OrderSummary
-          price={price}
-          isProcessing={isProcessing}
-          onPayment={handleSubmitPayment}
-          videoDuration={actualDuration}
-        />
-      </div>
+    <div className="flex flex-col max-w-2xl mx-auto">
+      {/* Информация о заказе (по центру) */}
+      <OrderDetails
+        videoFile={videoFile}
+        selectedLanguage={actualLanguage}
+        videoDuration={actualDuration}
+        isLoading={isLoading}
+        price={price}
+        isProcessing={isProcessing}
+        onPayment={handleSubmitPayment}
+      />
     </div>
   );
 };

@@ -251,67 +251,56 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
         </div>
       ) : (
         // Экран в процессе обработки
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-6">
-            <Icon
-              name="Loader2"
-              size={48}
-              className="text-primary animate-spin"
-            />
-          </div>
-          <h3 className="text-xl font-medium mb-3">Обрабатываем ваше видео</h3>
-          <p className="text-muted-foreground max-w-md mx-auto mb-2">
-            {processingStages[processingStage]}...
-          </p>
-          <p className="text-muted-foreground max-w-md mx-auto mb-6">
-            Этот процесс может занять до 10 минут. Вы получите уведомление на
-            email, когда видео будет готово.
-          </p>
-
-          {/* Информация о заказе */}
-          {uniqueCode && (
-            <div className="border rounded-lg p-4 mb-4 w-full max-w-sm">
-              <div className="flex flex-col space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Номер заказа:</span>
-                  <span className="font-medium">
-                    {formatOrderNumber(orderNumber)}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Статус:</span>
-                  <span className="font-medium text-amber-600">В обработке</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Код заказа:</span>
-                  <span className="font-medium text-xs">
-                    {uniqueCode.slice(0, 8)}...
-                  </span>
-                </div>
-              </div>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="mb-6">
+              <Icon
+                  name="Loader2"
+                  size={60}
+                  className="text-primary animate-spin"
+              />
             </div>
-          )}
-          
-          {/* Кнопка обновления статуса (если поллинг неактивен) */}
-          {!isPollingActive && uniqueCode && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={handleRefreshStatus}
-              className="mt-2"
-            >
-              <Icon name="RefreshCw" className="mr-2 w-4 h-4" />
-              Проверить статус
-            </Button>
-          )}
+            <h3 className="text-xl font-medium mb-0">Обрабатываем ваше видео</h3>
 
-          {/* Сообщение о возможности закрыть окно */}
-          <p className="text-gray-500 mt-4">
-            Вы можете закрыть это окно. Заказ будет обработан автоматически.
-          </p>
-        </div>
+
+            {/* Информация о заказе */}
+            {uniqueCode && (
+                <div className="border rounded-lg p-4 my-5 w-full max-w-sm">
+                  <div className="flex flex-col space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Номер заказа:</span>
+                      <span className="font-medium">
+                    {formatOrderNumber(uniqueCode.slice(0, 12)).toUpperCase()}
+                  </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Статус:</span>
+                      <span className="font-medium text-amber-600">В обработке</span>
+                    </div>
+
+
+                  </div>
+                </div>
+            )}
+            <p className="text-muted-foreground max-w-md mx-auto mb-6">
+              Перевод видео занимает примерно 15 минут. Вы получите уведомление на почту после завершения перевода.
+              Вы можете закрыть это окно.
+            </p>
+
+            {/* Кнопка обновления статуса (если поллинг неактивен) */}
+            {!isPollingActive && uniqueCode && (
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRefreshStatus}
+                    className="mt-2"
+                >
+                  <Icon name="RefreshCw" className="mr-2 w-4 h-4"/>
+                  Проверить статус
+                </Button>
+            )}
+
+          </div>
       )}
     </div>
   );

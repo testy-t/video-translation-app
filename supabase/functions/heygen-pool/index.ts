@@ -89,6 +89,8 @@ async function sendCompletionEmail(userEmail: string, videoDetails: any) {
                             .button-container {
                                 text-align: center;
                                 margin: 36px 0;
+                                background-color: #0070f3;
+                                border-radius: 100px;
                             }
                             
                             .button {
@@ -167,14 +169,9 @@ async function sendCompletionEmail(userEmail: string, videoDetails: any) {
                             <p>Мы рады сообщить, что перевод вашего видео успешно завершен. Ваше видео теперь доступно на <strong>${videoDetails.language}</strong>.</p>
                             
                             <div class="button-container">
-                                <a href="https://golosok.app/order?step=3&uniquecode=${videoDetails.uniquecode}" class="button">Посмотреть перевод</a>
+                                <a href="https://golosok.app/order?step=3&uniquecode=${videoDetails.uniquecode}" class="button">Загрузить перевод</a>
                             </div>
                             
-                            <div class="card">
-                                <p>Это письмо сгенерировано автоматически. Пожалуйста, не отвечайте на него. Если у вас возникли вопросы, обратитесь в службу поддержки через сайт.</p>
-                            </div>
-                            
-                            <div class="divider"></div>
                             
                             <p>Благодарим вас за использование нашего сервиса.</p>
                             <p>С уважением,<br>Команда Golosok.app</p>

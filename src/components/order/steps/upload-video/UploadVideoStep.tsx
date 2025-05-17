@@ -211,11 +211,9 @@ const UploadVideoStep: React.FC<UploadVideoStepProps> = ({
         return;
       }
       
-      toast({
-        title: "Ошибка",
-        description: "Не выбран файл",
-        variant: "destructive",
-      });
+      // Убираем сообщение об ошибке, т.к. пользователь мог еще не выбрать файл
+      // Пользователь может вызывать uploadVideo() нажав кнопку через VideoActionButtons
+      // но не через автоматический вызов при монтировании компонента
       return;
     }
     

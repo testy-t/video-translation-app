@@ -53,20 +53,41 @@ export const useOrderProcess = () => {
   useEffect(() => {
     const setupOrderProcess = async () => {
       try {
-        // Пытаемся восстановить данные предыдущего заказа из localStorage
-        const savedVideoId = localStorage.getItem('uploadedVideoId');
-        const savedFileKey = localStorage.getItem('uploadedFileKey');
-        const savedTransactionId = localStorage.getItem('transactionId');
+        // Если мы переходим на шаг 0 (загрузка видео) из шага оплаты (например, "создать еще одно видео"),
+        // то очищаем предыдущие данные о видео
+        const params = new URLSearchParams(location.search);
+        const step = parseInt(params.get("step") || "0");
+        const prevStep = parseInt(sessionStorage.getItem("previousStep") || "0");
         
-        // Если есть данные о предыдущей загрузке, восстанавливаем их
-        if (savedVideoId && savedFileKey) {
-          setVideoId(parseInt(savedVideoId));
-          setFileKey(savedFileKey);
+        // Сохраняем текущий шаг для последующего сравнения
+        sessionStorage.setItem("previousStep", step.toString());
+        
+        // Если перешли к шагу загрузки с шага оплаты или результата - сбрасываем старые данные
+        if (step === 0 && (prevStep === 2 || prevStep === 3)) {
+          console.log("📊 Reset video data when coming back to upload step from payment or result");
+          // Импортируем VideoStorageUtils для очистки данных
+          const { default: VideoStorageUtils } = await import('@/components/order/steps/upload-video/utils/VideoStorageUtils');
+          VideoStorageUtils.clearVideoInfo();
+          setVideoFile(null);
+          setVideoId(null);
+          setFileKey(null);
+          // Создаем новую транзакцию
+        } else {
+          // Пытаемся восстановить данные предыдущего заказа из localStorage
+          const savedVideoId = localStorage.getItem('uploadedVideoId');
+          const savedFileKey = localStorage.getItem('uploadedFileKey');
+          const savedTransactionId = localStorage.getItem('transactionId');
           
-          // Если был сохранен ID транзакции, используем его
-          if (savedTransactionId) {
-            setTransactionId(savedTransactionId);
-            return; // Пропускаем создание новой транзакции
+          // Если есть данные о предыдущей загрузке, восстанавливаем их
+          if (savedVideoId && savedFileKey) {
+            setVideoId(parseInt(savedVideoId));
+            setFileKey(savedFileKey);
+            
+            // Если был сохранен ID транзакции, используем его
+            if (savedTransactionId) {
+              setTransactionId(savedTransactionId);
+              return; // Пропускаем создание новой транзакции
+            }
           }
         }
         

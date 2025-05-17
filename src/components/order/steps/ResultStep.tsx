@@ -6,6 +6,39 @@ import { useLocation } from "react-router-dom";
 import { VideoInfo } from "../payment/types";
 import PaymentService from "../payment/services/PaymentService";
 import { toast } from "@/components/ui/use-toast";
+import { useLanguageContext } from "@/context/LanguageContext";
+
+// Component to display language name with flag
+const LanguageDisplay: React.FC<{ languageCode: string }> = ({ languageCode }) => {
+  const { getLanguageName, languages } = useLanguageContext();
+  
+  // Get language info
+  const getLanguageInfo = () => {
+    if (!languageCode) {
+      return { name: 'Неизвестный язык', flag: '🌐' };
+    }
+    
+    const name = getLanguageName(languageCode);
+    const langObj = languages.find(l => 
+      l.code.toLowerCase() === languageCode.toLowerCase() ||
+      l.code.split('-')[0].toLowerCase() === languageCode.split('-')[0].toLowerCase()
+    );
+    
+    return { 
+      name, 
+      flag: langObj?.flag || '🌐'
+    };
+  };
+  
+  const { name, flag } = getLanguageInfo();
+  
+  return (
+    <span className="flex items-center">
+      <span className="mr-1">{flag}</span>
+      <span>{name}</span>
+    </span>
+  );
+};
 
 interface ResultStepProps {
   orderNumber: string;
@@ -19,6 +52,8 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
   const [pollingTimerId, setPollingTimerId] = useState<number | null>(null);
   const [isPollingActive, setIsPollingActive] = useState(false);
   const [uniqueCode, setUniqueCode] = useState<string | null>(null);
+  // Ref для отслеживания первого рендера
+  const isInitialRender = React.useRef(true);
   
   // Получаем uniquecode из URL
   const location = useLocation();
@@ -48,6 +83,14 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
 
   // Эффект для получения uniquecode из URL и запуска поллинга
   useEffect(() => {
+    // Выполняем только при первом рендере или при изменении URL
+    if (!isInitialRender.current && !location.search.includes("uniquecode")) {
+      return;
+    }
+    
+    // После первого выполнения помечаем, что инициализация завершена
+    isInitialRender.current = false;
+    
     const params = new URLSearchParams(location.search);
     const code = params.get("uniquecode");
     
@@ -72,7 +115,7 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
       }
       
       // Запускаем поллинг статуса видео, если его еще нет
-      if (!isPollingActive && !isComplete && !videoInfo) {
+      if (!isPollingActive && !isComplete) {
         console.log("🔄 Запуск поллинга статуса видео...");
         setIsPollingActive(true);
         
@@ -109,7 +152,8 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
         }
       }
     }
-  }, [location.search, isPollingActive, isComplete, videoInfo]);
+  // Убрали videoInfo из зависимостей, т.к. оно вызывает лишние обновления
+  }, [location.search, isPollingActive, isComplete]);
   
   // Эффект для периодической смены стадии обработки
   useEffect(() => {
@@ -194,14 +238,13 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
         <div className="w-full">
           <div className="flex flex-col items-center mb-6">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <Icon name="CheckCircle" size={32} className="text-green-600" />
+              <Icon name="CircleCheck" size={32} className="text-green-600" />
             </div>
             <h3 className="text-xl font-medium text-center mb-2">
               Ваше видео готово!
             </h3>
             <p className="text-muted-foreground text-center">
-              Перевод видео успешно завершен. Вы можете скачать результат прямо
-              сейчас.
+              Вы можете скачать результат прямо сейчас.
             </p>
           </div>
 
@@ -223,7 +266,7 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Язык перевода:</span>
                 <span className="font-medium">
-                  {videoInfo.output_language.toUpperCase()}
+                  <LanguageDisplay languageCode={videoInfo.output_language} />
                 </span>
               </div>
 
@@ -278,7 +321,22 @@ const ResultStep: React.FC<ResultStepProps> = ({ orderNumber }) => {
                       <span className="text-muted-foreground">Статус:</span>
                       <span className="font-medium text-amber-600">В обработке</span>
                     </div>
-
+                    
+                    {/* Show selected language if available in localStorage */}
+                    {(() => {
+                      const selectedLang = localStorage.getItem('selectedLanguage');
+                      if (selectedLang) {
+                        return (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Язык перевода:</span>
+                            <span className="font-medium">
+                              <LanguageDisplay languageCode={selectedLang} />
+                            </span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
 
                   </div>
                 </div>

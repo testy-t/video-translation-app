@@ -162,11 +162,9 @@ async function sendCompletionEmail(userEmail: string, videoDetails: any) {
                         <div class="email-container">
                             <div class="logo">Golosok.app</div>
                             
-                            <h1>Ваш перевод видео готов</h1>
+                            <h1>🎉 Всё готово</h1>
                             
-                            <p>Здравствуйте!</p>
-                            
-                            <p>Мы рады сообщить, что перевод вашего видео успешно завершен. Ваше видео теперь доступно на <strong>${videoDetails.language}</strong>.</p>
+                            <p>Привет! Рады сообщить, что перевод успешно завершен. Видео переведено на <strong>${videoDetails.language}</strong> язык.</p>
                             
                             <div class="button-container">
                                 <a href="https://golosok.app/order?step=3&uniquecode=${videoDetails.uniquecode}" class="button">Загрузить перевод</a>

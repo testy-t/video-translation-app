@@ -179,13 +179,13 @@ const Header: React.FC = () => {
                       Тут будут ваши заказы
                     </DropdownMenuItem>
                   ) : (
-                    orderCodes.map((code, index) => (
+                    orderCodes.map((code) => (
                       <DropdownMenuItem
                         key={code}
                         onClick={() => openOrder(code)}
                         className="cursor-pointer"
                       >
-                        Заказ #{index + 1}
+                        {code.slice(0, 12).toUpperCase()}
                       </DropdownMenuItem>
                     ))
                   )}

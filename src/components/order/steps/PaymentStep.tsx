@@ -209,19 +209,26 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
     setIsProcessing(true);
 
     try {
-      // Получаем URL для перенаправления после успешной оплаты
-      const redirectUrl = `${window.location.origin}/order?step=3`; // Редиректим на шаг результата
+      // Не используем redirectUrl для автоматического перенаправления,
+      // так как мы контролируем перенаправление через поллинг
+      const redirectUrl = null;
       
       // Запускаем процесс оплаты
+      // Поллинг запускается автоматически в PaymentService.processPayment
       await PaymentService.processPayment(
         email, 
         videoId, 
         redirectUrl,
-        // Колбэк при успешной оплате
+        // Колбэк при успешной оплате в виджете
         () => {
-          console.log("Оплата успешно завершена");
+          console.log("Оплата успешно завершена в виджете CloudPayments");
           setIsProcessing(false);
-          onPayment(); // Вызываем колбэк из props для перехода к следующему шагу
+          
+          // Получаем код транзакции
+          const uniqueCode = localStorage.getItem('paymentUniqueCode');
+          if (uniqueCode) {
+            onPayment(uniqueCode); // Вызываем колбэк с кодом транзакции
+          }
         },
         // Колбэк при ошибке оплаты
         (error: string) => {

@@ -114,12 +114,12 @@ export class PaymentService {
   /**
    * Проверяет статус платежа
    * @param uniquecode Уникальный код транзакции
-   * @returns Статус оплаты (true если оплачено)
+   * @returns Статус оплаты ({is_paid: boolean, status: string})
    */
-  static async checkPaymentStatus(uniquecode: string): Promise<boolean> {
+  static async checkPaymentStatus(uniquecode: string): Promise<{is_paid: boolean, status: string}> {
     try {
       const response = await fetch(
-        `https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/payment-status?uniquecode=${uniquecode}`,
+        `https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/transaction-is-paid?uniquecode=${uniquecode}`,
         {
           method: "GET",
           headers: {
@@ -134,11 +134,113 @@ export class PaymentService {
         throw new Error(data.error || "Не удалось проверить статус платежа");
       }
 
-      return data.isPaid;
+      return {
+        is_paid: data.is_paid || false,
+        status: data.status || "pending"
+      };
     } catch (error) {
       console.error("Ошибка при проверке статуса платежа:", error);
       throw error;
     }
+  }
+  
+  /**
+   * Запускает поллинг статуса платежа
+   * @param uniquecode Уникальный код транзакции
+   * @param onPaid Колбэк при успешной оплате
+   * @param interval Интервал проверки в миллисекундах (по умолчанию 3000 мс)
+   * @param maxAttempts Максимальное количество попыток (по умолчанию 60 - 3 минуты)
+   * @returns Идентификатор таймера (для возможной отмены)
+   */
+  static startPaymentStatusPolling(
+    uniquecode: string,
+    onPaid: (uniquecode: string) => void,
+    interval = 3000,
+    maxAttempts = 60
+  ): number {
+    let attempts = 0;
+    
+    // Храним ID таймера для возможности остановки
+    const timerId = window.setInterval(async () => {
+      attempts++;
+      
+      try {
+        console.log(`🔄 Проверка статуса платежа (попытка ${attempts}/${maxAttempts})...`);
+        const { is_paid, status } = await this.checkPaymentStatus(uniquecode);
+        
+        console.log(`📊 Статус платежа: is_paid=${is_paid}, status=${status}`);
+        
+        // Если платеж подтвержден, останавливаем поллинг и вызываем колбэк
+        if (is_paid) {
+          console.log("✅ Платеж подтвержден API");
+          window.clearInterval(timerId);
+          
+          // Вызываем колбэк
+          onPaid(uniquecode);
+          
+          // Если мы на экране оплаты, сразу перенаправляем на экран результата
+          console.log(`🔄 Перенаправление с uniquecode=${uniquecode}`);
+          
+          // Важно: сначала сохраняем uniquecode в localStorage
+          localStorage.setItem("paymentUniqueCode", uniquecode);
+          localStorage.setItem("orderPaid", "true");
+          
+          // Сохраняем информацию о заказе
+          const orderInfo = {
+            uniquecode: uniquecode,
+            date: new Date().toISOString(),
+            email: localStorage.getItem('userEmail') || '',
+            language: localStorage.getItem('selectedLanguage') || '',
+            videoDuration: localStorage.getItem('videoDuration') || ''
+          };
+          
+          try {
+            // Получаем существующие коды или создаем новый набор
+            const existingUniqueCodesStr = localStorage.getItem('completedPaymentCodes') || '[]';
+            let completedPaymentCodes = [];
+            try {
+              completedPaymentCodes = JSON.parse(existingUniqueCodesStr);
+              if (!Array.isArray(completedPaymentCodes)) {
+                completedPaymentCodes = [];
+              }
+            } catch (e) {
+              completedPaymentCodes = [];
+            }
+            
+            // Добавляем текущий код, если его еще нет в массиве
+            if (!completedPaymentCodes.includes(uniquecode)) {
+              completedPaymentCodes.push(uniquecode);
+              localStorage.setItem('completedPaymentCodes', JSON.stringify(completedPaymentCodes));
+            }
+            
+            // Сохраняем информацию о заказе
+            localStorage.setItem(`order_${uniquecode}`, JSON.stringify(orderInfo));
+          } catch (e) {
+            console.error("Ошибка при сохранении данных заказа:", e);
+          }
+          
+          // Убеждаемся, что uniquecode есть в URL при перенаправлении
+          window.location.href = `${window.location.origin}/order?step=3&uniquecode=${encodeURIComponent(uniquecode)}`;
+          return;
+        }
+        
+        // Если достигли максимального количества попыток, останавливаем поллинг
+        if (attempts >= maxAttempts) {
+          console.log("⚠️ Достигнуто максимальное количество попыток проверки статуса");
+          window.clearInterval(timerId);
+        }
+      } catch (error) {
+        console.error("Ошибка при проверке статуса платежа:", error);
+        
+        // При ошибке продолжаем поллинг до максимального количества попыток
+        if (attempts >= maxAttempts) {
+          console.log("⚠️ Достигнуто максимальное количество попыток проверки статуса");
+          window.clearInterval(timerId);
+        }
+      }
+    }, interval);
+    
+    return timerId;
   }
 
   /**
@@ -228,7 +330,7 @@ export class PaymentService {
    * @param userEmail Email пользователя
    * @param videoId ID видео
    * @param redirectUrl URL для перенаправления после успешной оплаты
-   * @param onSuccess Колбэк при успешной оплате
+   * @param onSuccess Колбэк при успешной оплате через виджет
    * @param onFail Колбэк при неудачной оплате
    * @param onStatusChange Колбэк для обновления статуса процесса
    */
@@ -244,26 +346,38 @@ export class PaymentService {
       // Шаг 1: Создание транзакции
       onStatusChange("Создание транзакции...");
       const transactionData = await this.createTransaction(userEmail, 1, videoId);
+      
+      // Сохраняем код транзакции в localStorage для использования в поллинге
+      const uniquecode = transactionData.uniquecode;
+      localStorage.setItem("paymentUniqueCode", uniquecode);
 
       // Шаг 2: Инициация платежа
       onStatusChange("Инициализация платежа...");
       const paymentData = await this.initiatePayment(
-        transactionData.uniquecode,
+        uniquecode,
         redirectUrl
       );
 
-      // Шаг 3: Отключаем индикатор загрузки
+      // Шаг 3: Отключаем индикатор загрузки перед открытием виджета
       onStatusChange("");
+      
+      // Шаг 4: Запускаем поллинг статуса платежа (сразу после создания транзакции)
+      // Используем простой колбэк для поллинга, так как перенаправление 
+      // происходит внутри функции startPaymentStatusPolling
+      const pollingTimerId = this.startPaymentStatusPolling(
+        uniquecode,
+        () => {
+          // Этот колбэк фактически не вызывается из-за перенаправления в поллере
+          onSuccess();
+        }
+      );
 
-      // Шаг 4: Открытие виджета CloudPayments
+      // Шаг 5: Открытие виджета CloudPayments
       await this.openCloudPaymentsWidget(
         paymentData,
-        onSuccess,
+        onSuccess, // Этот колбэк может быть вызван, если виджет корректно завершает работу
         onFail
       );
-      
-      // Сохраняем код транзакции для возможной проверки статуса позже
-      localStorage.setItem("paymentUniqueCode", transactionData.uniquecode);
       
     } catch (error) {
       console.error("Ошибка в процессе оплаты:", error);

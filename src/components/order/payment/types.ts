@@ -58,3 +58,23 @@ export interface CloudPaymentsParams {
     successUrl?: string;
   };
 }
+
+/**
+ * Информация о заказе для хранения в localStorage
+ */
+export interface OrderInfo {
+  /** Уникальный код заказа */
+  uniquecode: string;
+  /** Дата создания заказа */
+  date: Date | string;
+  /** Email пользователя */
+  email: string;
+  /** Код языка перевода */
+  language: string;
+  /** Длительность видео в секундах */
+  videoDuration: string;
+  /** Номер заказа (опционально) */
+  orderNumber?: string;
+  /** Статус заказа (опционально) */
+  status?: string;
+}

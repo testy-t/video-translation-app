@@ -265,16 +265,66 @@ export const useOrderProcess = () => {
   /**
    * Обработчик успешной оплаты
    * Вызывается после успешного завершения оплаты через CloudPayments
+   * или после подтверждения статуса оплаты через API
+   * @param uniqueCode - Уникальный код транзакции
    */
-  const handlePayment = () => {
-    console.log("🔄 Платеж успешно завершен");
+  const handlePayment = (uniqueCode?: string) => {
+    console.log("🔄 Обработка успешной оплаты");
     
-    // Получаем uniqueCode из localStorage
-    const uniqueCode = localStorage.getItem('paymentUniqueCode');
+    // Получаем uniqueCode из параметра или из localStorage
+    const paymentUniqueCode = uniqueCode || localStorage.getItem('paymentUniqueCode');
+    
+    if (!paymentUniqueCode) {
+      console.error("Не найден код транзакции при обработке оплаты");
+      toast({
+        title: "Ошибка",
+        description: "Не удалось идентифицировать платеж. Пожалуйста, свяжитесь с поддержкой.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Сохраняем текущий uniquecode
+    localStorage.setItem('paymentUniqueCode', paymentUniqueCode);
+    localStorage.setItem('orderPaid', 'true');
+    
+    // Добавляем uniquecode в набор завершенных платежей
+    // Получаем существующие коды или создаем новый набор
+    const existingUniqueCodesStr = localStorage.getItem('completedPaymentCodes') || '[]';
+    let completedPaymentCodes = [];
+    try {
+      completedPaymentCodes = JSON.parse(existingUniqueCodesStr);
+      // Проверяем, что это действительно массив
+      if (!Array.isArray(completedPaymentCodes)) {
+        completedPaymentCodes = [];
+      }
+    } catch (e) {
+      console.error('Ошибка при разборе строки completedPaymentCodes:', e);
+      completedPaymentCodes = [];
+    }
+    
+    // Добавляем текущий код, если его еще нет в массиве
+    if (!completedPaymentCodes.includes(paymentUniqueCode)) {
+      completedPaymentCodes.push(paymentUniqueCode);
+      localStorage.setItem('completedPaymentCodes', JSON.stringify(completedPaymentCodes));
+    }
+    
+    // Сохраняем информацию о заказе
+    const orderInfo = {
+      uniquecode: paymentUniqueCode,
+      date: new Date().toISOString(),
+      email: localStorage.getItem('userEmail') || '',
+      language: localStorage.getItem('selectedLanguage') || '',
+      videoDuration: localStorage.getItem('videoDuration') || ''
+    };
+    
+    // Сохраняем информацию о заказе
+    localStorage.setItem(`order_${paymentUniqueCode}`, JSON.stringify(orderInfo));
     
     // Генерируем номер заказа
     const randomOrderId = Math.floor(Math.random() * 1000000);
     setOrderNumber(`OR-${randomOrderId}`);
+    localStorage.setItem('orderNumber', `OR-${randomOrderId}`);
     
     // Обновляем статус транзакции в БД, если есть transactionId
     if (transactionId) {
@@ -291,8 +341,9 @@ export const useOrderProcess = () => {
         });
     }
     
-    // Переходим к следующему шагу
-    goToNextStep();
+    // Переходим к следующему шагу с параметром uniquecode
+    navigate(`/order?step=3&uniquecode=${paymentUniqueCode}`, { replace: true });
+    setCurrentStep(3); // Устанавливаем текущий шаг на результат
     
     // Показываем уведомление об успешной оплате
     toast({
@@ -300,6 +351,162 @@ export const useOrderProcess = () => {
       description: "Ваш видеоролик обрабатывается. Результат будет готов в течение 15 минут.",
       variant: "default",
     });
+  };
+  
+  // Получаем uniquecode из URL, если есть
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const uniqueCode = params.get("uniquecode");
+    const step = parseInt(params.get("step") || "0");
+    
+    console.log("🔍 Проверяем URL параметры:", { uniqueCode, step });
+    
+    // Если есть uniquecode и мы на шаге результата, проверяем статус оплаты
+    if (uniqueCode && step === 3) {
+      console.log("✅ Найден uniquecode в URL:", uniqueCode);
+      
+      // Сохраняем для использования позже
+      localStorage.setItem('paymentUniqueCode', uniqueCode);
+      
+      // Проверяем статус оплаты через API
+      const checkPaymentStatus = async () => {
+        try {
+          console.log("🔄 Проверяем статус оплаты для:", uniqueCode);
+          const response = await fetch(`https://tbgwudnxjwplqtkjihxc.supabase.co/functions/v1/transaction-is-paid?uniquecode=${uniqueCode}`);
+          const data = await response.json();
+          
+          console.log("📊 Статус оплаты:", data);
+          
+          if (data.is_paid) {
+            // Если оплачено, сохраняем информацию о заказе
+            console.log("✅ Оплата подтверждена");
+            localStorage.setItem('orderPaid', 'true');
+            
+            // Сохраняем информацию о заказе
+            const orderInfo = {
+              uniquecode: uniqueCode,
+              date: new Date().toISOString(),
+              email: localStorage.getItem('userEmail') || '',
+              language: localStorage.getItem('selectedLanguage') || '',
+              videoDuration: localStorage.getItem('videoDuration') || ''
+            };
+            
+            // Добавляем uniquecode в список завершенных платежей, если его там еще нет
+            try {
+              const existingUniqueCodesStr = localStorage.getItem('completedPaymentCodes') || '[]';
+              let completedPaymentCodes = [];
+              try {
+                completedPaymentCodes = JSON.parse(existingUniqueCodesStr);
+                if (!Array.isArray(completedPaymentCodes)) {
+                  completedPaymentCodes = [];
+                }
+              } catch (e) {
+                completedPaymentCodes = [];
+              }
+              
+              if (!completedPaymentCodes.includes(uniqueCode)) {
+                completedPaymentCodes.push(uniqueCode);
+                localStorage.setItem('completedPaymentCodes', JSON.stringify(completedPaymentCodes));
+              }
+              
+              localStorage.setItem(`order_${uniqueCode}`, JSON.stringify(orderInfo));
+            } catch (e) {
+              console.error("Ошибка при сохранении данных заказа:", e);
+            }
+            
+            // Обновляем номер заказа
+            if (!orderNumber) {
+              const randomOrderId = Math.floor(Math.random() * 1000000);
+              const newOrderNumber = `OR-${randomOrderId}`;
+              setOrderNumber(newOrderNumber);
+              localStorage.setItem('orderNumber', newOrderNumber);
+            }
+          } else {
+            // Если не оплачено, перенаправляем на шаг оплаты
+            console.log("⚠️ Оплата не подтверждена, перенаправляем на шаг оплаты");
+            navigate(`/order?step=2`, { replace: true });
+            setCurrentStep(2);
+            toast({
+              title: "Платеж не найден",
+              description: "Статус оплаты не подтвержден. Пожалуйста, завершите оплату.",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          console.error("Ошибка при проверке статуса оплаты:", error);
+          toast({
+            title: "Ошибка",
+            description: "Не удалось проверить статус оплаты. Пожалуйста, попробуйте еще раз.",
+            variant: "destructive",
+          });
+        }
+      };
+      
+      checkPaymentStatus();
+    } else if (step === 3 && !uniqueCode) {
+      // Если мы на шаге результата, но нет uniquecode, проверяем в localStorage
+      console.log("⚠️ Шаг результата без uniquecode в URL");
+      const savedUniqueCode = localStorage.getItem('paymentUniqueCode');
+      
+      if (savedUniqueCode) {
+        // Если есть сохраненный uniquecode, добавляем его в URL
+        console.log("✅ Найден сохраненный uniquecode:", savedUniqueCode);
+        navigate(`/order?step=3&uniquecode=${savedUniqueCode}`, { replace: true });
+      } else {
+        // Если нет uniquecode, перенаправляем на шаг оплаты
+        console.log("⚠️ Нет uniquecode, перенаправляем на шаг оплаты");
+        navigate(`/order?step=2`, { replace: true });
+        setCurrentStep(2);
+        toast({
+          title: "Информация о платеже не найдена",
+          description: "Пожалуйста, завершите процесс оплаты.",
+          variant: "destructive",
+        });
+      }
+    }
+  }, [location.search, navigate, orderNumber]);
+
+  /**
+   * Получает историю заказов из localStorage
+   * @returns Массив информации о заказах
+   */
+  const getOrderHistory = () => {
+    // Получаем список кодов заказов
+    const uniqueCodesStr = localStorage.getItem('completedPaymentCodes') || '[]';
+    let uniqueCodes = [];
+    
+    try {
+      uniqueCodes = JSON.parse(uniqueCodesStr);
+      // Проверяем, что это действительно массив
+      if (!Array.isArray(uniqueCodes)) {
+        console.error('completedPaymentCodes не является массивом');
+        return [];
+      }
+    } catch (e) {
+      console.error('Ошибка при разборе completedPaymentCodes:', e);
+      return [];
+    }
+    
+    // Получаем информацию по каждому заказу
+    const orderHistory = uniqueCodes.map(code => {
+      const orderInfoStr = localStorage.getItem(`order_${code}`);
+      if (!orderInfoStr) return null;
+      
+      try {
+        const orderInfo = JSON.parse(orderInfoStr);
+        return {
+          ...orderInfo,
+          // Преобразуем строку даты в объект Date
+          date: new Date(orderInfo.date),
+        };
+      } catch (e) {
+        console.error(`Ошибка при разборе информации о заказе ${code}:`, e);
+        return null;
+      }
+    }).filter(Boolean); // Фильтруем null значения
+    
+    // Сортируем по дате (от новых к старым)
+    return orderHistory.sort((a, b) => b.date.getTime() - a.date.getTime());
   };
 
   return {
@@ -317,6 +524,7 @@ export const useOrderProcess = () => {
     transactionId,
     handleUploadSuccess,
     isUploading,
-    videoDuration
+    videoDuration,
+    getOrderHistory // Добавляем новую функцию
   };
 };

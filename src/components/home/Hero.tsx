@@ -61,7 +61,7 @@ const Hero: React.FC = () => {
             {/* Левая колонка - текст */}
             <div className="text-center md:text-left w-full">
               <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-[#0070F3]/10 text-[#0070F3] backdrop-blur-sm border border-[#0070F3]/20">
-                <Icon name="Video" size={16} className="text-[#0070F3]" />
+                <Icon name="Sparkles" size={14} className="text-[#0070F3] me-1" />
                 ИИ Переводчик Видео
               </span>
               <h1 className="text-4xl md:text-4xl lg:text-7xl font-bold tracking-tight mb-4 text-slate-900">

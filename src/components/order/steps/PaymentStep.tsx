@@ -9,7 +9,7 @@ import OrderSummary from "../payment/OrderSummary";
 
 // Импорт хуков
 import { useOrderPrice } from "../payment/hooks/useOrderPrice";
-import { getLanguageName } from "../language-selector/languages-data";
+// Больше не импортируем контекст, т.к. используем его в OrderDetails
 
 /**
  * Компонент шага оплаты в процессе заказа
@@ -21,6 +21,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   videoDuration,
   onPayment,
 }) => {
+  // Больше не нуждаемся в явном доступе к контексту здесь, 
+  // т.к. OrderDetails сам получает данные из контекста
+  
   // Состояние процесса оплаты
   const [isProcessing, setIsProcessing] = useState(false);
   
@@ -96,11 +99,13 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
       console.log('✅ Получены данные о видео из API:', data);
       
       // Преобразуем данные и сохраняем в состояние
+      const languageCode = data.outputLanguage || selectedLanguage || "en";
       const videoData = {
         duration: data.duration || videoDuration || 180,
-        outputLanguage: data.outputLanguage || selectedLanguage || "en",
-        outputLanguageName: getLanguageName(data.outputLanguage || selectedLanguage || "en")
+        outputLanguage: languageCode
       };
+      
+      console.log(`✅ Получен язык перевода: ${languageCode}`);
       
       console.log('✅ Преобразованные данные о видео:', videoData);
       setVideoInfo(videoData);
@@ -136,7 +141,9 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
   // Используем длительность из API, если доступна, иначе из пропсов
   const actualDuration = videoInfo?.duration || videoDuration;
   const actualLanguage = videoInfo?.outputLanguage || selectedLanguage;
-  const actualLanguageName = videoInfo?.outputLanguageName;
+  
+  // Больше не нужно получать имя языка здесь, т.к. это делается в OrderDetails
+  // с помощью контекста
   
   // Получаем цену заказа из хука
   const price = useOrderPrice(videoFile, actualDuration);
@@ -163,7 +170,6 @@ const PaymentStep: React.FC<PaymentStepProps> = ({
           videoFile={videoFile}
           selectedLanguage={actualLanguage}
           videoDuration={actualDuration}
-          languageName={actualLanguageName}
           isLoading={isLoading}
         />
       </div>

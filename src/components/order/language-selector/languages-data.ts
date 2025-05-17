@@ -32,7 +32,14 @@ export const AVAILABLE_LANGUAGES: Language[] = [
  * @returns Данные о языке или undefined если язык не найден
  */
 export const getLanguageByCode = (code: string): Language | undefined => {
-  return AVAILABLE_LANGUAGES.find(lang => lang.code === code);
+  // Сначала ищем прямое совпадение
+  const exactMatch = AVAILABLE_LANGUAGES.find(lang => lang.code === code);
+  if (exactMatch) return exactMatch;
+  
+  // Если код имеет расширенный формат (например, en-US, en-AA), 
+  // пробуем получить основную часть кода до дефиса
+  const baseLangCode = code.split('-')[0];
+  return AVAILABLE_LANGUAGES.find(lang => lang.code === baseLangCode);
 };
 
 /**

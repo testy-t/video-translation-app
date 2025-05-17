@@ -1,8 +1,8 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-// Убираем импорт, так как используем локальную функцию
 import Icon from "@/components/ui/icon";
+import { useLanguageContext } from "@/context/LanguageContext";
 
 interface OrderDetailsItemProps {
   label: string;
@@ -20,7 +20,6 @@ interface OrderDetailsProps {
   videoFile: File | null;
   selectedLanguage: string;
   videoDuration: number;
-  languageName?: string;
   isLoading?: boolean;
 }
 
@@ -34,9 +33,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
   videoFile, 
   selectedLanguage,
   videoDuration,
-  languageName,
   isLoading = false
 }) => {
+  // Получаем функцию для получения имени языка из контекста
+  const { getLanguageName, isLoading: isLoadingLanguages } = useLanguageContext();
 
   // Форматируем длительность видео в формат мм:сс
   const formatDuration = (seconds: number): string => {
@@ -45,31 +45,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
   
-  // Функция для получения имени языка по его коду локально
-  const getLanguageNameLocal = (code: string): string => {
-    const languages: Record<string, string> = {
-      "en": "Английский",
-      "es": "Испанский",
-      "fr": "Французский",
-      "de": "Немецкий",
-      "it": "Итальянский",
-      "pt": "Португальский",
-      "ru": "Русский",
-      "zh": "Китайский",
-      "ja": "Японский",
-      "ko": "Корейский",
-      "ar": "Арабский",
-      "hi": "Хинди",
-      "bn": "Бенгальский",
-      "id": "Индонезийский",
-      "tr": "Турецкий",
-      "nl": "Голландский",
-      "pl": "Польский",
-      "sv": "Шведский",
-      "da": "Датский",
-    };
-    return languages[code] || "Неизвестный язык";
-  };
+  // В этой версии мы полагаемся на languageName из пропсов
 
   return (
     <Card className="mb-6">
@@ -93,12 +69,17 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           <OrderDetailsItem 
             label="Язык перевода" 
             value={
-              isLoading 
+              isLoading || isLoadingLanguages
                 ? <span className="flex items-center">
                     <Icon name="Loader2" className="mr-2 w-4 h-4 animate-spin" />
                     Загрузка...
                   </span>
-                : (languageName || getLanguageNameLocal(selectedLanguage))
+                : (() => {
+                    // Используем язык из контекста
+                    const languageDisplayName = getLanguageName(selectedLanguage);
+                    console.log(`👁️ Отображаем язык: ${selectedLanguage} -> ${languageDisplayName}`);
+                    return languageDisplayName;
+                  })()
             } 
           />
           

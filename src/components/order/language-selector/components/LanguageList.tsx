@@ -15,7 +15,7 @@ const LanguageList: React.FC<LanguageListProps> = ({
   selectedLanguage, 
   setSelectedLanguage 
 }) => (
-  <ScrollArea className="h-[300px] border rounded-md">
+  <ScrollArea className="max-h-[calc(55vh-150px)] min-h-[200px] border rounded-md">
     {/* Секция популярных языков (показывается только когда нет поискового запроса) */}
     {popularLanguages.length > 0 && !searchTerm && (
       <div className="p-4 border-b">

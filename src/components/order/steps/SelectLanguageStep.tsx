@@ -191,79 +191,82 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
             </div>
           </div>
 
-          {/* Список языков */}
-          <div className="max-h-[400px] min-h-[300px] overflow-y-auto pr-2 space-y-1">
-            <RadioGroup
-              value={localSelectedLanguage}
-              onValueChange={setLocalSelectedLanguage}
-              disabled={isLoading}
-            >
-              {filteredLanguages.map((language, index) => {
-                // Создаем уникальный ключ, используя комбинацию кода и индекса
-                const uniqueKey = `${language.code}-${index}`;
-                const uniqueId = `lang-${language.code}-${index}`;
-                
-                return (
-                  <div
-                    key={uniqueKey}
-                    className={`
-                      flex items-center space-x-2 p-2 rounded-md cursor-pointer
-                      transition-all duration-200 ease-in-out
-                      ${localSelectedLanguage === language.code ? "bg-primary/10" : "hover:bg-gray-100"}
-                      ${isAnimated ? "fade-slide-in" : "opacity-0"}
-                      ${isLoading ? "opacity-50 pointer-events-none" : ""}
-                    `}
-                    style={{ animationDelay: `${150 + index * 30}ms` }}
-                  >
-                    <RadioGroupItem 
-                      value={language.code} 
-                      id={uniqueId}
-                      disabled={isLoading}
-                    />
-                    <Label
-                      htmlFor={uniqueId}
-                      className="flex-grow cursor-pointer font-normal text-base"
+          {/* Контейнер для списка языков и кнопки подтверждения */}
+          <div className="flex flex-col h-[calc(100vh-520px)] min-h-[100px]">
+            {/* Список языков */}
+            <div className="flex-1 overflow-y-auto pr-2 space-y-1 mb-4">
+              <RadioGroup
+                value={localSelectedLanguage}
+                onValueChange={setLocalSelectedLanguage}
+                disabled={isLoading}
+              >
+                {filteredLanguages.map((language, index) => {
+                  // Создаем уникальный ключ, используя комбинацию кода и индекса
+                  const uniqueKey = `${language.code}-${index}`;
+                  const uniqueId = `lang-${language.code}-${index}`;
+                  
+                  return (
+                    <div
+                      key={uniqueKey}
+                      className={`
+                        flex items-center space-x-2 p-2 rounded-md cursor-pointer
+                        transition-all duration-200 ease-in-out
+                        ${localSelectedLanguage === language.code ? "bg-primary/10" : "hover:bg-gray-100"}
+                        ${isAnimated ? "fade-slide-in" : "opacity-0"}
+                        ${isLoading ? "opacity-50 pointer-events-none" : ""}
+                      `}
+                      style={{ animationDelay: `${150 + index * 30}ms` }}
                     >
-                      {language.flag && (
-                        <span className="mr-2">{language.flag}</span>
-                      )}
-                      {language.name}
-                    </Label>
-                  </div>
-                );
-              })}
+                      <RadioGroupItem 
+                        value={language.code} 
+                        id={uniqueId}
+                        disabled={isLoading}
+                      />
+                      <Label
+                        htmlFor={uniqueId}
+                        className="flex-grow cursor-pointer font-normal text-base"
+                      >
+                        {language.flag && (
+                          <span className="mr-2">{language.flag}</span>
+                        )}
+                        {language.name}
+                      </Label>
+                    </div>
+                  );
+                })}
 
-              {filteredLanguages.length === 0 && (
-                <div className="flex items-center justify-center h-[200px] text-gray-500">
-                  <div className="text-center">
-                    <Icon name="Search" size={30} className="mx-auto mb-2 opacity-30" />
-                    <p>Языки не найдены</p>
-                    <p className="text-sm mt-1 opacity-70">Попробуйте изменить поисковый запрос</p>
+                {filteredLanguages.length === 0 && (
+                  <div className="flex items-center justify-center h-[200px] text-gray-500">
+                    <div className="text-center">
+                      <Icon name="Search" size={30} className="mx-auto mb-2 opacity-30" />
+                      <p>Языки не найдены</p>
+                      <p className="text-sm mt-1 opacity-70">Попробуйте изменить поисковый запрос</p>
+                    </div>
                   </div>
-                </div>
-              )}
-            </RadioGroup>
-          </div>
+                )}
+              </RadioGroup>
+            </div>
 
-          {/* Кнопка подтверждения выбора */}
-          <div className="mt-6">
-            <Button 
-              onClick={handleConfirmLanguage} 
-              className="w-full"
-              disabled={!localSelectedLanguage || isLoading || !videoId}
-            >
-              {isLoading ? (
-                <>
-                  <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
-                  Обновление языка...
-                </>
-              ) : (
-                <>
-                  <Icon name="Check" className="mr-2 h-4 w-4" />
-                  Подтвердить выбор
-                </>
-              )}
-            </Button>
+            {/* Кнопка подтверждения выбора - всегда видима */}
+            <div className="sticky bottom-0 pt-2 bg-white border-t">
+              <Button 
+                onClick={handleConfirmLanguage} 
+                className="w-full"
+                disabled={!localSelectedLanguage || isLoading || !videoId}
+              >
+                {isLoading ? (
+                  <>
+                    <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
+                    Обновление языка...
+                  </>
+                ) : (
+                  <>
+                    <Icon name="Check" className="mr-2 h-4 w-4" />
+                    Подтвердить выбор
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           {/* Информация о выбранном языке */}

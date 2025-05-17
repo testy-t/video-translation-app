@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
@@ -9,6 +9,46 @@ import InlineLanguageToggle from "./InlineLanguageToggle";
 const Hero: React.FC = () => {
   const navigate = useNavigate();
   const [activeLanguage, setActiveLanguage] = useState("ru");
+  const [isMuted, setIsMuted] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  
+  // Определяем мобильный вид при загрузке и изменении размера окна
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px - это breakpoint для md в Tailwind
+    };
+    
+    // Проверяем при загрузке
+    checkIsMobile();
+    
+    // Слушаем событие изменения размера окна
+    window.addEventListener('resize', checkIsMobile);
+    
+    // Очищаем слушатель при размонтировании
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+  
+  // При изменении языка останавливаем и перезапускаем видео
+  useEffect(() => {
+    // Сначала останавливаем все видео
+    if (mobileVideoRef.current) {
+      mobileVideoRef.current.pause();
+    }
+    if (desktopVideoRef.current) {
+      desktopVideoRef.current.pause();
+    }
+    
+    // После короткой задержки запускаем нужное видео
+    setTimeout(() => {
+      if (isMobile && mobileVideoRef.current) {
+        mobileVideoRef.current.play().catch(e => console.error("Error playing mobile video:", e));
+      } else if (!isMobile && desktopVideoRef.current) {
+        desktopVideoRef.current.play().catch(e => console.error("Error playing desktop video:", e));
+      }
+    }, 50);
+  }, [activeLanguage, isMobile]);
 
   // Функция для перехода на страницу генерации
   const goToOrderPage = () => {
@@ -46,42 +86,81 @@ const Hero: React.FC = () => {
 
   // Обработчик выбора языка
   const handleLanguageSelect = (code: string) => {
+    // Если выбран тот же язык, не делаем ничего
+    if (activeLanguage === code) return;
+    
     setActiveLanguage(code);
     console.log(`Selected language: ${code}`);
+  };
+  
+  // Функция для переключения звука только на активном видео
+  const toggleMute = () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    
+    // Воспроизводим видео только если оно на паузе и нужно включить звук
+    if (!newMutedState) {
+      // Воспроизводим только то видео, которое видит пользователь
+      if (isMobile) {
+        if (mobileVideoRef.current && mobileVideoRef.current.paused) {
+          mobileVideoRef.current.play().catch(e => console.error("Error playing mobile video:", e));
+        }
+      } else {
+        if (desktopVideoRef.current && desktopVideoRef.current.paused) {
+          desktopVideoRef.current.play().catch(e => console.error("Error playing desktop video:", e));
+        }
+      }
+    }
   };
 
   return (
     <section className="relative overflow-hidden">
       {/* Тёмная секция с минималистичным фоном */}
-      <div className="min-h-screen flex items-center pt-8 md:pt-16 pb-24 md:pb-32 relative">
+      <div className="min-h-screen flex items-center pt-14 md:pt-16 pb-24 md:pb-32 relative">
         <AnimatedBackground />
 
         <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem] relative z-10">
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Левая колонка - текст */}
-            <div className="text-center md:text-left w-full">
+            <div className="text-center md:text-left w-full mt-8 md:mt-0">
               <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-[#0070F3]/10 text-[#0070F3] backdrop-blur-sm border border-[#0070F3]/20">
                 <Icon name="Sparkles" size={14} className="text-[#0070F3] me-1" />
                 ИИ Переводчик Видео
               </span>
-              <h1 className="text-4xl md:text-4xl lg:text-7xl font-bold tracking-tight mb-4 text-slate-900">
+              <h1 className="text-3xl md:text-4xl lg:text-7xl font-bold tracking-tight mt-8 md:mt-0 mb-4 text-slate-900">
                 Ваш голос на любом языке
               </h1>
 
-              {/* Видео для мобильной версии размещаем между заголовком и селектором языка */}
-              <div className="w-full mb-4 flex justify-center md:hidden">
-                <div className="w-full max-w-md aspect-video rounded-2xl overflow-hidden border border-slate-200 flex flex-col items-center justify-center relative shadow-lg">
-                  <div className="w-14 h-14 rounded-full bg-[#0070F3]/10 flex items-center justify-center backdrop-blur-sm">
-                    <Icon name="Play" size={28} className="text-[#0070F3] ml-1" />
+              {/* Видео для мобильной версии размещаем сразу после заголовка */}
+              <div className="w-full mb-3 flex justify-center md:hidden">
+                <div 
+                  className="w-full max-w-md aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
+                  onClick={toggleMute}
+                >
+                  {isMobile && (
+                    <video 
+                      ref={mobileVideoRef}
+                      className="w-full h-full object-cover"
+                      src={`https://cdn.poehali.dev/golosok/preview/${activeLanguage === 'zh' ? 'cn' : activeLanguage}.mp4`}
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      key={`mobile-${activeLanguage}`}
+                    />
+                  )}
+                  <div className="absolute bottom-4 right-4 bg-black/60 rounded-full p-3 shadow-lg cursor-pointer">
+                    <Icon 
+                      name={isMuted ? "VolumeX" : "Volume2"} 
+                      size={26} 
+                      className="text-white" 
+                    />
                   </div>
-                  <p className="absolute bottom-4 text-slate-700 text-sm">
-                    Демонстрация технологии
-                  </p>
                 </div>
               </div>
 
-              {/* Инлайн переключатель языков только для мобильной версии */}
-              <div className="mb-4 flex justify-center md:hidden">
+              {/* Инлайн переключатель языков сразу под видео */}
+              <div className="mb-5 flex justify-center md:hidden">
                 <InlineLanguageToggle
                   languages={languages}
                   activeLanguage={activeLanguage}
@@ -89,13 +168,8 @@ const Hero: React.FC = () => {
                 />
               </div>
 
-              <p className="text-base md:text-lg text-slate-700 mb-6 md:mb-10 max-w-xl mx-auto md:mx-0 leading-relaxed">
-                Загрузите видео и получите профессиональный перевод на любой
-                язык с идеальной синхронизацией губ за считанные минуты.
-              </p>
-
-              {/* Кнопка действия */}
-              <div className="flex justify-center md:justify-start">
+              {/* Кнопка действия после выбора языка */}
+              <div className="flex justify-center md:justify-start mb-4">
                 <Button
                   className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto"
                   onClick={goToOrderPage}
@@ -104,17 +178,38 @@ const Hero: React.FC = () => {
                   Перевести видео
                 </Button>
               </div>
+
+              <p className="text-base md:text-lg text-slate-700 mb-5 max-w-xl mx-auto md:mx-0 leading-relaxed">
+                Загрузите видео и получите профессиональный перевод на любой
+                язык с идеальной синхронизацией губ за считанные минуты.
+              </p>
             </div>
 
-            {/* Правая колонка - плейсхолдер для видео - только для десктопа */}
+            {/* Правая колонка - видео - только для десктопа */}
             <div className="w-full hidden md:flex flex-col items-center md:items-end mt-0">
-              <div className="w-full md:w-[85%] aspect-video md:aspect-square bg-[#f8fafc] backdrop-blur-sm rounded-2xl overflow-hidden border border-slate-200 flex flex-col items-center justify-center relative shadow-lg">
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#0070F3]/10 flex items-center justify-center backdrop-blur-sm">
-                  <Icon name="Play" size={28} className="text-[#0070F3] ml-1" />
+              <div 
+                className="w-full md:w-[85%] aspect-video md:aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
+                onClick={toggleMute}
+              >
+                {!isMobile && (
+                  <video 
+                    ref={desktopVideoRef}
+                    className="w-full h-full object-cover"
+                    src={`https://cdn.poehali.dev/golosok/preview/${activeLanguage === 'zh' ? 'cn' : activeLanguage}.mp4`}
+                    autoPlay
+                    loop
+                    muted={isMuted}
+                    playsInline
+                    key={`desktop-${activeLanguage}`}
+                  />
+                )}
+                <div className="absolute bottom-4 right-4 bg-black/60 rounded-full p-3 shadow-lg cursor-pointer">
+                  <Icon 
+                    name={isMuted ? "VolumeX" : "Volume2"} 
+                    size={26} 
+                    className="text-white" 
+                  />
                 </div>
-                <p className="absolute bottom-4 text-slate-700 text-sm">
-                  Демонстрация технологии
-                </p>
               </div>
 
               {/* Языки - мобильный стиль с увеличенным размером для десктопа */}

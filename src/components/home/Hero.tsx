@@ -13,23 +13,23 @@ const Hero: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
   const desktopVideoRef = useRef<HTMLVideoElement>(null);
-  
+
   // Определяем мобильный вид при загрузке и изменении размера окна
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768); // 768px - это breakpoint для md в Tailwind
     };
-    
+
     // Проверяем при загрузке
     checkIsMobile();
-    
+
     // Слушаем событие изменения размера окна
-    window.addEventListener('resize', checkIsMobile);
-    
+    window.addEventListener("resize", checkIsMobile);
+
     // Очищаем слушатель при размонтировании
-    return () => window.removeEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
-  
+
   // При изменении языка останавливаем и перезапускаем видео
   useEffect(() => {
     // Сначала останавливаем все видео
@@ -39,13 +39,17 @@ const Hero: React.FC = () => {
     if (desktopVideoRef.current) {
       desktopVideoRef.current.pause();
     }
-    
+
     // После короткой задержки запускаем нужное видео
     setTimeout(() => {
       if (isMobile && mobileVideoRef.current) {
-        mobileVideoRef.current.play().catch(e => console.error("Error playing mobile video:", e));
+        mobileVideoRef.current
+          .play()
+          .catch((e) => console.error("Error playing mobile video:", e));
       } else if (!isMobile && desktopVideoRef.current) {
-        desktopVideoRef.current.play().catch(e => console.error("Error playing desktop video:", e));
+        desktopVideoRef.current
+          .play()
+          .catch((e) => console.error("Error playing desktop video:", e));
       }
     }, 50);
   }, [activeLanguage, isMobile]);
@@ -88,26 +92,30 @@ const Hero: React.FC = () => {
   const handleLanguageSelect = (code: string) => {
     // Если выбран тот же язык, не делаем ничего
     if (activeLanguage === code) return;
-    
+
     setActiveLanguage(code);
     console.log(`Selected language: ${code}`);
   };
-  
+
   // Функция для переключения звука только на активном видео
   const toggleMute = () => {
     const newMutedState = !isMuted;
     setIsMuted(newMutedState);
-    
+
     // Воспроизводим видео только если оно на паузе и нужно включить звук
     if (!newMutedState) {
       // Воспроизводим только то видео, которое видит пользователь
       if (isMobile) {
         if (mobileVideoRef.current && mobileVideoRef.current.paused) {
-          mobileVideoRef.current.play().catch(e => console.error("Error playing mobile video:", e));
+          mobileVideoRef.current
+            .play()
+            .catch((e) => console.error("Error playing mobile video:", e));
         }
       } else {
         if (desktopVideoRef.current && desktopVideoRef.current.paused) {
-          desktopVideoRef.current.play().catch(e => console.error("Error playing desktop video:", e));
+          desktopVideoRef.current
+            .play()
+            .catch((e) => console.error("Error playing desktop video:", e));
         }
       }
     }
@@ -119,13 +127,16 @@ const Hero: React.FC = () => {
       <div className="min-h-screen flex items-center pt-14 md:pt-16 pb-24 md:pb-32 relative">
         {!isMobile && <AnimatedBackground />}
 
-
         <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem] relative z-10">
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-center md:text-left w-full mt-8 md:mt-0">
               <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium mb-4 md:mb-6 bg-[#0070F3]/10 text-[#0070F3] backdrop-blur-sm border border-[#0070F3]/20">
-                <Icon name="Sparkles" size={14} className="text-[#0070F3] me-1" />
+                <Icon
+                  name="Sparkles"
+                  size={14}
+                  className="text-[#0070F3] me-1"
+                />
                 ИИ Переводчик Видео
               </span>
               <h1 className="text-2xl md:text-4xl lg:text-7xl font-bold tracking-tight mt-4 md:mt-0 mb-4 text-slate-900">
@@ -134,15 +145,15 @@ const Hero: React.FC = () => {
 
               {/* Видео для мобильной версии размещаем сразу после заголовка */}
               <div className="w-full mb-3 flex justify-center md:hidden">
-                <div 
+                <div
                   className="w-full max-w-md aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
                   onClick={toggleMute}
                 >
                   {isMobile && (
-                    <video 
+                    <video
                       ref={mobileVideoRef}
                       className="w-full h-full object-cover"
-                      src={`https://cdn.poehali.dev/golosok/preview/${activeLanguage === 'zh' ? 'cn' : activeLanguage}.mp4`}
+                      src={`https://cdn.poehali.dev/golosok/preview/${activeLanguage === "zh" ? "cn" : activeLanguage}.mp4`}
                       autoPlay
                       loop
                       muted={isMuted}
@@ -151,10 +162,10 @@ const Hero: React.FC = () => {
                     />
                   )}
                   <div className="absolute bottom-4 right-4 bg-black/60 rounded-full p-3 shadow-lg cursor-pointer">
-                    <Icon 
-                      name={isMuted ? "VolumeX" : "Volume2"} 
-                      size={26} 
-                      className="text-white" 
+                    <Icon
+                      name={isMuted ? "VolumeX" : "Volume2"}
+                      size={26}
+                      className="text-white"
                     />
                   </div>
                 </div>
@@ -169,8 +180,8 @@ const Hero: React.FC = () => {
                 />
               </div>
 
-              {/* Кнопка действия после выбора языка */}
-              <div className="flex justify-center md:justify-start mb-4">
+              {/* Кнопка действия после выбора языка - только для мобильной версии */}
+              <div className="flex justify-center md:hidden mb-4">
                 <Button
                   className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto"
                   onClick={goToOrderPage}
@@ -184,19 +195,30 @@ const Hero: React.FC = () => {
                 Загрузите видео и получите профессиональный перевод на любой
                 язык с идеальной синхронизацией губ за считанные минуты.
               </p>
+
+              {/* Кнопка действия для десктопа - после описания */}
+              <div className="hidden md:flex justify-start mb-4">
+                <Button
+                  className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto"
+                  onClick={goToOrderPage}
+                >
+                  <Icon name="Play" size={18} className="mr-2" />
+                  Перевести видео
+                </Button>
+              </div>
             </div>
 
             {/* Правая колонка - видео - только для десктопа */}
             <div className="w-full hidden md:flex flex-col items-center md:items-end mt-0">
-              <div 
+              <div
                 className="w-full md:w-[85%] aspect-video md:aspect-square rounded-2xl overflow-hidden border border-slate-200 relative shadow-lg cursor-pointer"
                 onClick={toggleMute}
               >
                 {!isMobile && (
-                  <video 
+                  <video
                     ref={desktopVideoRef}
                     className="w-full h-full object-cover"
-                    src={`https://cdn.poehali.dev/golosok/preview/${activeLanguage === 'zh' ? 'cn' : activeLanguage}.mp4`}
+                    src={`https://cdn.poehali.dev/golosok/preview/${activeLanguage === "zh" ? "cn" : activeLanguage}.mp4`}
                     autoPlay
                     loop
                     muted={isMuted}
@@ -205,10 +227,10 @@ const Hero: React.FC = () => {
                   />
                 )}
                 <div className="absolute bottom-4 right-4 bg-black/60 rounded-full p-3 shadow-lg cursor-pointer">
-                  <Icon 
-                    name={isMuted ? "VolumeX" : "Volume2"} 
-                    size={26} 
-                    className="text-white" 
+                  <Icon
+                    name={isMuted ? "VolumeX" : "Volume2"}
+                    size={26}
+                    className="text-white"
                   />
                 </div>
               </div>

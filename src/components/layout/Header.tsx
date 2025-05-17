@@ -176,7 +176,7 @@ const Header: React.FC = () => {
                 <DropdownMenuContent align="end" className="w-[200px]">
                   {orderCodes.length === 0 ? (
                     <DropdownMenuItem disabled>
-                      Нет истории заказов
+                      Тут будут ваши заказы
                     </DropdownMenuItem>
                   ) : (
                     orderCodes.map((code, index) => (

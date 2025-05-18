@@ -10,18 +10,12 @@ const HeroActions: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mt-8">
+    <div className="mt-8">
       <Button
-        className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-3 text-base font-medium rounded-full h-auto"
+        className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-2.5 text-base font-medium rounded-full h-auto"
         onClick={handleStartClick}
       >
         Перевести видео от 149 ₽
-      </Button>
-      <Button
-        className="bg-transparent border border-gray-600 hover:bg-white/5 text-white px-8 py-6 text-base h-auto"
-        onClick={() => navigate("/faq")}
-      >
-        Узнать больше
       </Button>
     </div>
   );

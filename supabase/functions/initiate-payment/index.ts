@@ -159,6 +159,7 @@ serve(async (req: Request) => {
                 description: `Перевод видео (${videoDuration} мин.)`,
                 amount: fullTransaction.amount,
                 currency: "RUB",
+                email: user.email,
                 invoiceId: uniquecode,
                 accountId: fullTransaction.user_id.toString(),
                 autoClose: 3,

@@ -243,7 +243,6 @@ function buildReceipt(items: Array<{ label: string, price: number, quantity: num
         calculationPlace: "golosok.app", // или ваш домен
         customerInfo: "",
         isBso: false,
-        AgentSign: null,
         amounts: {
             electronic: Number(totalAmount.toFixed(2)),
             advancePayment: 0.00,

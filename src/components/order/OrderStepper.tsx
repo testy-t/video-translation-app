@@ -16,7 +16,7 @@ interface OrderStepperProps {
 
 /**
  * Компонент для отображения прогресса шагов заказа
- * Адаптивный дизайн: на мобильных показывает только текущий шаг
+ * Адаптивный дизайн: на мобильных показывает только индикатор прогресса
  */
 const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -52,31 +52,16 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
         <h1 className="text-lg md:text-lg font-semibold">Перевод видео</h1>
       </div>
 
-      {/* Мобильная версия - показываем только текущий шаг */}
+      {/* Мобильная версия - показываем только индикатор прогресса */}
       {isMobile && (
-        <div className="flex flex-col gap-3">
-          {/* Индикатор прогресса */}
-          <div className="mb-2">
-            <div className="flex justify-between text-sm text-gray-500 mb-1">
-              <span>
-                Шаг {currentStep + 1} из {steps.length}
-              </span>
-              <span>{Math.round(progressPercentage)}%</span>
-            </div>
-            <Progress value={progressPercentage} className="h-2" />
+        <div className="mb-2">
+          <div className="flex justify-between text-sm text-gray-500 mb-1">
+            <span>
+              Шаг {currentStep + 1} из {steps.length}
+            </span>
+            <span>{Math.round(progressPercentage)}%</span>
           </div>
-
-          {/* Текущий шаг крупно */}
-          <div className="flex items-center py-3 px-4 rounded-md bg-primary text-white border-primary shadow-md">
-            <div className="flex items-center gap-3">
-              <div className="bg-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium text-primary">
-                {currentStep + 1}
-              </div>
-              <span className="text-base font-medium">
-                {steps[currentStep].title}
-              </span>
-            </div>
-          </div>
+          <Progress value={progressPercentage} className="h-2" />
         </div>
       )}
 

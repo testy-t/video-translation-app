@@ -57,7 +57,10 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
 
   return (
     <div className="fade-slide-in">
-      <h2 className="text-xl font-semibold mb-6">Выберите язык для перевода</h2>
+      <h2 className="text-xl font-semibold mb-6">🎙️ На какой язык перевести?</h2>
+      <p className="text-muted-foreground mb-4">
+        Укажите, <strong>на каком языке</strong> вы хотите получить результат. Оригинальное видео будет переведено именно на этот язык.
+      </p>
 
       {/* Сообщения об ошибках */}
       {languagesError && (
@@ -86,7 +89,7 @@ const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
           </div>
 
           {/* Контейнер для списка языков и кнопки подтверждения */}
-          <div className="flex flex-col h-[calc(100vh-520px)] min-h-[100px]">
+          <div className="flex flex-col h-[calc(100vh-570px)] min-h-[100px]">
             {/* Список языков */}
             <LanguageList 
               filteredLanguages={filteredLanguages}

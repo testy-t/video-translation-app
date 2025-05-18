@@ -18,9 +18,10 @@ const SelectedLanguageInfo: React.FC<SelectedLanguageInfoProps> = ({
   
   return (
     <div className="mt-4 text-sm text-gray-500 text-center">
-      Выбран язык: <span className="font-medium">
+      Видео будет переведено на <span className="font-medium">
         {selectedLanguage.ru_name} {selectedLanguage.flag_emoji}
       </span>
+
     </div>
   );
 };

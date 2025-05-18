@@ -46,10 +46,10 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
       <div className="flex justify-between items-center mb-8">
         <Link to="/" className="flex items-center gap-2">
           <Icon name="Mic2" size={24} className="text-primary" />
-          <span className="text-lg md:text-lg font-semibold">ГолосОК</span>
+          <span className="text-base md:text-lg font-semibold">ГолосОК</span>
         </Link>
 
-        <h1 className="text-lg md:text-lg font-semibold">Перевод видео</h1>
+        <h1 className="text-base md:text-lg font-semibold">Перевод видео</h1>
       </div>
 
       {/* Мобильная версия - показываем только индикатор прогресса */}

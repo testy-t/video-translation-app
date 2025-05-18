@@ -296,7 +296,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                   <div className="text-2xl font-bold mb-0 text-foreground/80">
                     Язык
                   </div>
-                  <div className="text-sm text-muted-foreground/90">
+                  <div className="text-sm text-muted-foreground/90 text-center">
                     {languageInfo.name}
                   </div>
                 </>

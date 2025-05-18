@@ -53,7 +53,7 @@ export const useLanguageSelection = (
     if (!localSelectedLanguage) {
       toast({
         title: "Предупреждение",
-        description: "Пожалуйста, выберите язык для перевода",
+        description: "Пожалуйста, выберите язык, на который нужно перевести видео",
       });
       return;
     }
@@ -91,7 +91,7 @@ export const useLanguageSelection = (
       // Отображаем успешное сообщение
       toast({
         title: "Успех",
-        description: "Язык для перевода выбран успешно",
+        description: "Язык результата выбран успешно",
       });
       
       // Передаем выбранный язык в родительский компонент

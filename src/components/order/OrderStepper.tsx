@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import Icon from "@/components/ui/icon";
 import { Link } from "react-router-dom";
@@ -27,13 +26,13 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768); // 768px - breakpoint для md в Tailwind
     };
-    
+
     // Проверяем при загрузке
     checkIsMobile();
-    
+
     // Слушаем событие изменения размера окна
     window.addEventListener("resize", checkIsMobile);
-    
+
     // Очищаем слушатель при размонтировании
     return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
@@ -59,21 +58,23 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
           {/* Индикатор прогресса */}
           <div className="mb-2">
             <div className="flex justify-between text-sm text-gray-500 mb-1">
-              <span>Шаг {currentStep + 1} из {steps.length}</span>
+              <span>
+                Шаг {currentStep + 1} из {steps.length}
+              </span>
               <span>{Math.round(progressPercentage)}%</span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
           </div>
-          
+
           {/* Текущий шаг крупно */}
-          <div 
-            className="flex items-center py-3 px-4 rounded-md bg-primary text-white border-primary shadow-md"
-          >
+          <div className="flex items-center py-3 px-4 rounded-md bg-primary text-white border-primary shadow-md">
             <div className="flex items-center gap-3">
               <div className="bg-white w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium text-primary">
                 {currentStep + 1}
               </div>
-              <span className="text-base font-medium">{steps[currentStep].title}</span>
+              <span className="text-base font-medium">
+                {steps[currentStep].title}
+              </span>
             </div>
           </div>
         </div>
@@ -100,7 +101,11 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ steps, currentStep }) => {
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0">
                     {index < currentStep ? (
-                      <Icon name="CircleCheck" className="text-primary" size={22} />
+                      <Icon
+                        name="CircleCheck"
+                        className="text-primary"
+                        size={22}
+                      />
                     ) : (
                       <div
                         className={`bg-white w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium border 

@@ -5,6 +5,15 @@ import { useLanguageContext } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { toast } from "@/components/ui/use-toast";
+
+// Дополняем типы Window для Yandex Metrika
+declare global {
+  interface Window {
+    ym?: (counterId: number, action: string, goalId: string) => void;
+  }
+}
 
 interface InfoBlockProps {
   icon: string;
@@ -185,9 +194,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
 
   return (
     <Card className="mb-6 border-0 shadow-none">
-      <CardContent className="p-6 px-0">
-        <h4 className="text-2xl font-bold mb-6 text-center">Детали заказа</h4>
-
+      <CardContent className="p-0 px-0">
         {/* Время обработки */}
         <div className="flex items-center justify-center my-6 p-3 rounded-lg bg-primary/10">
           <Icon name="Rocket" className="mr-2 text-primary" />
@@ -348,6 +355,37 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
         >
           {getButtonText()}
         </Button>
+        
+        {/* Кнопка "Попробовать за 149 рублей" для видео длительностью более 1 минуты */}
+        {roundedMinutes > 1 && (
+          <div className="mt-3">
+            <HoverCard openDelay={100} closeDelay={200}>
+              <HoverCardTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className="w-full py-6 text-lg" 
+                  onClick={() => {
+                    window.ym && window.ym(101915706,'reachGoal','minute_request');
+                    toast({
+                      title: "Функция в разработке",
+                      description: "Данная функция находится в разработке и будет доступна в ближайшее время.",
+                    });
+                  }}
+                >
+                  Тестовый перевод за 149 ₽
+                </Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80">
+                <div className="space-y-2">
+                  <h4 className="font-medium">Не уверены?</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Вы можете заказать перевод только первой минуты вашего видео, чтобы оценить качество.
+                  </p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        )}
 
         <div className="mt-4 text-xs text-center text-muted-foreground">
           Нажимая кнопку, вы соглашаетесь с нашей{" "}

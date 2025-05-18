@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Language } from "./types";
 
@@ -13,7 +12,7 @@ interface LanguageSwitcherProps {
  * Компонент переключателя языков для видео Hero-секции
  */
 const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
-  languages,
+  languages = [], // Устанавливаем пустой массив по умолчанию
   activeLanguage,
   onLanguageSelect,
   isDesktop = false,
@@ -39,6 +38,11 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
     return shortCodes[code] || code.toUpperCase();
   };
 
+  // Проверка наличия массива languages
+  if (!languages || languages.length === 0) {
+    return null; // Не отображаем компонент, если нет языков
+  }
+
   return (
     <div
       className={`flex items-center backdrop-blur-sm rounded-full overflow-x-auto ${
@@ -61,8 +65,8 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   ? "bg-[#0070F3] text-white"
                   : "bg-[#0070F3] text-white shadow-md"
                 : isDesktop
-                ? "text-slate-700 hover:text-[#0070F3]"
-                : "text-slate-700 hover:text-[#0070F3]"
+                  ? "text-slate-700 hover:text-[#0070F3]"
+                  : "text-slate-700 hover:text-[#0070F3]"
             }
           `}
         >

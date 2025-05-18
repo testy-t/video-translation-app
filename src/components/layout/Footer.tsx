@@ -1,130 +1,125 @@
 import React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const navigate = useNavigate();
-  const location = useLocation();
 
-  // Функция для прокрутки к секции на главной странице
-  const scrollToSection = (id: string) => {
-    // Если мы не на главной странице, сначала переходим на неё
-    if (location.pathname !== "/") {
-      navigate("/");
-      // Задержка для загрузки страницы перед скроллом
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
+  // Функция для открытия чата JivoSite
+  const openSupportChat = () => {
+    // Проверяем, доступна ли функция openJivoChat
+    if (window.openJivoChat) {
+      window.openJivoChat();
     } else {
-      // Если уже на главной, просто скроллим
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
+      // Запасной вариант, если наша функция недоступна
+      // Пытаемся использовать API напрямую
+      if (window.jivo_api) {
+        window.jivo_api.open();
+      } else {
+        console.warn("JivoSite API не загружен");
       }
     }
   };
 
-  // Обработчик для перехода по ссылкам с возвратом наверх страницы
-  const handleNavigate = (path: string) => (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate(path);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
   return (
-    <footer className="w-full mt-auto pt-10">
-      <div className="container mx-auto px-4 md:px-0 w-full max-w-[66rem]">
-        <div className="rounded-t-2xl border border-gray-200 shadow-xl backdrop-blur-md bg-gray-100">
-          <div className="p-6 pb-10 relative min-h-[140px]">
-            <div
-              className="flex items-center absolute top-6 left-6 cursor-pointer"
-              onClick={() => {
-                navigate("/");
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+    <footer className="bg-gray-50 border-t">
+      <div className="container mx-auto py-8 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Колонка с логотипом и описанием */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Icon name="Mic2" className="text-primary" size={24} />
+              <span className="text-xl font-semibold">ГолосОК</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Сервис для перевода видео на любой язык с синхронизацией губ
+              благодаря нейросетям.
+            </p>
+
+            {/* Кнопка поддержки */}
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={openSupportChat}
             >
-              <Icon name="Mic2" size={32} className="text-[#0070F3] mr-3" />
-              <div className="flex flex-col">
-                <span className="text-xl font-semibold text-black leading-tight">
-                  ГолосОК
-                </span>
-                <p className="text-sm text-black/70 leading-tight">
-                  © {currentYear}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 md:ml-auto md:w-3/5">
-              <div className="flex flex-col mt-20 md:mt-0">
-                <h3 className="text-black text-sm font-medium mb-3">
-                  Навигация
-                </h3>
-                <div className="flex flex-col gap-2">
-                  <a
-                    href="/"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate("/");
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Главная
-                  </a>
-                  <a
-                    href="/order"
-                    onClick={handleNavigate("/order")}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Заказать
-                  </a>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.jivo_api?.open();
-                    }}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Поддержка
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex flex-col md:mt-0">
-                <h3 className="text-black text-sm font-medium mb-3">
-                  Документы
-                </h3>
-                <div className="flex flex-col gap-2">
-                  <a
-                    href="/offer"
-                    onClick={handleNavigate("/offer")}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Оферта
-                  </a>
-                  <a
-                    href="/privacy"
-                    onClick={handleNavigate("/privacy")}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Обработка ПД
-                  </a>
-                  <a
-                    href="/confidentiality"
-                    onClick={handleNavigate("/confidentiality")}
-                    className="text-sm text-black/70 hover:text-black transition-colors"
-                  >
-                    Конфиденциальность
-                  </a>
-                </div>
-              </div>
-            </div>
+              <Icon name="MessageCircle" size={16} />
+              <span>Поддержка</span>
+            </Button>
           </div>
+
+          {/* Колонка с ссылками на страницы */}
+          <div>
+            <h3 className="text-sm font-semibold mb-4">Страницы</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link
+                  to="/"
+                  className="text-sm text-gray-600 hover:text-primary"
+                >
+                  Главная
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/order"
+                  className="text-sm text-gray-600 hover:text-primary"
+                >
+                  Заказать перевод
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/offer"
+                  className="text-sm text-gray-600 hover:text-primary"
+                >
+                  Оферта
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/confidentiality"
+                  className="text-sm text-gray-600 hover:text-primary"
+                >
+                  Политика конфиденциальности
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Колонка с контактами */}
+          <div>
+            <h3 className="text-sm font-semibold mb-4">Связаться с нами</h3>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <Icon name="Mail" size={16} className="text-gray-600" />
+                <a
+                  href="mailto:info@golosok.ru"
+                  className="text-sm text-gray-600 hover:text-primary"
+                >
+                  info@golosok.ru
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Icon
+                  name="MessageCircle"
+                  size={16}
+                  className="text-gray-600"
+                />
+                <button
+                  onClick={openSupportChat}
+                  className="text-sm text-gray-600 hover:text-primary cursor-pointer"
+                >
+                  Написать в чат
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Копирайт */}
+        <div className="border-t mt-8 pt-4 text-center text-sm text-gray-600">
+          <p>© {currentYear} ГолосОК. Все права защищены.</p>
         </div>
       </div>
     </footer>

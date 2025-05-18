@@ -52,43 +52,7 @@
     <script src="https://cdn.poehali.dev/intertnal/js/route-min.js"></script>
     
     <!-- JivoSite widget -->
-    <script>
-      // Функция для инициализации JivoSite с отключенным чатом по умолчанию
-      function initJivo() {
-        // Создаем настройки для JivoSite
-        window.jivo_config = {
-          // При инициализации виджет будет скрыт
-          widget_id: "XOtNENuONe",
-          always_online: true, // Опциональный параметр
-          start_hidden: true // Начинаем со скрытым виджетом
-        };
-        
-        // Добавляем глобальную функцию для открытия чата
-        window.openJivoChat = function() {
-          // Убедимся, что API JivoSite загружен
-          if (window.jivo_api) {
-            window.jivo_api.open();
-          } else {
-            console.warn("JivoSite API не загружен");
-            // Попытка подождать загрузки API
-            setTimeout(function() {
-              if (window.jivo_api) {
-                window.jivo_api.open();
-              }
-            }, 1000);
-          }
-        };
-        
-        // Загружаем скрипт JivoSite
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = '//code.jivosite.com/widget/XOtNENuONe';
-        document.head.appendChild(s);
-      }
-      
-      // Инициализируем JivoSite после загрузки страницы
-      document.addEventListener('DOMContentLoaded', initJivo);
-    </script>
+    <script src="//code.jivosite.com/widget/XOtNENuONe" async></script>
   </head>
 
   <body>

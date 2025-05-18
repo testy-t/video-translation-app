@@ -1,52 +1,29 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Icon from "@/components/ui/icon";
+import { useNavigate } from "react-router-dom";
 
-interface HeroActionsProps {
-  onAction: () => void;
-  buttonText: string;
-  showMobile?: boolean;
-  showDesktop?: boolean;
-}
+const HeroActions: React.FC = () => {
+  const navigate = useNavigate();
 
-/**
- * Компонент с кнопками действий для Hero секции
- */
-const HeroActions: React.FC<HeroActionsProps> = ({
-  onAction,
-  buttonText,
-  showMobile = true,
-  showDesktop = true,
-}) => {
+  const handleStartClick = () => {
+    navigate("/order");
+  };
+
   return (
-    <>
-      {/* Мобильная версия */}
-      {showMobile && (
-        <div className="flex justify-center md:hidden mb-4">
-          <Button
-            className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto"
-            onClick={onAction}
-          >
-            <Icon name="Play" size={18} className="mr-2" />
-            {buttonText}
-          </Button>
-        </div>
-      )}
-
-      {/* Десктопная версия */}
-      {showDesktop && (
-        <div className="hidden md:flex justify-start mb-4">
-          <Button
-            className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-6 md:px-8 py-3 md:py-4 text-base font-medium rounded-full h-auto"
-            onClick={onAction}
-          >
-            <Icon name="Play" size={18} className="mr-2" />
-            {buttonText}
-          </Button>
-        </div>
-      )}
-    </>
+    <div className="flex flex-col sm:flex-row gap-4 mt-8">
+      <Button
+        className="bg-primary hover:bg-primary/90 text-white px-8 py-6 text-base h-auto"
+        onClick={handleStartClick}
+      >
+        Перевести видео от 149 ₽
+      </Button>
+      <Button
+        className="bg-transparent border border-gray-600 hover:bg-white/5 text-white px-8 py-6 text-base h-auto"
+        onClick={() => navigate("/faq")}
+      >
+        Узнать больше
+      </Button>
+    </div>
   );
 };
 

@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedBackground from "../AnimatedBackground";
-import HeroBadge from "./HeroBadge";
+
 import HeroHeading from "./HeroHeading";
 import HeroDescription from "./HeroDescription";
 import HeroActions from "./HeroActions";
 import VideoPlayer from "./VideoPlayer";
+import TestimonialsCounter from "./TestimonialsCounter";
 import { Language } from "./types";
 
 /**
@@ -94,26 +95,29 @@ const Hero: React.FC = () => {
           <div className="flex flex-col md:grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Левая колонка - текст */}
             <div className="text-center md:text-left w-full mt-8 md:mt-0">
-              {/* Бейдж */}
-              <HeroBadge text="ИИ Переводчик Видео" />
-              
+              {/* Бейдж и отзывы в одной строке на десктопе */}
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between md:w-full mb-4 md:mb-6">
+                {/*<HeroBadge text="ИИ Переводчик Видео" />*/}
+                {!isMobile && <TestimonialsCounter count="10,000+" />}
+              </div>
+
               {/* Заголовок */}
               <HeroHeading title="Ваш голос на любом языке" />
-              
+
               {/* Описание - показываем только на десктопе */}
               {!isMobile && <HeroDescription description={description} />}
-              
+
               {/* Кнопка действия для десктопа - после описания */}
               {!isMobile && (
-                <HeroActions 
+                <HeroActions
                   onAction={goToOrderPage}
                   buttonText="Перевести видео"
                 />
               )}
-              
+
               {/* Видео плеер для мобильной версии */}
               {isMobile && (
-                <VideoPlayer 
+                <VideoPlayer
                   activeLanguage={activeLanguage}
                   isMuted={isMuted}
                   onMuteToggle={toggleMute}
@@ -125,19 +129,22 @@ const Hero: React.FC = () => {
 
               {/* Кнопка действия после видео - для мобильной версии */}
               {isMobile && (
-                <HeroActions 
+                <HeroActions
                   onAction={goToOrderPage}
                   buttonText="Перевести видео"
                 />
               )}
-              
+
               {/* Описание - показываем только на мобильных устройствах после кнопки */}
               {isMobile && <HeroDescription description={description} />}
+              {isMobile && <TestimonialsCounter count="5,000+" />}
+
+              {/* Отзывы для мобильных устройств */}
             </div>
 
             {/* Правая колонка - видео с переключателем языков - только для десктопа */}
             {!isMobile && (
-              <VideoPlayer 
+              <VideoPlayer
                 activeLanguage={activeLanguage}
                 isMuted={isMuted}
                 onMuteToggle={toggleMute}

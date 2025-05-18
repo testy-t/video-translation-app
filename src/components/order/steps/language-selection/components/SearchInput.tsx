@@ -1,52 +1,37 @@
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import Icon from "@/components/ui/icon";
 
 interface SearchInputProps {
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  placeholder?: string;
-  helperText?: string;
+  setSearchTerm: (term: string) => void;
+  isDisabled?: boolean;
 }
 
 /**
- * Компонент поиска языков
+ * Компонент для поиска языков
  */
-const SearchInput: React.FC<SearchInputProps> = ({
-  searchTerm,
-  setSearchTerm,
-  placeholder = "Поиск языка...",
-  helperText,
+const SearchInput: React.FC<SearchInputProps> = ({ 
+  searchTerm, 
+  setSearchTerm, 
+  isDisabled = false 
 }) => {
   return (
-    <div className="mb-5">
-      <div className="relative">
-        <Input
-          type="text"
-          placeholder={placeholder}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10"
-        />
-        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <Icon name="Search" size={16} className="text-gray-400" />
-        </div>
-        {searchTerm && (
-          <button
-            onClick={() => setSearchTerm("")}
-            className="absolute inset-y-0 right-0 flex items-center pr-3"
-          >
-            <Icon
-              name="X"
-              size={16}
-              className="text-gray-400 hover:text-gray-600"
-            />
-          </button>
-        )}
-      </div>
-      {helperText && (
-        <p className="text-xs text-gray-500 mt-1.5 ml-1">{helperText}</p>
-      )}
+    <div className="relative">
+      <Input
+        type="text"
+        placeholder="Поиск языка..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="pl-10"
+        disabled={isDisabled}
+      />
+      <Icon
+        name="Search"
+        size={18}
+        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+      />
     </div>
   );
 };

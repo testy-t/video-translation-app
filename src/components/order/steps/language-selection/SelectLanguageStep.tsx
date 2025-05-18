@@ -1,13 +1,13 @@
-import React from "react";
-import { useLanguageSelection } from "./hooks";
-import {
-  SearchInput,
-  LanguageList,
-  AlertMessage,
+
+import React, { useEffect, useState } from "react";
+import { 
+  SearchInput, 
+  LanguageList, 
   ConfirmButton,
   SelectedLanguageInfo,
+  AlertMessage
 } from "./components";
-import Icon from "@/components/ui/icon";
+import { useLanguageSelection } from "./hooks";
 
 interface SelectLanguageStepProps {
   videoFile: File | null;
@@ -17,92 +17,97 @@ interface SelectLanguageStepProps {
 }
 
 /**
- * Компонент для выбора языка перевода видео
+ * Компонент выбора языка для перевода видео
  */
 const SelectLanguageStep: React.FC<SelectLanguageStepProps> = ({
   videoFile,
   selectedLanguage,
   setSelectedLanguage,
-  isLoading = false,
+  isLoading: externalLoading = false,
 }) => {
+  // Получаем ID видео из localStorage при монтировании компонента
+  const [videoId, setVideoId] = useState<number | null>(null);
+  
+  useEffect(() => {
+    const videoIdFromStorage = localStorage.getItem('videoDbId');
+    if (videoIdFromStorage) {
+      setVideoId(parseInt(videoIdFromStorage, 10));
+    }
+  }, []);
+
+  // Используем хук для управления выбором языка
   const {
+    isAnimated,
+    localSelectedLanguage,
+    setLocalSelectedLanguage,
+    isProcessing,
     searchTerm,
     setSearchTerm,
-    languages,
-    isPending,
-    error,
-    allLanguages,
-    popularLanguages,
-    otherLanguages,
-    searchResults,
-    confirmLanguageSelection,
-  } = useLanguageSelection(selectedLanguage, setSelectedLanguage);
+    filteredLanguages,
+    languagesLoading,
+    languagesError,
+    selectedDbLanguage,
+    handleConfirmLanguage,
+    isLoading: internalLoading,
+    noVideoError
+  } = useLanguageSelection(selectedLanguage, videoId, setSelectedLanguage);
+
+  // Общее состояние загрузки (внешнее + внутреннее)
+  const isLoading = externalLoading || internalLoading;
 
   return (
     <div className="fade-slide-in">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Выберите язык перевода</h2>
-        <div className="flex items-center text-sm text-gray-600 gap-2 mt-1">
-          <Icon name="ArrowRight" size={16} />
-          <p>
-            Укажите <strong>целевой язык</strong>, на который нужно перевести
-            ваше видео
-          </p>
-        </div>
-      </div>
+      <h2 className="text-xl font-semibold mb-6">Выберите язык для перевода</h2>
 
-      <div className="bg-gray-50 p-3 rounded-lg mb-5 border border-gray-100">
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <div className="flex items-center gap-1.5">
-            <Icon name="FileVideo" size={18} className="text-gray-600" />
-            <span>Оригинал</span>
-          </div>
+      {/* Сообщения об ошибках */}
+      {languagesError && (
+        <AlertMessage type="error" message={languagesError} />
+      )}
 
-          <Icon name="ArrowRight" size={14} className="text-primary" />
-
-          <div className="flex items-center gap-1.5">
-            <Icon name="Languages" size={18} className="text-primary" />
-            <span className="font-medium">
-              {selectedLanguage
-                ? allLanguages.find((l) => l.code === selectedLanguage)?.name ||
-                  "Выбранный язык"
-                : "Язык перевода"}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {error && <AlertMessage message={error} />}
-
-      <SearchInput
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        placeholder="Найти язык перевода..."
-        helperText="Начните вводить название языка, на который хотите перевести видео"
-      />
-
-      {selectedLanguage && (
-        <SelectedLanguageInfo
-          language={allLanguages.find((l) => l.code === selectedLanguage)}
-          onClear={() => setSelectedLanguage("")}
+      {/* Проверка наличия видео */}
+      {noVideoError && (
+        <AlertMessage 
+          type="info" 
+          message="Не найдено загруженное видео. Пожалуйста, сначала загрузите видео." 
         />
       )}
 
-      <LanguageList
-        selectedLanguage={selectedLanguage}
-        setSelectedLanguage={setSelectedLanguage}
-        popularLanguages={popularLanguages}
-        otherLanguages={otherLanguages}
-        searchResults={searchResults}
-        searchTerm={searchTerm}
-      />
+      <div className="grid grid-cols-1 gap-6">
+        {/* Блок выбора языка с анимацией */}
+        <div className={`${isAnimated ? "fade-slide-in delay-100" : "opacity-0"}`}>
+          
+          {/* Поиск языка */}
+          <div className="mb-4">
+            <SearchInput 
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              isDisabled={isLoading}
+            />
+          </div>
 
-      <ConfirmButton
-        selectedLanguage={selectedLanguage}
-        confirmSelection={confirmLanguageSelection}
-        isLoading={isLoading || isPending}
-        buttonText="Перевести на выбранный язык"
-      />
+          {/* Контейнер для списка языков и кнопки подтверждения */}
+          <div className="flex flex-col h-[calc(100vh-520px)] min-h-[100px]">
+            {/* Список языков */}
+            <LanguageList 
+              filteredLanguages={filteredLanguages}
+              selectedLanguage={localSelectedLanguage}
+              onSelectLanguage={setLocalSelectedLanguage}
+              isAnimated={isAnimated}
+              isDisabled={isLoading}
+            />
+
+            {/* Кнопка подтверждения выбора */}
+            <ConfirmButton 
+              onConfirm={handleConfirmLanguage}
+              isDisabled={!localSelectedLanguage || isLoading || !videoId}
+              isLoading={isProcessing}
+            />
+          </div>
+
+          {/* Информация о выбранном языке */}
+          <SelectedLanguageInfo selectedLanguage={selectedDbLanguage} />
+        </div>
+      </div>
     </div>
   );
 };

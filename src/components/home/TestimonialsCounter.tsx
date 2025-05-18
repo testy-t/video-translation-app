@@ -20,10 +20,10 @@ const TestimonialsCounter: React.FC<TestimonialsCounterProps> = ({
   stars = 5,
 }) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center p-4 my-4 bg-primary/20 rounded-lg backdrop-blur-sm">
-      <h3 className="text-base font-semibold text-primary text-center mb-3">
-        <span className="font-bold">{count}</span> человек создают с
-        Поехали!
+    <div className="w-full max-w-md flex flex-col items-center justify-center p-4 my-4 bg-primary/10 rounded-lg backdrop-blur-sm border border-primary/20 shadow-sm">
+      <h3 className="text-base font-semibold text-foreground text-center mb-3">
+        <span className="font-bold text-primary">{count}</span> человек создают с
+        <span className="text-primary font-bold"> Поехали!</span>
       </h3>
 
       <div className="flex items-center justify-center gap-4">
@@ -31,7 +31,7 @@ const TestimonialsCounter: React.FC<TestimonialsCounterProps> = ({
           {avatars.map((avatar, index) => (
             <div
               key={index}
-              className="w-8 h-8 rounded-full border border-white relative"
+              className="w-8 h-8 rounded-full border-2 border-white relative shadow-sm"
               style={{ marginRight: "-8px", zIndex: avatars.length - index }}
             >
               <img

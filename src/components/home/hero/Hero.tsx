@@ -76,11 +76,19 @@ const Hero: React.FC = () => {
 
     setActiveLanguage(code);
     console.log(`Selected language: ${code}`);
+
+    window.ym && window.ym(101915706,'reachGoal','player_interaction', {
+      action: "language_change"
+    });
   };
 
   // Функция для переключения звука
   const toggleMute = () => {
     setIsMuted(!isMuted);
+
+    window.ym && window.ym(101915706,'reachGoal','player_interaction', {
+      action: "mute_toggle"
+    });
   };
 
   const description = "Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты.";

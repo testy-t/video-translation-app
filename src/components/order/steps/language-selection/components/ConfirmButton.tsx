@@ -1,39 +1,40 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Icon from "@/components/ui/icon";
 
 interface ConfirmButtonProps {
-  onConfirm: () => void;
-  isDisabled: boolean;
-  isLoading: boolean;
+  selectedLanguage: string;
+  confirmSelection: () => void;
+  isLoading?: boolean;
+  buttonText?: string;
 }
 
 /**
  * Компонент кнопки подтверждения выбора языка
  */
 const ConfirmButton: React.FC<ConfirmButtonProps> = ({
-  onConfirm,
-  isDisabled,
-  isLoading
+  selectedLanguage,
+  confirmSelection,
+  isLoading = false,
+  buttonText = "Подтвердить выбор",
 }) => {
   return (
-    <div className="sticky bottom-0 pt-2 bg-white border-t">
-      <Button 
-        onClick={onConfirm} 
+    <div className="mt-6">
+      <Button
+        onClick={confirmSelection}
+        disabled={!selectedLanguage || isLoading}
         className="w-full"
-        disabled={isDisabled}
       >
         {isLoading ? (
-          <>
-            <Icon name="Loader2" className="mr-2 h-4 w-4 animate-spin" />
-            Обновление языка...
-          </>
+          <span className="flex items-center gap-2">
+            <Icon name="Loader2" className="animate-spin" size={16} />
+            Загрузка...
+          </span>
         ) : (
-          <>
-            <Icon name="Check" className="mr-2 h-4 w-4" />
-            Подтвердить выбор
-          </>
+          <span className="flex items-center gap-2">
+            <Icon name="Languages" size={16} />
+            {buttonText}
+          </span>
         )}
       </Button>
     </div>

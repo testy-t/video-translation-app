@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedBackground from "../AnimatedBackground";
@@ -82,7 +81,8 @@ const Hero: React.FC = () => {
     setIsMuted(!isMuted);
   };
 
-  const description = "Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты.";
+  const description =
+    "Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты.";
 
   return (
     <section className="relative overflow-hidden">
@@ -96,24 +96,24 @@ const Hero: React.FC = () => {
             <div className="text-center md:text-left w-full mt-8 md:mt-0">
               {/* Бейдж */}
               <HeroBadge text="ИИ Переводчик Видео" />
-              
+
               {/* Заголовок */}
               <HeroHeading title="Ваш голос на любом языке" />
-              
+
               {/* Описание - показываем только на десктопе */}
               {!isMobile && <HeroDescription description={description} />}
-              
+
               {/* Кнопка действия для десктопа - после описания */}
               {!isMobile && (
-                <HeroActions 
+                <HeroActions
                   onAction={goToOrderPage}
                   buttonText="Перевести видео"
                 />
               )}
-              
+
               {/* Видео плеер для мобильной версии */}
               {isMobile && (
-                <VideoPlayer 
+                <VideoPlayer
                   activeLanguage={activeLanguage}
                   isMuted={isMuted}
                   onMuteToggle={toggleMute}
@@ -125,19 +125,19 @@ const Hero: React.FC = () => {
 
               {/* Кнопка действия после видео - для мобильной версии */}
               {isMobile && (
-                <HeroActions 
+                <HeroActions
                   onAction={goToOrderPage}
                   buttonText="Перевести видео"
                 />
               )}
-              
+
               {/* Описание - показываем только на мобильных устройствах после кнопки */}
               {isMobile && <HeroDescription description={description} />}
             </div>
 
             {/* Правая колонка - видео с переключателем языков - только для десктопа */}
             {!isMobile && (
-              <VideoPlayer 
+              <VideoPlayer
                 activeLanguage={activeLanguage}
                 isMuted={isMuted}
                 onMuteToggle={toggleMute}

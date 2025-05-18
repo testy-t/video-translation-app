@@ -15,7 +15,7 @@ const HeroActions: React.FC = () => {
         className="bg-[#0070F3] hover:bg-[#0060d3] text-white px-8 py-3 text-base font-medium rounded-full h-auto"
         onClick={handleStartClick}
       >
-        Перевести видео от 149 ₽
+        Перевести видео от 59 ₽
       </Button>
     </div>
   );

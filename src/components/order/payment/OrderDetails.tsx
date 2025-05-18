@@ -126,7 +126,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
 
   const languageInfo = getLanguageInfo();
   const roundedMinutes = Math.ceil(videoDuration / 60);
-  const pricePerMinute = 149;
+  const pricePerMinute = 59;
   const totalPrice = roundedMinutes * pricePerMinute;
 
   // Обработчик изменения email
@@ -356,7 +356,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
           {getButtonText()}
         </Button>
         
-        {/* Кнопка "Попробовать за 149 рублей" для видео длительностью более 1 минуты */}
+        {/* Кнопка "Попробовать за 59 рублей" для видео длительностью более 1 минуты */}
         {roundedMinutes > 1 && (
           <div className="mt-3">
             <HoverCard openDelay={100} closeDelay={200}>
@@ -372,7 +372,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({
                     });
                   }}
                 >
-                  Тестовый перевод за 149 ₽
+                  Тестовый перевод за 59 ₽
                 </Button>
               </HoverCardTrigger>
               <HoverCardContent className="w-80">

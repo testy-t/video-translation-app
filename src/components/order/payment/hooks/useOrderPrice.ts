@@ -7,7 +7,7 @@
  */
 export const useOrderPrice = (videoFile: File | null, videoDuration: number): number => {
   // Стоимость перевода за минуту видео
-  const PRICE_PER_MINUTE = 149;
+  const PRICE_PER_MINUTE = 59;
   
   // Рассчитываем стоимость на основе длительности видео
   const calculatePrice = (): number => {

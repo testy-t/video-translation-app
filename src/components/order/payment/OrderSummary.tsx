@@ -34,7 +34,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       </div>
       <div className="flex justify-between">
         <span className="text-muted-foreground">Стоимость минуты</span>
-        <span>149 ₽</span>
+        <span>59 ₽</span>
       </div>
       <div className="flex justify-between">
         <span className="text-muted-foreground">Стоимость перевода</span>

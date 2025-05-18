@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Star } from "lucide-react";
 
@@ -13,15 +14,16 @@ const TestimonialsCounter: React.FC<TestimonialsCounterProps> = ({
     "https://cdn.poehali.dev/intertnal/img/testimonials/1.webp",
     "https://cdn.poehali.dev/intertnal/img/testimonials/2.webp",
     "https://cdn.poehali.dev/intertnal/img/testimonials/3.webp",
-    "https://cdn.poehali.dev/intertnal/img/testimonials/4.webp",
+    "https://cdn.poehali.dev/intertnal/img/testimonials/4.webp", 
     "https://cdn.poehali.dev/intertnal/img/testimonials/5.webp",
   ],
   stars = 5,
 }) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center p-4 my-4 bg-primary/20 rounded-lg">
-      <h3 className="text-base font-semibold text-white text-center mb-3">
-        <span className="font-bold">{count}</span> человек создают с Поехали!
+    <div className="w-full flex flex-col items-center justify-center p-4 my-4 bg-primary/20 rounded-lg backdrop-blur-sm">
+      <h3 className="text-base font-semibold text-primary text-center mb-3">
+        <span className="font-bold">{count}</span> человек создают с
+        Поехали!
       </h3>
 
       <div className="flex items-center justify-center gap-4">

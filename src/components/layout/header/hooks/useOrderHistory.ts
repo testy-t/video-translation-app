@@ -37,13 +37,7 @@ export function useOrderHistory() {
 
   // Метод для добавления тестового заказа (для разработки)
   const addTestOrder = () => {
-    const testCode = "b94e7fd4-5539-4d2c-aba0-993e49891f88";
-    const currentCodes = [...orderCodes];
-    if (!currentCodes.includes(testCode)) {
-      const newCodes = [...currentCodes, testCode];
-      localStorage.setItem("completedPaymentCodes", JSON.stringify(newCodes));
-      setOrderCodes(newCodes);
-    }
+    // removed
   };
 
   return { orderCodes, addTestOrder };

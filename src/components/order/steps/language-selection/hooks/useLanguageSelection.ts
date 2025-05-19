@@ -93,6 +93,7 @@ export const useLanguageSelection = (
         title: "Успех",
         description: "Язык результата выбран успешно",
       });
+      window.ym && window.ym(101915706,'reachGoal','lang');
       
       // Передаем выбранный язык в родительский компонент
       onLanguageSelected(localSelectedLanguage);

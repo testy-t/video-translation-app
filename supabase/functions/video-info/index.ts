@@ -94,7 +94,7 @@ serve(async (req: Request) => {
           videoId,
           duration,
           outputLanguage: videoRecord.output_language || outputLanguage,
-          finalAmount: 59 * Math.ceil(duration / 60) // Расчет стоимости
+          finalAmount: 119 * Math.ceil(duration / 60) // Расчет стоимости
         }
       }
 

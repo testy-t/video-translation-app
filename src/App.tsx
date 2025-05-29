@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { LanguageProvider } from "./context/LanguageContext";
 import Index from "./pages/Index";
+import GiftCards from "./pages/GiftCards";
+import Instructions from "./pages/Instructions";
 import NotFound from "./pages/NotFound";
 import OrderProcess from "./pages/OrderProcess";
 import OfferPage from "./pages/OfferPage";
@@ -36,10 +38,9 @@ const AppRoutes = () => {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Index />} />
+        <Route path="/gift-cards" element={<GiftCards />} />
+        <Route path="/instructions" element={<Instructions />} />
         <Route path="/order" element={<OrderProcess />} />
-        <Route path="/offer" element={<OfferPage />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/confidentiality" element={<ConfidentialityPage />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

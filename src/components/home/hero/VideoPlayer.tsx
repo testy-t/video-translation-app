@@ -94,7 +94,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       >
         <video
           ref={videoRef}
-          className="w-full h-full object-cover rounded-none"
+          className="w-full h-full object-cover"
           src={getVideoUrl(activeLanguage)}
           autoPlay
           loop

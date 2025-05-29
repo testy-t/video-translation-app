@@ -1,3 +1,4 @@
+
 import React from "react";
 
 interface HeroDescriptionProps {
@@ -9,7 +10,7 @@ interface HeroDescriptionProps {
  */
 const HeroDescription: React.FC<HeroDescriptionProps> = ({ description }) => {
   return (
-    <p className="text-base md:text-lg mb-5 max-w-xl mx-auto md:mx-0 leading-relaxed text-slate-800">
+    <p className="text-base md:text-lg text-slate-700 mb-5 max-w-xl mx-auto md:mx-0 leading-relaxed">
       {description}
     </p>
   );

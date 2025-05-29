@@ -30,7 +30,7 @@ const PricingSection: React.FC = () => {
         <div className="flex flex-col md:flex-row">
           {/* Цена - на мобильных отображается сверху */}
           <div className="w-full md:w-1/3 bg-[#0070F3] text-white p-8 flex flex-col justify-center items-center text-center order-first md:order-last">
-            <h3 className="text-5xl md:text-6xl font-bold mb-2">119 ₽</h3>
+            <h3 className="md:text-6xl font-bold mb-2 text-7xl">119 ₽</h3>
             <p className="text-xl text-blue-100">за 1 минуту видео</p>
           </div>
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AnimatedBackground from "../AnimatedBackground";
@@ -77,21 +76,24 @@ const Hero: React.FC = () => {
     setActiveLanguage(code);
     console.log(`Selected language: ${code}`);
 
-    window.ym && window.ym(101915706,'reachGoal','player_interaction', {
-      action: "language_change"
-    });
+    window.ym &&
+      window.ym(101915706, "reachGoal", "player_interaction", {
+        action: "language_change",
+      });
   };
 
   // Функция для переключения звука
   const toggleMute = () => {
     setIsMuted(!isMuted);
 
-    window.ym && window.ym(101915706,'reachGoal','player_interaction', {
-      action: "mute_toggle"
-    });
+    window.ym &&
+      window.ym(101915706, "reachGoal", "player_interaction", {
+        action: "mute_toggle",
+      });
   };
 
-  const description = "Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты.";
+  const description =
+    "Загрузите видео и получите профессиональный перевод на любой язык с идеальной синхронизацией губ за считанные минуты.";
 
   return (
     <section className="relative overflow-hidden">
@@ -106,7 +108,6 @@ const Hero: React.FC = () => {
               {/* Бейдж и отзывы в одной строке на десктопе */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between md:w-full mb-4 md:mb-6">
                 {/*<HeroBadge text="ИИ Переводчик Видео" />*/}
-                {!isMobile && <TestimonialsCounter count="10,000+" />}
               </div>
 
               {/* Заголовок */}

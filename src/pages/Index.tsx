@@ -1,4 +1,5 @@
 import React from "react";
+import { SplashCursor } from "@/components/ui/splash-cursor";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
@@ -27,25 +28,28 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <>
+      <SplashCursor />
+      <div className="flex flex-col min-h-screen">
+        <Header />
 
-      <main className="flex-grow">
-        <section id="home" className="w-full">
-          <Hero />
-        </section>
+        <main className="flex-grow">
+          <section id="home" className="w-full">
+            <Hero />
+          </section>
 
-        <section id="how-it-works" className="w-full py-20 bg-gray-100">
-          <HowItWorks steps={workflowSteps} />
-        </section>
+          <section id="how-it-works" className="w-full py-20 bg-gray-100">
+            <HowItWorks steps={workflowSteps} />
+          </section>
 
-        <section id="pricing" className="w-full py-20 bg-white">
-          <PricingSection />
-        </section>
-      </main>
+          <section id="pricing" className="w-full py-20 bg-white">
+            <PricingSection />
+          </section>
+        </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 
